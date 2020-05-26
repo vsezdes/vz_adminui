@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Items from '../views/Items.vue'
+import Categories from '../views/Categories.vue'
 
 Vue.use(VueRouter)
 
@@ -9,6 +10,11 @@ Vue.use(VueRouter)
     path: '/',
     name: 'Home',
     component: Items
+  },
+  {
+    path: '/categories',
+    name: 'Categories',
+    component: Categories
   },
   {
     path: '/items',
