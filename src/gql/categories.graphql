@@ -1,0 +1,24 @@
+import gql from 'graphql-tag'
+
+export default gql`
+  query {
+    categories {
+      id
+      title
+      icon
+      slug
+      children {
+        id
+        title
+        icon
+        slug
+        children {
+          id
+          title
+          icon
+          slug
+        }
+      }
+    }
+  }
+`
