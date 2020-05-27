@@ -26,7 +26,7 @@
             label="Родительская категория II уровня"
             :items="subRootCategories"
           />
-          <v-btn dark block @click="submitForm">Сохранить</v-btn>
+          <v-btn dark block @click="submitForm" :loading="loading">Сохранить</v-btn>
         </v-form>
       </v-col>
     </v-row>
@@ -49,6 +49,7 @@ export default {
     slug: null,
     icon: null,
     valid: false,
+    loading: false,
     categoryFirst: null,
     categorySecond: null,
   }),
@@ -90,6 +91,7 @@ export default {
   methods: {
     submitForm() {
       console.warn(this.valid);
+      this.loading = true;
       this.$apollo.mutate({
         // Query
         mutation: gql`mutation saveCat($id: Int, $data: CategoryInput!) {
@@ -166,12 +168,14 @@ export default {
       }).then((data) => {
         // Result
         console.log(data)
+        this.loading = false;
         this.title = null;
         this.icon = null;
         this.slug = null;
       }).catch((error) => {
         // Error
         console.error(error)
+        this.loading = false;
       })
     }
   }
