@@ -15,8 +15,8 @@ import '@mdi/font/css/materialdesignicons.css'
 // HTTP connection to the API
 const httpLink = createHttpLink({
   // You should use an absolute URL here
-  // uri: 'http://localhost:4000',
-  uri: 'https://vz-api.herokuapp.com/',
+  uri: 'http://localhost:4000',
+  // uri: 'https://vz-api.herokuapp.com/',
 })
 
 // Cache implementation

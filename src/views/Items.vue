@@ -1,5 +1,17 @@
 <template>
   <v-container fluid>
+    <v-btn
+      fixed
+      dark
+      fab
+      top
+      :style="{ top: '80px' }"
+      right
+      color="pink"
+      @click="drawer = !drawer"
+    >
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
     <v-data-iterator
       :items="items"
       :items-per-page.sync="itemsPerPage"
@@ -133,20 +145,33 @@
         </v-row>
       </template>
     </v-data-iterator>
+    <v-navigation-drawer
+      class="pa-0"
+      v-model="drawer"
+      temporary
+      fixed
+      right
+      width="400px"
+    >
+      <ItemForm></ItemForm>
+    </v-navigation-drawer>
   </v-container>
 </template>
 
 <script>
 import ItemCard from '@/components/ItemCard';
+import ItemForm from '@/components/ItemForm';
   export default {
     components: {
       ItemCard,
+      ItemForm,
     },
     data () {
       return {
         itemsPerPageArray: [4, 8, 12],
         search: '',
         filter: {},
+        drawer: false,
         sortDesc: false,
         page: 1,
         itemsPerPage: 4,
