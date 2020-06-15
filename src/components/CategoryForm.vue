@@ -40,8 +40,8 @@ export default {
   name: 'CategoryForm',
   props: {
     categories: {
-      type: Object,
-      default: () => {},
+      type: Array,
+      default: () => ([]),
     }
   },
   data: () => ({
