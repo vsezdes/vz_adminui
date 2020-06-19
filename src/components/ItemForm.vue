@@ -15,15 +15,17 @@
           dense
         />
         <v-select
-          v-model="categoryFirst"
-          label="Категория I уровня"
-          :items="rootCategories"
+          v-model="categorySecond"
+          :disabled="!categoryFirst"
+          label="Категория II уровня"
+          :items="subRootCategories(categoryFirst)"
           dense
         />
         <v-select
-          v-model="categoryFirst"
-          label="Категория I уровня"
-          :items="rootCategories"
+          v-model="categoryThird"
+          :disabled="!categorySecond"
+          label="Категория III уровня"
+          :items="subRootCategories(categorySecond, true)"
           dense
         />
       </v-form>
@@ -44,6 +46,8 @@ export default {
     return {
       categoryFirst: null,
       categorySecond: null,
+      categoryThird: null,
+      valid: false,
     };
   },
   computed: {
@@ -53,12 +57,24 @@ export default {
         value: cat.id,
       }))
     },
-    subRootCategories() {
+  },
+  methods: {
+    subRootCategories(catId, nextLevel = false) {
       const items = [{
         text: 'Нет',
         value: 0,
       }];
-      const children = this.categories && this.categories.find(cat => cat.id === this.categoryFirst).children;
+
+      let theCat = null;
+      let children = null;
+      if (nextLevel) {
+        const secondCat = this.categories && this.categories.find(cat => cat.id === this.categoryFirst);
+        theCat = secondCat && secondCat.children.find(cat => cat.id === catId);
+      } else {
+        theCat = this.categories && this.categories.find(cat => cat.id === catId);
+      }
+
+      children = theCat && theCat.children;
       if (children) {
         return [
           ...items,

@@ -76,9 +76,6 @@ export default {
           delCategory(id: $id) {
             id
             title
-            parent {
-              id
-            }
           }
         }`,
         // Parameters
@@ -87,35 +84,17 @@ export default {
         },
         update: (store, { data: { delCategory }}) => {
           const data = store.readQuery({ query: CATEGORIES_QUERY });
-          console.warn(data, delCategory);
-          if (!delCategory.parent || !delCategory.parent.id) {
-            data.categories = [...data.categories.filter(c => c.id !== id)];
-            store.writeQuery({ query: CATEGORIES_QUERY, data })
-          } else {
-            let dataRemoved = false;
-            let updatedCats = data.categories.map(c => {
-              if (c.id === delCategory.parent.id) {
-                dataRemoved = true;
-                c.children = [...c.children.filter(c => c.id !== id)];
-              }
-              return c;
-            });
-            // if it seems like third-level cat added
-            if (!dataRemoved) {
-              updatedCats = data.categories.map(c => {
-                return {
-                  ...c,
-                  children: c.children.map(child => {
-                    if (child.id === delCategory.parent.id) {
-                      child.children = [...child.children.filter(c => c.id !== id)];
-                    }
-                    return child;
-                  }),
-                };
-              });
-            }
-            store.writeQuery({ query: CATEGORIES_QUERY, data: { categories: updatedCats } })
-          }
+          if (!delCategory.id) return;
+
+          const categories = data.categories.filter(c1 => c1.id !== delCategory.id).map(c1 => ({
+            ...c1,
+            children: c1.children.filter(c2 => c2.id !== delCategory.id).map(c2 => ({
+              ...c2,
+              children: c2.children.filter(c3 => c3.id !== delCategory.id),
+            }))
+          }));
+          console.warn(data, categories, delCategory);
+          store.writeQuery({ query: CATEGORIES_QUERY, data: { categories } });
         },
       }).then((data) => {
         // Result

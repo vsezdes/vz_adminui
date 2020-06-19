@@ -88,6 +88,11 @@ export default {
       return items;
     }
   },
+  watch: {
+    categoryFirst(val) {
+      if (val) this.categorySecond = null;
+    }
+  },
   methods: {
     submitForm() {
       console.warn(this.valid);
