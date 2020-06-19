@@ -22,6 +22,7 @@
       :disabled="images.length === 0"
       fab outlined small absolute color="primary"
       class="next-btn mr-3"
+      @click="$emit('next', true)"
     ><v-icon>mdi-arrow-right</v-icon></v-btn>
   </div>
 </template>
@@ -62,6 +63,10 @@ export default {
       cloudName: 'vsetut2020',
       apiKey: '486853485234433',
       cropping: true,
+      croppingDefaultSelectionRatio: 16/9,
+      croppingAspectRatio: 16/9,
+      croppingShowBackButton: false,
+      showSkipCropButton: false,
       uploadPreset: 'bc5bf78g'}, this.onImageReady
     )
   },

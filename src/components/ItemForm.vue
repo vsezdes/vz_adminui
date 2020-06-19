@@ -8,7 +8,7 @@
     <v-card-title class="headline">Добавить товар</v-card-title>
     <v-stepper v-model="step" vertical non-linear>
       <v-stepper-step :complete="step > 1" step="1" @click.native="step = 1">
-        Укажите категорию
+        Категории
         <small>{{ catString }}</small>
       </v-stepper-step>
 
@@ -45,7 +45,7 @@
       </v-stepper-content>
 
       <v-stepper-step :complete="step > 2" step="2">
-        Детали товара
+        Детали
       </v-stepper-step>
 
       <v-stepper-content step="2">
@@ -56,7 +56,14 @@
             label="Наименование товара"
             v-model="itemName"
             :rules="[
-              v => v.length > 5 || 'Обязательно к заполнению (5 букв)'
+              v => v.length > 4 || 'Обязательно к заполнению (5 букв)'
+            ]"
+          />
+          <v-text-field
+            label="Цена товара"
+            v-model="itemPrice"
+            :rules="[
+              v => !!v || 'Обязательно к заполнению'
             ]"
           />
         </v-form>
@@ -69,7 +76,7 @@
       </v-stepper-content>
 
       <v-stepper-step :complete="step > 3" step="3">
-        Фото товара
+        Фото
       </v-stepper-step>
 
       <v-stepper-content step="3">
@@ -78,14 +85,15 @@
           v-on:update:images="images.push($event)"
           v-on:delete:images="images = images.filter(i => i.asset_id !== $event)"
           :show="step === 3"
+          @next="step = 4"
         />
       </v-stepper-content>
 
-      <v-stepper-step step="4">View setup instructions</v-stepper-step>
+      <v-stepper-step step="4">Сохранить</v-stepper-step>
       <v-stepper-content step="4">
-        <v-card color="grey lighten-1" class="mb-12" height="200px"></v-card>
-        <v-btn color="primary" @click="e6 = 1">Continue</v-btn>
-        <v-btn text>Cancel</v-btn>
+        <ItemPreview :data="item" />
+        <v-btn text @click="drawer = false">Отмена</v-btn>
+        <v-btn color="primary" @click="save">Записать</v-btn>
       </v-stepper-content>
     </v-stepper>
     <v-card-actions>
@@ -100,11 +108,13 @@
 import CATEGORIES_QUERY from '@/gql/categories.graphql';
 import VImageInput from 'vuetify-image-input';
 import ImageUploader from '@/components/ImageUploader.vue';
+import ItemPreview from '@/components/ItemPreview.vue';
 
 
 export default {
   components: {
     ImageUploader,
+    ItemPreview,
     [VImageInput.name]: VImageInput,
   },
   apollo: {
@@ -116,7 +126,8 @@ export default {
       categorySecond: null,
       categoryThird: null,
       valid: false,
-      step: 3,
+      detailsValid: false,
+      step: 1,
       itemName: '',
       imageData: '',
       images: [],
@@ -133,8 +144,27 @@ export default {
       }))
     },
     catString() {
-      return 'suprastin'
+      let str = '';
+      const cat1 = this.categories && this.categories.find(c => c.id === this.categoryFirst);
+      if (cat1) {
+        str += cat1.title;
+        const cat2 = cat1.children.find(c => c.id === this.categorySecond);
+        if (cat2) {
+          str += ' » ' + cat2.title;
+          const cat3 = cat2.children.find(c => c.id === this.categoryThird);
+          if (cat3) str += ' » ' + cat3.title;
+        }
+      }
+      return str.toLowerCase();
     },
+    item() {
+      return {
+        title: this.itemName,
+        price: this.itemPrice,
+        thumb: this.images.length > 0 && this.images[0].url,
+        images: this.images,
+      }
+    }
   },
   methods: {
     subRootCategories(catId, nextLevel = false) {
