@@ -15,7 +15,7 @@ import '@mdi/font/css/materialdesignicons.css'
 // HTTP connection to the API
 const httpLink = createHttpLink({
   // You should use an absolute URL here
-  uri: process.env.API_URL || 'http://localhost:4000',
+  uri: process.env.VUE_APP_API_URL || 'http://localhost:4000',
   // uri: 'https://vz-api.herokuapp.com/',
 })
 
