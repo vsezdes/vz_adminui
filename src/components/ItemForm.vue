@@ -93,7 +93,7 @@
       <v-stepper-content step="4">
         <ItemPreview :data="item" />
         <v-btn text @click="drawer = false">Отмена</v-btn>
-        <v-btn color="primary" @click="save">Записать</v-btn>
+        <v-btn color="primary" @click="save" :loading="loading">Записать</v-btn>
       </v-stepper-content>
     </v-stepper>
     <v-card-actions>
@@ -105,7 +105,9 @@
 </template>
 
 <script>
+import gql from 'graphql-tag';
 import CATEGORIES_QUERY from '@/gql/categories.graphql';
+import CATEGORY_ITEMS_QUERY from '@/gql/items.graphql';
 import VImageInput from 'vuetify-image-input';
 import ImageUploader from '@/components/ImageUploader.vue';
 import ItemPreview from '@/components/ItemPreview.vue';
@@ -122,6 +124,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       categoryFirst: null,
       categorySecond: null,
       categoryThird: null,
@@ -190,9 +193,94 @@ export default {
       }
       return items;
     },
-    uploadSelectedImage() {
-      console.error(this.imageData)
-    }
+    save() {
+      this.$apollo.mutate({
+        // Query
+        mutation: gql`mutation saveItem($id: Int, $data: ItemInput!) {
+          saveItem(data: $data, id: $id) {
+            id
+            title
+            price
+            images {
+              asset_id
+              url
+            }
+          }
+        }`,
+        // Parameters
+        variables: {
+          data: {
+            title: this.item.title,
+            price: parseFloat(this.item.price),
+            categoryId: this.categoryThird,
+            images: this.images.map(i => ({
+              ...i,
+              coordinates: JSON.stringify(i.coordinates),
+              tags: JSON.stringify(i.tags),
+            })),
+          },
+        },
+        // Update the cache with the result
+        // The query will be updated with the optimistic response
+        // and then with the real result of the mutation
+        update: (store, { data: { saveItem }}) => {
+          // Read the data from our cache for this query.
+          const data = store.readQuery({ query: CATEGORY_ITEMS_QUERY, id: this.categoryThird });
+          console.warn(data, saveItem);
+          if (!saveItem.parent || !saveItem.parent.id) {
+            data.categories.push(saveItem);
+            // Write our data back to the cache.
+            store.writeQuery({ query: CATEGORIES_QUERY, data })
+          } else {
+            let dataAdded = false;
+            let updatedCats = data.categories.map(c => {
+              if (c.id === saveItem.parent.id) {
+                dataAdded = true;
+                c.children.push(saveItem);
+              }
+              return c;
+            });
+            // if it seems like third-level cat added
+            if (!dataAdded) {
+              updatedCats = data.categories.map(c => {
+                return {
+                  ...c,
+                  children: c.children.map(child => {
+                    if (child.id === saveItem.parent.id) {
+                      child.children.push(saveItem);
+                    }
+                    return child;
+                  }),
+                };
+              });
+            }
+            store.writeQuery({ query: CATEGORIES_QUERY, data: { categories: updatedCats } })
+          }
+        },
+        // Optimistic UI
+        // Will be treated as a 'fake' result as soon as the request is made
+        // so that the UI can react quickly and the user be happy
+        // optimisticResponse: {
+        //   __typename: 'Mutation',
+        //   addTag: {
+        //     __typename: 'Tag',
+        //     id: -1,
+        //     label: newTag,
+        //   },
+        // },
+      }).then((data) => {
+        // Result
+        console.log(data)
+        this.loading = false;
+        this.title = null;
+        this.icon = null;
+        this.slug = null;
+      }).catch((error) => {
+        // Error
+        console.error(error)
+        this.loading = false;
+      })
+    },
   }
 }
 </script>
