@@ -150,8 +150,9 @@
       v-model="drawer"
       temporary
       fixed
+      fullWidth
       right
-      width="400px"
+      width="450"
     >
       <ItemForm></ItemForm>
     </v-navigation-drawer>

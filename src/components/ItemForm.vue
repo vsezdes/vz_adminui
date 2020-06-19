@@ -2,7 +2,6 @@
   <v-container>
     <v-card
       class="mx-auto pa-0"
-      max-width="600"
       outlined
       flat
     >
@@ -74,15 +73,11 @@
       </v-stepper-step>
 
       <v-stepper-content step="3">
-        <v-image-input
-          v-model="imageData"
-          :image-quality="0.85"
-          fullWidth
-          fullHeight
-          clearable
-          image-format="jpeg"
-          flipVerticallyIcon="mdi-format-vertical-align-top"
-          flipHorizontallyIcon="mdi-format-horizontal-align-right"
+        <ImageUploader
+          :images="images"
+          v-on:update:images="images.push($event)"
+          v-on:delete:images="images = images.filter(i => i.asset_id !== $event)"
+          :show="step === 3"
         />
       </v-stepper-content>
 
@@ -104,10 +99,12 @@
 <script>
 import CATEGORIES_QUERY from '@/gql/categories.graphql';
 import VImageInput from 'vuetify-image-input';
+import ImageUploader from '@/components/ImageUploader.vue';
 
 
 export default {
   components: {
+    ImageUploader,
     [VImageInput.name]: VImageInput,
   },
   apollo: {
@@ -122,7 +119,11 @@ export default {
       step: 3,
       itemName: '',
       imageData: '',
+      images: [],
     };
+  },
+  updated() {
+    console.log('img1', this.images);
   },
   computed: {
     rootCategories() {
@@ -158,6 +159,9 @@ export default {
         ];
       }
       return items;
+    },
+    uploadSelectedImage() {
+      console.error(this.imageData)
     }
   }
 }
