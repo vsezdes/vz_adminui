@@ -1,11 +1,27 @@
 import gql from 'graphql-tag'
 
+export const LAST_ITEMS = gql`
+  query lastItems {
+    lastItems {
+      id
+      title
+      price
+      category
+      images {
+        asset_id
+        url
+      }
+    }
+  }
+`
+
 export default gql`
   query categoryItems($id: Int!){
     categoryItems(id: $id) {
       id
       title
       price
+      category
       images {
         asset_id
         url

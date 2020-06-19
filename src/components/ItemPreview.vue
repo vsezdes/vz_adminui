@@ -4,6 +4,7 @@
     max-width="344"
   >
     <v-img
+      v-if="!!data.thumb"
       :style="{ border: '1px solid #EEE' }"
       :src="data.thumb"
       height="200px"
@@ -44,7 +45,7 @@ export default {
   }),
   props: {
     data: {
-      type: Boolean,
+      type: Object,
       default: () => {},
     }
   }

@@ -6,10 +6,11 @@
   >
     <v-img
       height="250"
-      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+      v-if="!!thumb"
+      :src="thumb"
     ></v-img>
 
-    <v-card-title>{{ name }}</v-card-title>
+    <v-card-title>{{ title }}</v-card-title>
 
     <v-card-text>
       <!-- <v-row
@@ -23,7 +24,7 @@
           half-increments
           readonly
           size="14"
-        ></v-rating>
+        ></v-rating>n
 
         <div class="grey--text ml-4">4.5 (413)</div>
       </v-row> -->
@@ -41,12 +42,13 @@
         </v-chip>
       </v-row>
 
+      <v-chip small >{{ category }}</v-chip>
       <div>{{ description }}</div>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>
 
-    <v-card-actions>
+    <!-- <v-card-actions>
       <v-btn
         color="deep-purple lighten-2"
         text
@@ -54,18 +56,22 @@
       >
         Reserve
       </v-btn>
-    </v-card-actions>
+    </v-card-actions> -->
   </v-card>
 </template>
 
 <script>
   export default {
-    props: ['name', 'price', 'description'],
+    props: ['title', 'price', 'images', 'category', 'description'],
     data: () => ({
       loading: false,
       selection: 1,
     }),
-
+    computed: {
+      thumb() {
+        return this.images && this.images.length > 0 && this.images[0].url;
+      },
+    },
     methods: {
       reserve () {
         this.loading = true
