@@ -2,14 +2,16 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Items from '../views/Items.vue'
 import Categories from '../views/Categories.vue'
-
+import Register from '../views/Register.vue';
+import Login from "../views/Login.vue";
 Vue.use(VueRouter)
 
   const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Items
+    component: Items,
+    params:true
   },
   {
     path: '/categories',
@@ -23,6 +25,14 @@ Vue.use(VueRouter)
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "items" */ '../views/Items.vue')
+  },
+  { path: '/register',
+    name: 'Register',
+    component: Register
+  },
+  { path: '/login',
+    name: 'Login',
+    component: Login
   }
 ]
 
