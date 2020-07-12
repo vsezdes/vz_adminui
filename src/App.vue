@@ -67,25 +67,31 @@
         </v-row>
       </v-container>
     </v-content>
+    <Alert />
   </v-app>
 </template>
 
 <script>
-  export default {
-    props: {
-      source: String,
-    },
-    data: () => ({
-      drawer: null,
-      items: [
-        { heading: 'Товары' },
-        { icon: 'mdi-package-variant', text: 'Все товары', href: '/' },
-        { icon: 'mdi-format-list-bulleted-type', text: 'Категории' , href: '/categories'},
-        { heading: 'Управление' },
-        { icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users' },
-      ],
-    }),
-  }
+import Alert from '@/components/Alert';
+
+export default {
+  components: {
+    Alert
+  },
+  props: {
+    source: String,
+  },
+  data: () => ({
+    drawer: null,
+    items: [
+      { heading: 'Товары' },
+      { icon: 'mdi-package-variant', text: 'Все товары', href: '/' },
+      { icon: 'mdi-format-list-bulleted-type', text: 'Категории' , href: '/categories'},
+      { heading: 'Управление' },
+      { icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users' },
+    ],
+  }),
+}
 </script>
 
 <style>
