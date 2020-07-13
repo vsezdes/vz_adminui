@@ -12,10 +12,26 @@
             label="Ярлык категории"
             v-model="slug"
           />
-          <v-text-field
+          <v-autocomplete
+            :items="icons"
+            :append-icon="icon"
+            color="white"
+            item-text="name"
             label="Иконка категории"
             v-model="icon"
-          />
+          >
+            <template v-slot:item="{ item }">
+              <v-list-item-avatar
+                color="indigo"
+                class="headline font-weight-light white--text"
+              >
+                <v-icon dark>{{ item }}</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title v-text="item"></v-list-item-title>
+              </v-list-item-content>
+            </template>
+          </v-autocomplete>
           <v-select
             v-model="categoryFirst"
             label="Родительская категория I уровня"
@@ -36,6 +52,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+import icons from '@/icons'
 import gql from 'graphql-tag';
 import CATEGORIES_QUERY from '@/gql/categories.graphql';
 export default {
@@ -54,6 +72,7 @@ export default {
     loading: false,
     categoryFirst: null,
     categorySecond: null,
+    icons,
   }),
   computed: {
     rootCategories() {
@@ -96,6 +115,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['alert']),
     submitForm() {
       console.warn(this.valid);
       this.loading = true;
@@ -175,6 +195,10 @@ export default {
       }).then((data) => {
         // Result
         console.log(data)
+        this.alert({
+          type: 'success',
+          message: 'Категория добавлена',
+        });
         this.loading = false;
         this.title = null;
         this.icon = null;
@@ -182,6 +206,10 @@ export default {
       }).catch((error) => {
         // Error
         console.error(error)
+        this.alert({
+          type: 'error',
+          message: error,
+        });
         this.loading = false;
       })
     }

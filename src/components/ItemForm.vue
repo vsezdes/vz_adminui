@@ -92,7 +92,6 @@
       <v-stepper-step step="4">Сохранить</v-stepper-step>
       <v-stepper-content step="4">
         <ItemPreview :data="item" />
-        <v-btn text @click="drawer = false">Отмена</v-btn>
         <v-btn color="primary" @click="save" :loading="loading">Записать</v-btn>
       </v-stepper-content>
     </v-stepper>
@@ -105,6 +104,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import gql from 'graphql-tag';
 import CATEGORIES_QUERY from '@/gql/categories.graphql';
 import { LAST_ITEMS } from '@/gql/items.graphql';
@@ -167,6 +167,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['alert']),
     subRootCategories(catId, nextLevel = false) {
       const items = [];
       let theCat = null;
@@ -240,14 +241,21 @@ export default {
         // },
       }).then((data) => {
         // Result
+        this.alert({
+          type: 'success',
+          message: 'Товар добавлен',
+        });
         console.log(data)
         this.loading = false;
-        this.title = null;
-        this.icon = null;
-        this.slug = null;
+        this.itemName = null;
+        this.itemPrice = null;
+        this.images = [];
+        this.step = 2;
       }).catch((error) => {
-        // Error
-        console.error(error)
+        this.alert({
+          type: 'error',
+          message: error,
+        });
         this.loading = false;
       })
     },
