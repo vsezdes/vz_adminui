@@ -33,7 +33,7 @@
                     prefix="+"
                     :rules="phoneRules"
                     v-model="phone"
-                    type="text"
+                    type="number"
                 ></v-text-field>
                 <v-text-field
                     id="password"
