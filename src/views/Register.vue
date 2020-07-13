@@ -31,6 +31,7 @@
                       v-on:update:images="images.push($event)"
                       v-on:delete:images="images = images.filter(i => i.asset_id !== $event)"
                       v-model="images"
+                      :show="true"
                   />
                   <v-text-field
                       label="* Имя"
@@ -52,11 +53,11 @@
                     label="* Телефон"
                     name="phone"
                     prepend-icon="mdi-phone"
-                    prefix="+"
+                    v-mask="['##/##/#####']"
                     :rules="phoneRules"
                     v-model="phone"
-                    type="number"
-                ></v-text-field>
+                    type="text"
+                />
                   <v-text-field
                     label="* Почта"
                     name="email"
@@ -98,9 +99,14 @@
 
 import VImageInput from 'vuetify-image-input';
 import ImageUploader from '@/components/ImageUploader.vue';
+// import TheMask from 'vue-the-mask'
+import {mask} from 'vue-the-mask'
 
 export default {
   name: "Register",
+  directives: {
+    mask
+  },
   components: {
     ImageUploader,
     [VImageInput.name]: VImageInput,
