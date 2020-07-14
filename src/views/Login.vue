@@ -30,14 +30,12 @@
             <v-card-text>
               <v-form>
                 <v-text-field
-                    label="Телефон"
-                    name="phone"
-                    prepend-icon="mdi-phone"
-                    v-mask="'+996(###)###-###'"
-                    placeholder="+996(999)123-456"
-                    :rules="phoneRules"
-                    v-model="phone"
+                    label="* Почта"
+                    name="email"
+                    prepend-icon="mdi-mail"
+                    v-model="email"
                     type="text"
+                    :rules='emailRules'
                 ></v-text-field>
                 <v-text-field
                     id="password"
@@ -53,7 +51,7 @@
             <v-card-actions>
               <v-layout row wrap>
                 <v-spacer></v-spacer>
-                <v-btn style="color: white" color="#42a7f5">Войти</v-btn>
+                <v-btn style="color: white" @click="login" color="#42a7f5">Войти</v-btn>
                 <v-spacer></v-spacer>
 
               </v-layout>
@@ -68,6 +66,7 @@
 <script>
 // import gql from 'graphql-tag';
 import {mask} from 'vue-the-mask'
+import gql from "graphql-tag";
 
 export default {
   name: "Login",
@@ -78,20 +77,30 @@ export default {
   },
   data() {
     return {
-      phone:'',
+      email:'',
       password:'',
       passRules:[
         v => !!v || '*Это поле обязательно',
       ],
-      phoneRules:[
-        v => (v && v.length <= 1) || '*Это поле обязательно',
-
-      ]
+      emailRules: [
+        v => !!v || '*Это поле обязательно',
+        v => /.+@.+\..+/.test(v) || 'Указанная вами почта имеет неверный формат',
+      ],
     };
   },
   methods: {
     validate () {
       this.$refs.form.validate()
+    },
+    login() {
+      this.$apollo.query({
+        // Query
+        query: gql`query login {
+                login(user: email,
+                 pass: password)
+                 { firstName lastName token avatar }
+                 }`,
+      })
     },
   },
   created() {

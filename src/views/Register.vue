@@ -24,17 +24,17 @@
                 <v-toolbar-title>Регистрация</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <router-link style="color: white;font-weight: bold" to="Login">Вход</router-link>
-
               </v-toolbar>
               <v-card-text>
                 <v-form>
                   <ImageUploader
-                      :images="images"
-                      v-on:update:images="images.push($event)"
-                      v-on:delete:images="images = images.filter(i => i.asset_id !== $event)"
-                      v-model="images"
+                      :images="image"
+                      v-on:update:images="image.push($event);imageChange()"
+                      v-on:delete:images="image = []"
+                      v-model="image"
                       :show="true"
                   />
+                    <v-img v-if="image.length>0" style="min-height: 200px;min-width: 200px" :src="image[0].url"/>
                   <v-text-field
                       label="* Имя"
                       name="login"
@@ -83,7 +83,7 @@
               <v-card-actions>
                 <v-layout row wrap>
                 <v-spacer></v-spacer>
-                  <v-btn style="color:white" color="#42a7f5"
+                  <v-btn style="color:white" color="#42a7f5" @click="register"
 
                   >Зарегистрироваться</v-btn>
                   <v-spacer></v-spacer>
@@ -104,6 +104,7 @@ import VImageInput from 'vuetify-image-input';
 import ImageUploader from '@/components/ImageUploader.vue';
 // import TheMask from 'vue-the-mask'
 import {mask} from 'vue-the-mask'
+import gql from "graphql-tag";
 
 export default {
   name: "Register",
@@ -123,7 +124,7 @@ export default {
       phone:'',
       email:'',
       password:'',
-      images: [],
+      image: [],
       nameRules: [
         v => !!v || '*Это поле обязательно',
         v => (v && v.length < 3) || 'Введите не менее 3-х символов',
@@ -145,6 +146,24 @@ export default {
   methods: {
     validate () {
       this.$refs.form.validate()
+    },
+    imageChange(){
+      console.log(this.image)
+    },
+    register() {
+      this.image=this.image[0]
+      this.$apollo.mutate({
+        // Query
+        mutation: gql`query register { register(
+                data: {
+                 lastName: surname,
+                 firstName: firstname,
+                 phone: phonr,
+                 email: email,
+                 pass:password,
+                 avatar:image})
+                 { firstName lastName token avatar } }`,
+      })
     },
   },
   created() {
