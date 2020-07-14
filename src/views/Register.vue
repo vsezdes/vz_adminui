@@ -20,8 +20,10 @@
                   flat
               >
                 <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
                 <v-toolbar-title>Регистрация</v-toolbar-title>
                 <v-spacer></v-spacer>
+                <router-link style="color: white;font-weight: bold" to="Login">Вход</router-link>
 
               </v-toolbar>
               <v-card-text>
@@ -53,7 +55,8 @@
                     label="* Телефон"
                     name="phone"
                     prepend-icon="mdi-phone"
-                    v-mask="['##/##/#####']"
+                    v-mask="'+996(###)###-###'"
+                    placeholder="+996(999)123-456"
                     :rules="phoneRules"
                     v-model="phone"
                     type="text"

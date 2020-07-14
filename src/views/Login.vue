@@ -20,8 +20,11 @@
                 flat
             >
               <v-spacer></v-spacer>
+              <v-spacer></v-spacer>
               <v-toolbar-title>Вход</v-toolbar-title>
               <v-spacer></v-spacer>
+
+              <router-link style="color: white;font-weight: bold" to="Register">Регистрация</router-link>
 
             </v-toolbar>
             <v-card-text>
@@ -30,10 +33,11 @@
                     label="Телефон"
                     name="phone"
                     prepend-icon="mdi-phone"
-                    prefix="+"
+                    v-mask="'+996(###)###-###'"
+                    placeholder="+996(999)123-456"
                     :rules="phoneRules"
                     v-model="phone"
-                    type="number"
+                    type="text"
                 ></v-text-field>
                 <v-text-field
                     id="password"
@@ -63,13 +67,18 @@
 
 <script>
 // import gql from 'graphql-tag';
+import {mask} from 'vue-the-mask'
 
 export default {
   name: "Login",
+  directives: {
+    mask
+  },
   components: {
   },
   data() {
     return {
+      phone:'',
       password:'',
       passRules:[
         v => !!v || '*Это поле обязательно',
