@@ -7,7 +7,10 @@
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
-      <span class="title ml-3 mr-5">Всё&nbsp;<span class="font-weight-light">Тут</span></span>
+      <router-link style="text-decoration: none;color: black" to="/">
+        <span class="title ml-3 mr-5">Всё&nbsp;<span class="font-weight-light">Тут</span></span>
+      </router-link>
+
     </v-app-bar>
 
     <v-navigation-drawer

@@ -4,6 +4,7 @@ import Items from '../views/Items.vue'
 import Categories from '../views/Categories.vue'
 import Register from '../views/Register.vue';
 import Login from "../views/Login.vue";
+import MyOrders from "../views/MyOrders.vue";
 Vue.use(VueRouter)
 
   const routes = [
@@ -26,13 +27,20 @@ Vue.use(VueRouter)
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "items" */ '../views/Items.vue')
   },
-  { path: '/register',
+  {
+    path: '/register',
     name: 'Register',
     component: Register
   },
-  { path: '/login',
+  {
+    path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/my_orders',
+    name: 'MyOrders',
+    component: MyOrders
   }
 ]
 
