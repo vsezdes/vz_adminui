@@ -1,24 +1,34 @@
 <template>
   <v-container>
+    <v-card-title class="headline">{{ !id ? 'Добавить категорию' : 'Изменить категорию' }}</v-card-title>
     <v-row class="text-center">
       <v-col cols="12">
-        <v-form v-model="valid">
+        <v-form v-model="valid" lazy-validation ref="form">
           <v-text-field
             label="Имя категории"
             v-model="title"
+            :rules="[
+              v => !!v || 'Обязательно к заполнению'
+            ]"
           />
           <v-text-field
             label="Ярлык категории"
             v-model="slug"
+            :rules="[
+              v => !!v || 'Обязательно к заполнению'
+            ]"
           />
           <v-autocomplete
             :items="icons"
-            :append-icon="`mdi-${icon}`"
+            :append-icon="icon && `mdi-${icon}`"
             color="white"
             item-text="name"
             label="Иконка категории"
             v-model="icon"
             ref="iconselector"
+            :rules="[
+              v => !!v || 'Обязательно к заполнению'
+            ]"
             @change="$refs.iconselector.blur()"
           >
             <template v-slot:item="{ item }">
@@ -51,7 +61,7 @@
             label="Родительская категория III уровня"
             :items="subSubRootCategories"
           />
-          <v-btn dark block @click="submitForm" :loading="loading">Сохранить</v-btn>
+          <v-btn block color="green" outlined @click="validate" :loading="loading">Сохранить</v-btn>
         </v-form>
       </v-col>
     </v-row>
@@ -63,6 +73,8 @@ import { mapActions } from 'vuex';
 import icons from '@/icons'
 import gql from 'graphql-tag';
 import CATEGORIES_QUERY from '@/gql/categories.graphql';
+const CYRLAT = {"Ё":"YO","Й":"I","Ц":"TS","У":"U","К":"K","Е":"E","Н":"N","Г":"G","Ш":"SH","Щ":"SCH","З":"Z","Х":"H","Ъ":"-","ё":"yo","й":"i","ц":"ts","у":"u","к":"k","е":"e","н":"n","г":"g","ш":"sh","щ":"sch","з":"z","х":"h","ъ":"-","Ф":"F","Ы":"I","В":"V","А":"a","П":"P","Р":"R","О":"O","Л":"L","Д":"D","Ж":"ZH","Э":"E","ф":"f","ы":"i","в":"v","а":"a","п":"p","р":"r","о":"o","л":"l","д":"d","ж":"zh","э":"e","Я":"Ya","Ч":"CH","С":"S","М":"M","И":"I","Т":"T","Ь":"-","Б":"B","Ю":"YU","я":"ya","ч":"ch","с":"s","м":"m","и":"i","т":"t","ь":"-","б":"b","ю":"yu", " ": "-"};
+
 export default {
   name: 'CategoryForm',
   props: {
@@ -73,6 +85,10 @@ export default {
     item: {
       type: Object,
       default: () => {},
+    },
+    selectCat: {
+      type: Number,
+      default: null,
     }
   },
   data: () => ({
@@ -126,7 +142,7 @@ export default {
         text: 'Нет',
         value: 0,
       }];
-      const grandChildren = this.categories && this.categories.find(cat => cat.id === this.categoryFirst).children;
+      const grandChildren = ((this.categories && this.categories.find(cat => cat.id === this.categoryFirst)) || {}).children;
       const { children } = (grandChildren && grandChildren.find(cat => cat.id === this.categorySecond)) || {};
       if (children) {
         return [
@@ -141,12 +157,55 @@ export default {
     }
   },
   watch: {
+    title(val) {
+      this.slug = this.transliterate(val);
+    },
+    selectCat(val) {
+      if (val) {
+        this.categories.forEach(c1 => {
+          if (c1.id === val) {
+            this.categoryFirst = c1.id;
+            this.categorySecond = null;
+            this.categoryThird = null;
+            return;
+          }
+          c1.children.forEach(c2 => {
+            if (c2.id === val) {
+              this.categoryFirst = c1.id;
+              this.$nextTick(() => {
+                this.categorySecond = c2.id
+                this.categoryThird = null;
+              });
+              return;
+            }
+            c2.children.forEach(c3 => {
+              if (c3.id === val) {
+                this.categoryFirst = c1.id;
+                this.$nextTick(() => {
+                  this.categorySecond = c2.id
+                  this.categoryThird = c3.id;
+                });
+
+                return;
+              }
+            })
+          });
+        });
+      } else {
+        this.categoryFirst = null;
+        this.categorySecond = null;
+        this.categoryThird = null;
+      }
+    },
     item(val) {
       if (!val) {
         this.title = null;
         this.icon = null;
         this.slug = null;
         this.id = null;
+        this.categoryFirst = null;
+        this.categorySecond = null;
+        this.categoryThird = null;
       } else {
         this.title = val.title;
         this.icon = val.icon;
@@ -160,8 +219,15 @@ export default {
   },
   methods: {
     ...mapActions(['alert']),
+    validate() {
+      this.$refs.form.validate();
+      this.$nextTick(() => {
+        if (this.valid) this.submitForm();
+      });
+    },
     submitForm() {
-      console.warn(this.valid);
+
+      if (!this.valid) return false;
       this.loading = true;
       this.$apollo.mutate({
         // Query
@@ -277,6 +343,11 @@ export default {
         });
         this.loading = false;
       })
+    },
+    transliterate(word){
+      return word.split('').map(function (char) {
+        return CYRLAT[char] || char;
+      }).join("");
     }
   }
 }

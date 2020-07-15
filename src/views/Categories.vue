@@ -25,8 +25,10 @@
             <v-icon class="mb-1 mr-3">{{ `mdi-${cat.icon}` }}</v-icon>
             {{ cat.title }}
             <v-spacer />
-                <v-btn small icon @click="onEdit(cat)"><v-icon small>mdi-pencil</v-icon></v-btn>
-                <v-btn :disabled="cat.children.length > 0" small icon @click="onDelete(cat.id)"><v-icon small>mdi-close</v-icon></v-btn>
+            <v-btn class="add-btn" small icon @click="onAddChild(cat.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
+            <v-btn small icon @click="onEdit(cat)"><v-icon small>mdi-pencil</v-icon></v-btn>
+            <v-btn :disabled="cat.children.length > 0" small icon @click="onDelete(cat.id)"><v-icon small>mdi-close</v-icon></v-btn>
+
           </v-card-title>
           <v-card-text>
             <v-divider />
@@ -45,6 +47,7 @@
                 </v-icon>
               </template>
               <template v-slot:append="{ item }">
+                <v-btn class="add-btn" small icon @click="onAddChild(item.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
                 <v-btn small icon @click="onEdit(item)"><v-icon small>mdi-pencil</v-icon></v-btn>
                 <v-btn :disabled="item.children && item.children.length > 0" small icon @click="onDelete(item.id)"><v-icon small>mdi-close</v-icon></v-btn>
               </template>
@@ -64,6 +67,7 @@
       <CategoryForm
         :categories="categories"
         :item="theCat"
+        :select-cat="newCategoryParent"
         @close="drawer = false"
       />
     </v-navigation-drawer>
@@ -81,10 +85,16 @@ export default {
   },
   data: () => ({
     loading: false,
+    newCategoryParent: null,
     theCat: null,
     drawer: false,
   }),
   watch: {
+    newCategoryParent(val) {
+      if (val) {
+        this.drawer = true;
+      }
+    },
     theCat(val) {
       if (val) {
         this.drawer = true;
@@ -93,10 +103,14 @@ export default {
     drawer(val) {
       if (!val) {
         this.theCat = null;
+        this.newCategoryParent = null;
       }
     }
   },
   methods: {
+    onAddChild(id) {
+      this.newCategoryParent = id;
+    },
     onEdit(cat) {
       this.theCat = cat;
     },
@@ -148,3 +162,17 @@ export default {
   },
 }
 </script>
+
+<style>
+.v-treeview-node__children .v-treeview-node__children .add-btn {
+  display: none !important;
+}
+.v-treeview-node__content .add-btn,
+.headline .add-btn {
+  display: none;
+}
+.v-treeview-node__content:hover .add-btn,
+.headline:hover .add-btn {
+  display: inline-flex;
+}
+</style>
