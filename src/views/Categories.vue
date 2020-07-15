@@ -21,6 +21,22 @@
           class="ma-3"
           max-width="300"
         >
+          <v-treeview
+            :items="categories"
+            dense
+            open-all
+            item-key="id"
+            item-text="title"
+            rounded
+            activatable
+          >
+            <template v-slot:prepend="{ item }">
+              <v-icon v-if="item.icon">
+                {{ item.icon.includes('mdi-') ? item.icon : `mdi-${item.icon}` }}
+              </v-icon>
+              <v-icon v-else>close</v-icon>
+            </template>
+          </v-treeview>
           <v-card-title>
             <v-icon>mdi-{{ cat.icon }}</v-icon>
             {{ cat.title }}
