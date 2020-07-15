@@ -13,18 +13,20 @@
           />
           <v-autocomplete
             :items="icons"
-            :append-icon="icon"
+            :append-icon="`mdi-${icon}`"
             color="white"
             item-text="name"
             label="Иконка категории"
             v-model="icon"
+            ref="iconselector"
+            @change="$refs.iconselector.blur()"
           >
             <template v-slot:item="{ item }">
               <v-list-item-avatar
                 color="indigo"
                 class="headline font-weight-light white--text"
               >
-                <v-icon dark>{{ item }}</v-icon>
+                <v-icon dark>{{ `mdi-${item}` }}</v-icon>
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title v-text="item"></v-list-item-title>
@@ -32,6 +34,7 @@
             </template>
           </v-autocomplete>
           <v-select
+            v-show="!id"
             v-model="categoryFirst"
             label="Родительская категория I уровня"
             :items="rootCategories"
@@ -41,6 +44,12 @@
             v-model="categorySecond"
             label="Родительская категория II уровня"
             :items="subRootCategories"
+          />
+          <v-select
+            v-if="categorySecond && subSubRootCategories.length > 1"
+            v-model="categoryThird"
+            label="Родительская категория III уровня"
+            :items="subSubRootCategories"
           />
           <v-btn dark block @click="submitForm" :loading="loading">Сохранить</v-btn>
         </v-form>
@@ -60,9 +69,14 @@ export default {
     categories: {
       type: Array,
       default: () => ([]),
+    },
+    item: {
+      type: Object,
+      default: () => {},
     }
   },
   data: () => ({
+    id: null,
     title: null,
     slug: null,
     icon: null,
@@ -70,6 +84,7 @@ export default {
     loading: false,
     categoryFirst: null,
     categorySecond: null,
+    categoryThird: null,
     icons,
   }),
   computed: {
@@ -105,9 +120,40 @@ export default {
         ];
       }
       return items;
+    },
+    subSubRootCategories() {
+      const items = [{
+        text: 'Нет',
+        value: 0,
+      }];
+      const grandChildren = this.categories && this.categories.find(cat => cat.id === this.categoryFirst).children;
+      const { children } = (grandChildren && grandChildren.find(cat => cat.id === this.categorySecond)) || {};
+      if (children) {
+        return [
+          ...items,
+          ...children.map(cat => ({
+            text: cat.title,
+            value: cat.id,
+          }))
+        ];
+      }
+      return items;
     }
   },
   watch: {
+    item(val) {
+      if (!val) {
+        this.title = null;
+        this.icon = null;
+        this.slug = null;
+        this.id = null;
+      } else {
+        this.title = val.title;
+        this.icon = val.icon;
+        this.slug = val.slug;
+        this.id = val.id;
+      }
+    },
     categoryFirst(val) {
       if (val) this.categorySecond = null;
     }
@@ -125,9 +171,7 @@ export default {
             title
             slug
             icon
-            parent {
-              id
-            }
+            parent
             children {
               id
             }
@@ -135,11 +179,12 @@ export default {
         }`,
         // Parameters
         variables: {
+          id: this.id,
           data: {
             title: this.title,
             slug: this.slug,
             icon: this.icon,
-            parentId: this.categorySecond || this.categoryFirst,
+            parentId: this.categoryThird || this.categorySecond || this.categoryFirst,
           },
         },
         // Update the cache with the result
@@ -149,14 +194,15 @@ export default {
           // Read the data from our cache for this query.
           const data = store.readQuery({ query: CATEGORIES_QUERY });
           console.warn(data, saveCategory);
-          if (!saveCategory.parent || !saveCategory.parent.id) {
+          if (this.id) return;
+          if (!saveCategory.parent) {
             data.categories.push(saveCategory);
             // Write our data back to the cache.
             store.writeQuery({ query: CATEGORIES_QUERY, data })
           } else {
             let dataAdded = false;
             let updatedCats = data.categories.map(c => {
-              if (c.id === saveCategory.parent.id) {
+              if (c.id === saveCategory.parent) {
                 dataAdded = true;
                 c.children.push(saveCategory);
               }
@@ -168,10 +214,30 @@ export default {
                 return {
                   ...c,
                   children: c.children.map(child => {
-                    if (child.id === saveCategory.parent.id) {
+                    if (child.id === saveCategory.parent) {
+                      dataAdded = true;
                       child.children.push(saveCategory);
                     }
                     return child;
+                  }),
+                };
+              });
+            }
+            // if it seems like fourth-level cat added
+            if (!dataAdded) {
+              updatedCats = data.categories.map(c => {
+                return {
+                  ...c,
+                  children: c.children.map(child => {
+                    return {
+                      ...child,
+                      chidlren: child.children.map(grandchild => {
+                        if (grandchild.id === saveCategory.parent) {
+                          grandchild.children.push(saveCategory);
+                        }
+                        return grandchild;
+                      })
+                    };
                   }),
                 };
               });
@@ -195,12 +261,13 @@ export default {
         console.log(data)
         this.alert({
           type: 'success',
-          message: 'Категория добавлена',
+          message: this.id ? 'Категория изменена' : 'Категория добавлена',
         });
         this.loading = false;
         this.title = null;
         this.icon = null;
         this.slug = null;
+        this.$emit('close', true);
       }).catch((error) => {
         // Error
         console.error(error)
