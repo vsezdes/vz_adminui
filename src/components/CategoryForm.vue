@@ -158,7 +158,7 @@ export default {
   },
   watch: {
     title(val) {
-      this.slug = this.transliterate(val);
+      this.slug = this.sluggify(val);
     },
     selectCat(val) {
       if (val) {
@@ -227,6 +227,7 @@ export default {
     },
     submitForm() {
 
+      console.warn(this.valid, this.id, this);
       if (!this.valid) return false;
       this.loading = true;
       this.$apollo.mutate({
@@ -259,8 +260,8 @@ export default {
         update: (store, { data: { saveCategory }}) => {
           // Read the data from our cache for this query.
           const data = store.readQuery({ query: CATEGORIES_QUERY });
-          console.warn(data, saveCategory);
           if (this.id) return;
+          console.log('update', this.id, saveCategory);
           if (!saveCategory.parent) {
             data.categories.push(saveCategory);
             // Write our data back to the cache.
@@ -344,10 +345,10 @@ export default {
         this.loading = false;
       })
     },
-    transliterate(word){
-      return word.split('').map(function (char) {
+    sluggify(word){
+      return word && word.split('').map(function (char) {
         return CYRLAT[char] || char;
-      }).join("");
+      }).join("").toLowerCase();
     }
   }
 }

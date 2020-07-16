@@ -25,8 +25,10 @@
             <v-icon class="mb-1 mr-3">{{ `mdi-${cat.icon}` }}</v-icon>
             {{ cat.title }}
             <v-spacer />
-            <v-btn class="add-btn" small icon @click="onAddChild(cat.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
-            <v-btn small icon @click="onEdit(cat)"><v-icon small>mdi-pencil</v-icon></v-btn>
+            <div class="controls">
+              <v-btn class="add-btn" small icon @click="onAddChild(cat.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
+              <v-btn class="edit-btn" small icon @click="onEdit(cat)"><v-icon small>mdi-pencil</v-icon></v-btn>
+            </div>
             <v-btn :disabled="cat.children.length > 0" small icon @click="onDelete(cat.id)"><v-icon small>mdi-close</v-icon></v-btn>
 
           </v-card-title>
@@ -47,8 +49,10 @@
                 </v-icon>
               </template>
               <template v-slot:append="{ item }">
-                <v-btn class="add-btn" small icon @click="onAddChild(item.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
-                <v-btn small icon @click="onEdit(item)"><v-icon small>mdi-pencil</v-icon></v-btn>
+                <div class="controls">
+                  <v-btn class="add-btn" small icon @click="onAddChild(item.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
+                  <v-btn class="edit-btn" small icon @click="onEdit(item)"><v-icon small>mdi-pencil</v-icon></v-btn>
+                </div>
                 <v-btn :disabled="item.children && item.children.length > 0" small icon @click="onDelete(item.id)"><v-icon small>mdi-close</v-icon></v-btn>
               </template>
             </v-treeview>
@@ -167,12 +171,18 @@ export default {
 .v-treeview-node__children .v-treeview-node__children .add-btn {
   display: none !important;
 }
-.v-treeview-node__content .add-btn,
-.headline .add-btn {
+
+.v-treeview-node__content .controls,
+.headline .controls {
   display: none;
 }
-.v-treeview-node__content:hover .add-btn,
-.headline:hover .add-btn {
-  display: inline-flex;
+.v-treeview-node__content:hover .controls,
+.headline:hover .controls {
+  display: block;
+  position: absolute;
+  width: 100px;
+  right: 10px;
+  text-align: right;
+  padding-right: 30px;
 }
 </style>
