@@ -43,6 +43,14 @@
               shaped
               item-text="title"
             >
+              <template v-slot:label="{ item }">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <span v-on="on">{{ item.title }}</span>
+                  </template>
+                  <span>{{ item.title }}</span>
+                </v-tooltip>
+              </template>
               <template v-slot:prepend="{ item }">
                 <v-icon>
                   {{ `mdi-${item.icon}` }}
@@ -184,5 +192,6 @@ export default {
   right: 10px;
   text-align: right;
   padding-right: 30px;
+  background: #F5F5F5;
 }
 </style>
