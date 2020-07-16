@@ -16,25 +16,54 @@
     <v-row>
       <v-col>
         <v-card
-          v-for="cat in categories"
+          v-for="(cat) in categories"
           :key="cat.id"
           class="ma-3"
           max-width="300"
         >
-          <v-card-title>
-            <v-icon>mdi-{{ cat.icon }}</v-icon>
+          <v-card-title class="headline">
+            <v-icon class="mb-1 mr-3">{{ `mdi-${cat.icon}` }}</v-icon>
             {{ cat.title }}
-            <v-btn icon @click="onDelete(cat.id)"><v-icon>mdi-minus</v-icon></v-btn>
+            <v-spacer />
+            <div class="controls">
+              <v-btn class="add-btn" small icon @click="onAddChild(cat.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
+              <v-btn class="edit-btn" small icon @click="onEdit(cat)"><v-icon small>mdi-pencil</v-icon></v-btn>
+            </div>
+            <v-btn :disabled="cat.children.length > 0" small icon @click="onDelete(cat.id)"><v-icon small>mdi-close</v-icon></v-btn>
+
           </v-card-title>
           <v-card-text>
-            <div v-for="cat2 in cat.children" :key="cat2.id">
-              - <v-icon>mdi-{{ cat2.icon }}</v-icon>{{ cat2.title }}
-                <v-btn icon @click="onDelete(cat2.id)"><v-icon>mdi-minus</v-icon></v-btn>
-              <div v-for="cat3 in cat2.children" :key="cat3.id">
-                - - - <v-icon>mdi-{{ cat3.icon }}</v-icon>{{ cat3.title }}
-                <v-btn icon @click="onDelete(cat3.id)"><v-icon>mdi-minus</v-icon></v-btn>
-              </div>
-            </div>
+            <v-divider />
+            <v-treeview
+              :items="cat.children"
+              dense
+              open-all
+              item-key="id"
+              hoverable
+              shaped
+              item-text="title"
+            >
+              <template v-slot:label="{ item }">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <span v-on="on">{{ item.title }}</span>
+                  </template>
+                  <span>{{ item.title }}</span>
+                </v-tooltip>
+              </template>
+              <template v-slot:prepend="{ item }">
+                <v-icon>
+                  {{ `mdi-${item.icon}` }}
+                </v-icon>
+              </template>
+              <template v-slot:append="{ item }">
+                <div class="controls">
+                  <v-btn class="add-btn" small icon @click="onAddChild(item.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
+                  <v-btn class="edit-btn" small icon @click="onEdit(item)"><v-icon small>mdi-pencil</v-icon></v-btn>
+                </div>
+                <v-btn :disabled="item.children && item.children.length > 0" small icon @click="onDelete(item.id)"><v-icon small>mdi-close</v-icon></v-btn>
+              </template>
+            </v-treeview>
           </v-card-text>
         </v-card>
       </v-col>
@@ -49,6 +78,9 @@
     >
       <CategoryForm
         :categories="categories"
+        :item="theCat"
+        :select-cat="newCategoryParent"
+        @close="drawer = false"
       />
     </v-navigation-drawer>
   </v-container>
@@ -65,10 +97,37 @@ export default {
   },
   data: () => ({
     loading: false,
+    newCategoryParent: null,
+    theCat: null,
     drawer: false,
   }),
+  watch: {
+    newCategoryParent(val) {
+      if (val) {
+        this.drawer = true;
+      }
+    },
+    theCat(val) {
+      if (val) {
+        this.drawer = true;
+      }
+    },
+    drawer(val) {
+      if (!val) {
+        this.theCat = null;
+        this.newCategoryParent = null;
+      }
+    }
+  },
   methods: {
+    onAddChild(id) {
+      this.newCategoryParent = id;
+    },
+    onEdit(cat) {
+      this.theCat = cat;
+    },
     onDelete(id) {
+      if (!window.confirm('Удалить категорию?')) return;
       this.loading = true;
       this.$apollo.mutate({
         // Query
@@ -90,7 +149,10 @@ export default {
             ...c1,
             children: c1.children.filter(c2 => c2.id !== delCategory.id).map(c2 => ({
               ...c2,
-              children: c2.children.filter(c3 => c3.id !== delCategory.id),
+              children: c2.children.filter(c3 => c3.id !== delCategory.id).map(c3 => ({
+                ...c3,
+                children: c3.children.filter(c4 => c4.id !== delCategory.id),
+              })),
             }))
           }));
           console.warn(data, categories, delCategory);
@@ -112,3 +174,24 @@ export default {
   },
 }
 </script>
+
+<style>
+.v-treeview-node__children .v-treeview-node__children .add-btn {
+  display: none !important;
+}
+
+.v-treeview-node__content .controls,
+.headline .controls {
+  display: none;
+}
+.v-treeview-node__content:hover .controls,
+.headline:hover .controls {
+  display: block;
+  position: absolute;
+  width: 100px;
+  right: 10px;
+  text-align: right;
+  padding-right: 30px;
+  background: #F5F5F5;
+}
+</style>

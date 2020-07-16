@@ -17,6 +17,12 @@ export default gql`
           title
           icon
           slug
+          children {
+            id
+            title
+            icon
+            slug
+          }
         }
       }
     }
