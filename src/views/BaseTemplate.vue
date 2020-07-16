@@ -6,8 +6,19 @@
         color="amber"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-spacer></v-spacer>
       <span class="title ml-3 mr-5">Всё&nbsp;<span class="font-weight-light">Тут</span></span>
+      <v-spacer></v-spacer>
+      <div class="auth-box">
+        <span v-if="isAuthenticated">
+          <span class="mr-5">{{ user.firstName }} {{ user.lastName }}</span>
+          <v-avatar class="mr-1" color="orange">
+            <img v-if="user.avatar" src="user.avatar" />
+            <v-icon v-else>mdi-emoticon-cool</v-icon>
+          </v-avatar>
+          <v-btn icon to="/logout"><v-icon>mdi-logout-variant</v-icon></v-btn>
+        </span>
+        <v-btn v-else icon to="/login"><v-icon>mdi-login-variant</v-icon></v-btn>
+      </div>
     </v-app-bar>
 
     <v-navigation-drawer
@@ -71,6 +82,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name:'BaseTemplate',
   props: {
@@ -80,12 +93,15 @@ export default {
     drawer: null,
     items: [
       { heading: 'Товары' },
-      { icon: 'mdi-package-variant', text: 'Все товары', href: '/' },
+      { icon: 'mdi-package-variant', text: 'Все товары', href: '/items' },
       { icon: 'mdi-format-list-bulleted-type', text: 'Категории' , href: '/categories'},
       { heading: 'Управление' },
       { icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users' },
     ],
   }),
+  computed: {
+    ...mapState(['isAuthenticated', 'user']),
+  }
 }
 </script>
 

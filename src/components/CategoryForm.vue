@@ -1,5 +1,4 @@
 <template>
-  <BaseTemplate>
   <v-container>
     <v-card-title class="headline">{{ !id ? 'Добавить категорию' : 'Изменить категорию' }}</v-card-title>
     <v-row class="text-center">
@@ -67,7 +66,6 @@
       </v-col>
     </v-row>
   </v-container>
-  </BaseTemplate>
 </template>
 
 <script>

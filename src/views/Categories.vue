@@ -1,99 +1,103 @@
 <template>
-  <v-container fluid>
-    <v-progress-linear v-if="loading" :indeterminate="true" />
-    <v-btn
-      fixed
-      dark
-      fab
-      top
-      :style="{ top: '80px' }"
-      right
-      color="pink"
-      @click="drawer = !drawer"
-    >
-      <v-icon>mdi-plus</v-icon>
-    </v-btn>
-    <v-row>
-      <v-col>
-        <v-card
-          v-for="(cat) in categories"
-          :key="cat.id"
-          class="ma-3"
-          max-width="300"
-        >
-          <v-card-title class="headline">
-            <v-icon class="mb-1 mr-3">{{ `mdi-${cat.icon}` }}</v-icon>
-            {{ cat.title }}
-            <v-spacer />
-            <div class="controls">
-              <v-btn class="add-btn" small icon @click="onAddChild(cat.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
-              <v-btn class="edit-btn" small icon @click="onEdit(cat)"><v-icon small>mdi-pencil</v-icon></v-btn>
-            </div>
-            <v-btn :disabled="cat.children.length > 0" small icon @click="onDelete(cat.id)"><v-icon small>mdi-close</v-icon></v-btn>
+  <BaseTemplate>
+    <v-container fluid>
+      <v-progress-linear v-if="loading" :indeterminate="true" />
+      <v-btn
+        fixed
+        dark
+        fab
+        top
+        :style="{ top: '80px' }"
+        right
+        color="pink"
+        @click="drawer = !drawer"
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+      <v-row>
+        <v-col>
+          <v-card
+            v-for="(cat) in categories"
+            :key="cat.id"
+            class="ma-3"
+            max-width="300"
+          >
+            <v-card-title class="headline">
+              <v-icon class="mb-1 mr-3">{{ `mdi-${cat.icon}` }}</v-icon>
+              {{ cat.title }}
+              <v-spacer />
+              <div class="controls">
+                <v-btn class="add-btn" small icon @click="onAddChild(cat.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
+                <v-btn class="edit-btn" small icon @click="onEdit(cat)"><v-icon small>mdi-pencil</v-icon></v-btn>
+              </div>
+              <v-btn :disabled="cat.children.length > 0" small icon @click="onDelete(cat.id)"><v-icon small>mdi-close</v-icon></v-btn>
 
-          </v-card-title>
-          <v-card-text>
-            <v-divider />
-            <v-treeview
-              :items="cat.children"
-              dense
-              open-all
-              item-key="id"
-              hoverable
-              shaped
-              item-text="title"
-            >
-              <template v-slot:label="{ item }">
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <span v-on="on">{{ item.title }}</span>
-                  </template>
-                  <span>{{ item.title }}</span>
-                </v-tooltip>
-              </template>
-              <template v-slot:prepend="{ item }">
-                <v-icon>
-                  {{ `mdi-${item.icon}` }}
-                </v-icon>
-              </template>
-              <template v-slot:append="{ item }">
-                <div class="controls">
-                  <v-btn class="add-btn" small icon @click="onAddChild(item.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
-                  <v-btn class="edit-btn" small icon @click="onEdit(item)"><v-icon small>mdi-pencil</v-icon></v-btn>
-                </div>
-                <v-btn :disabled="item.children && item.children.length > 0" small icon @click="onDelete(item.id)"><v-icon small>mdi-close</v-icon></v-btn>
-              </template>
-            </v-treeview>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-navigation-drawer
-      class="pa-0"
-      v-model="drawer"
-      temporary
-      fixed
-      right
-      width="400px"
-    >
-      <CategoryForm
-        :categories="categories"
-        :item="theCat"
-        :select-cat="newCategoryParent"
-        @close="drawer = false"
-      />
-    </v-navigation-drawer>
-  </v-container>
+            </v-card-title>
+            <v-card-text>
+              <v-divider />
+              <v-treeview
+                :items="cat.children"
+                dense
+                open-all
+                item-key="id"
+                hoverable
+                shaped
+                item-text="title"
+              >
+                <template v-slot:label="{ item }">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <span v-on="on">{{ item.title }}</span>
+                    </template>
+                    <span>{{ item.title }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-slot:prepend="{ item }">
+                  <v-icon>
+                    {{ `mdi-${item.icon}` }}
+                  </v-icon>
+                </template>
+                <template v-slot:append="{ item }">
+                  <div class="controls">
+                    <v-btn class="add-btn" small icon @click="onAddChild(item.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
+                    <v-btn class="edit-btn" small icon @click="onEdit(item)"><v-icon small>mdi-pencil</v-icon></v-btn>
+                  </div>
+                  <v-btn :disabled="item.children && item.children.length > 0" small icon @click="onDelete(item.id)"><v-icon small>mdi-close</v-icon></v-btn>
+                </template>
+              </v-treeview>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-navigation-drawer
+        class="pa-0"
+        v-model="drawer"
+        temporary
+        fixed
+        right
+        width="400px"
+      >
+        <CategoryForm
+          :categories="categories"
+          :item="theCat"
+          :select-cat="newCategoryParent"
+          @close="drawer = false"
+        />
+      </v-navigation-drawer>
+    </v-container>
+  </BaseTemplate>
 </template>
 
 <script>
 import gql from 'graphql-tag';
 import CategoryForm from '@/components/CategoryForm';
+import BaseTemplate from '@/views/BaseTemplate.vue';
 import CATEGORIES_QUERY from '@/gql/categories.graphql';
 
 export default {
   components: {
-    CategoryForm
+    CategoryForm,
+    BaseTemplate,
   },
   data: () => ({
     loading: false,
