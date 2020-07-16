@@ -14,6 +14,11 @@
             md="4"
         >
           <v-card class="elevation-12">
+            <v-progress-linear
+              :active="loading"
+              indeterminate
+              color="yellow darken-2"
+            ></v-progress-linear>
             <v-toolbar
                 color="#42a7f5"
                 dark
@@ -51,7 +56,7 @@
             <v-card-actions>
               <v-layout row wrap>
                 <v-spacer></v-spacer>
-                <v-btn style="color: white" @click="login" color="#42a7f5">Войти</v-btn>
+                <v-btn style="color: white" @click="loginQuery" color="#42a7f5">Войти</v-btn>
                 <v-spacer></v-spacer>
 
               </v-layout>
@@ -65,6 +70,7 @@
 
 <script>
 // import gql from 'graphql-tag';
+import { mapActions } from 'vuex';
 import {mask} from 'vue-the-mask'
 import gql from "graphql-tag";
 
@@ -79,6 +85,7 @@ export default {
     return {
       email:'',
       password:'',
+      loading: false,
       passRules:[
         v => !!v || '*Это поле обязательно',
       ],
@@ -89,23 +96,45 @@ export default {
     };
   },
   methods: {
+    ...mapActions(['login', 'alert']),
     validate () {
       this.$refs.form.validate()
     },
-    login() {
+    loginQuery() {
+      this.loading = true;
       this.$apollo.query({
         // Query
-        query: gql`query login {
-                login(user: email,
-                 pass: password)
-                 { firstName lastName token avatar }
-                 }`,
-      })
+        query: gql`query authUser($user: String!, $pass: String!) {
+          authUser(login: $user, password: $pass) {
+            firstName
+            lastName
+            token
+            avatar
+          }
+        }`,
+        variables: {
+          user: this.email,
+          pass: this.password,
+        }
+      }).then(data => {
+        this.loading = false;
+        if (data.data.authUser) this.login(data.data.authUser);
+        // TODO: Remove this when login starts working
+        else this.login({
+          firstName: 'Test',
+          lastName: 'User',
+          token: 'DFGH$#%WHWS#$UYHDFTERH$#3wh45$',
+          avatar: null,
+        }).then(() => this.$router.push('/'))
+      }).catch(error => {
+        this.loading = false;
+        this.alert({
+          type: 'error',
+          message: error,
+        });
+      });
     },
   },
-  created() {
-    console.warn(this)
-  }
 }
 </script>
 
