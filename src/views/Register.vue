@@ -155,16 +155,14 @@ export default {
       this.$apollo.mutate({
         // Query
         mutation: gql`query register { register(
-                  data: {
-                       lastName: surname,
-                       firstName: firstname,
-                       phone: phonr,
-                       email: email,
-                       pass:password,
-                       avatar:image
-                       }
-                  )
-                  { firstName lastName token avatar } }`,
+                data: {
+                 lastName: surname,
+                 firstName: firstname,
+                 phone: phonr,
+                 email: email,
+                 pass:password,
+                 avatar:image})
+                 { firstName lastName token avatar } }`,
       })
     },
   },

@@ -95,13 +95,11 @@ export default {
     login() {
       this.$apollo.query({
         // Query
-        query: gql`query{
-                login(
-                    data:{user: email,
-                    pass: password}
-                    )
-                { firstName lastName token avatar }
-                }`,
+        query: gql`query login {
+                login(user: email,
+                 pass: password)
+                 { firstName lastName token avatar }
+                 }`,
       })
     },
   },
