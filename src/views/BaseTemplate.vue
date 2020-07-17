@@ -7,7 +7,7 @@
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <router-link to="/" class="logo">
-        <v-avatar color="orange">
+        <v-avatar>
           <v-img height="40" src="../assets/logo.svg" />
         </v-avatar>
         <span class="title ml-3 mr-5">Всё&nbsp;<span class="font-weight-light">Тут</span></span>
@@ -123,5 +123,8 @@ export default {
 .logo .title {
   text-decoration: none;
   color: #755803;
+}
+.v-avatar .v-image {
+  filter: grayscale(100%);
 }
 </style>
