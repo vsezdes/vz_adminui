@@ -1,7 +1,7 @@
 <template>
   <BaseTemplate>
     <div class="home">
-      <img alt="Vue logo" src="../assets/logo.png">
+      <img alt="Vue logo" src="../assets/logo.svg">
       Homepage will be here
     </div>
   </BaseTemplate>

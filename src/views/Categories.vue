@@ -75,7 +75,7 @@
         temporary
         fixed
         right
-        width="400px"
+        width="400"
       >
         <CategoryForm
           :categories="categories"

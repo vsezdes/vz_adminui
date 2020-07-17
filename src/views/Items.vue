@@ -33,7 +33,6 @@
         v-model="drawer"
         temporary
         fixed
-        fullWidth
         right
         width="450"
       >

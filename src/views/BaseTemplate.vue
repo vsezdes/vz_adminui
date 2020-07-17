@@ -6,7 +6,12 @@
         color="amber"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <span class="title ml-3 mr-5">Всё&nbsp;<span class="font-weight-light">Тут</span></span>
+      <router-link to="/" class="logo">
+        <v-avatar color="orange">
+          <v-img height="40" src="../assets/logo.svg" />
+        </v-avatar>
+        <span class="title ml-3 mr-5">Всё&nbsp;<span class="font-weight-light">Тут</span></span>
+      </router-link>
       <v-spacer></v-spacer>
       <div class="auth-box">
         <span v-if="isAuthenticated">
@@ -111,5 +116,12 @@ export default {
 }
 .v-subheader {
   text-transform: uppercase;
+}
+.logo {
+  text-decoration: none;
+}
+.logo .title {
+  text-decoration: none;
+  color: #755803;
 }
 </style>
