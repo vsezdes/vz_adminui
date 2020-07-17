@@ -34,7 +34,9 @@ const apolloProvider = new VueApollo({
   defaultClient: apolloClient,
 })
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+
+store.commit('INIT_STORE');
 
 new Vue({
   router,
