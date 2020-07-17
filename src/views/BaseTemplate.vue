@@ -11,6 +11,13 @@
           <v-img height="40" src="../assets/logo.svg" />
         </v-avatar>
         <span class="title ml-3 mr-5">Всё&nbsp;<span class="font-weight-light">Тут</span></span>
+        <v-progress-circular
+          v-if="loading"
+          :indeterminate="true"
+          size="48"
+          width="3"
+          color="blue"
+        />
       </router-link>
       <v-spacer></v-spacer>
       <div class="auth-box">
@@ -93,6 +100,10 @@ export default {
   name:'BaseTemplate',
   props: {
     source: String,
+    loading: {
+      type: Boolean,
+      default: false,
+    }
   },
   data: () => ({
     drawer: null,
@@ -119,10 +130,16 @@ export default {
 }
 .logo {
   text-decoration: none;
+  position: relative;
 }
 .logo .title {
   text-decoration: none;
   color: #755803;
+}
+.logo .v-progress-circular {
+  position: absolute;
+  left: 0;
+  top: 1px;
 }
 .v-avatar .v-image {
   filter: grayscale(100%);

@@ -1,7 +1,6 @@
 <template>
-  <BaseTemplate>
+  <BaseTemplate :loading="loading">
     <v-container fluid>
-      <v-progress-linear v-if="loading" :indeterminate="true" />
       <v-btn
         fixed
         dark
@@ -15,15 +14,19 @@
         <v-icon>mdi-plus</v-icon>
       </v-btn>
       <v-row>
-        <v-col>
+        <v-col
+          v-for="(cat) in categories"
+          :key="cat.id"
+          cols="12"
+          sm="6"
+          md="4"
+          lg="4"
+        >
           <v-card
-            v-for="(cat) in categories"
-            :key="cat.id"
             class="ma-3"
-            max-width="300"
           >
             <v-card-title class="headline">
-              <v-icon class="mb-1 mr-3">{{ `mdi-${cat.icon}` }}</v-icon>
+              <v-icon class="my-1 mx-2">{{ `mdi-${cat.icon}` }}</v-icon>
               {{ cat.title }}
               <v-spacer />
               <div class="controls">
@@ -34,7 +37,6 @@
 
             </v-card-title>
             <v-card-text>
-              <v-divider />
               <v-treeview
                 :items="cat.children"
                 dense
@@ -188,14 +190,24 @@ export default {
 .headline .controls {
   display: none;
 }
+.v-card__title.headline {
+  background: #F5F5F5;
+  font-size: 16px;
+  padding: 5px;
+}
 .v-treeview-node__content:hover .controls,
 .headline:hover .controls {
   display: block;
   position: absolute;
   width: 100px;
-  right: 10px;
+  right: 0px;
+  top: 3px;
   text-align: right;
   padding-right: 30px;
   background: #F5F5F5;
+}
+.v-treeview-node__content:hover .controls{
+  right: 7px;
+  top: 6px;
 }
 </style>
