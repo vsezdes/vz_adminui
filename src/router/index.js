@@ -4,7 +4,7 @@ import Home from '../views/Home.vue'
 import Register from '../views/Register.vue';
 import Login from "../views/Login.vue";
 import store from '@/store';
-
+import MyOrders from "../views/MyOrders.vue";
 Vue.use(VueRouter)
 
 const routes = [
@@ -46,12 +46,9 @@ const routes = [
     component: Login
   },
   {
-    path: '/logout',
-    name: 'Logout',
-    beforeEnter: (to, from, next) => {
-      store.dispatch('logout');
-      next({ name: 'Login' })
-    }
+    path: '/my_orders',
+    name: 'MyOrders',
+    component: MyOrders
   }
 ]
 
