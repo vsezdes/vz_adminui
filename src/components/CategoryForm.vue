@@ -157,8 +157,8 @@ export default {
     }
   },
   watch: {
-    title(val) {
-      this.slug = this.sluggify(val);
+    title(val, oldVal) {
+      if (oldVal) this.slug = this.sluggify(val);
     },
     selectCat(val) {
       if (val) {
