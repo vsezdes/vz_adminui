@@ -7,6 +7,14 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
+  "pwa": {
+    "themeColor": "#42b983",
+    "msTileColor": "#42b983",
+    "appleMobileWebAppCache": "yes",
+    "manifestOptions": {
+      "background_color": "#42b983"
+    }
+  },
   "dependencies": {
     "@mdi/font": "^3.6.95",
     "apollo-cache-inmemory": "^1.6.6",

@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import App from './App.vue'
-import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
@@ -11,6 +10,8 @@ import VueApollo from 'vue-apollo'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
 
+import wb from "./registerServiceWorker";
+Vue.prototype.$workbox = wb;
 
 // HTTP connection to the API
 const httpLink = createHttpLink({
