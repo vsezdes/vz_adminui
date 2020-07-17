@@ -1,6 +1,8 @@
 {
-  "name": "pwa",
-  "short_name": "pwa",
+  "name": "VseTut менеджер",
+  "short_name": "vsetut",
+  "background_color": "#F2D811",
+  "theme_color": "#FF9800",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",
