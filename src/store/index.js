@@ -21,13 +21,22 @@ export default new Vuex.Store({
       }, data.expire || 5000);
     },
     login: ({ commit }, user) => {
+      const parsedUser = JSON.stringify(user);
+      localStorage.setItem('user', parsedUser);
       commit('LOGIN', user);
     },
     logout: ({ commit }, user) => {
+      localStorage.removeItem('user');
       commit('LOGOUT', user);
     },
   },
   mutations: {
+    INIT_STORE(state) {
+      if (!state.user && localStorage.getItem('user')) {
+        state.user = JSON.parse(localStorage.getItem('user'));
+        state.isAuthenticated = true;
+      }
+    },
     SET_ALERT(state, alert) {
       state.alerts.push(alert);
     },

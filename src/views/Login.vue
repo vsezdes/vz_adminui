@@ -106,6 +106,7 @@ export default {
         // Query
         query: gql`query authUser($user: String!, $pass: String!) {
           authUser(login: $user, password: $pass) {
+            id
             firstName
             lastName
             token
@@ -121,6 +122,7 @@ export default {
         if (data.data.authUser) this.login(data.data.authUser);
         // TODO: Remove this when login starts working
         else this.login({
+          id: 0,
           firstName: 'Test',
           lastName: 'User',
           token: 'DFGH$#%WHWS#$UYHDFTERH$#3wh45$',
