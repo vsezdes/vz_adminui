@@ -46,6 +46,14 @@ const routes = [
     component: Login
   },
   {
+    path: '/logout',
+    name: 'Logout',
+    beforeEnter: (to, from, next) => {
+      store.dispatch('logout');
+      next({ name: 'Login' })
+    }
+  },
+  {
     path: '/my_orders',
     name: 'MyOrders',
     component: MyOrders
