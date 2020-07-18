@@ -66,9 +66,20 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  if (to.name) {
+    // Start the route progress bar.
+    // eslint-disable-next-line no-undef
+    NProgress.start()
+  }
   if (to.meta.protected && to.name !== 'Login' && !store.state.isAuthenticated) next({ name: 'Login' })
   else if (to.name === 'Login' && store.state.isAuthenticated) next({ name: 'Home' })
   else next()
+})
+// eslint-disable-next-line no-unused-vars
+router.afterEach((to, from) => {
+  // Complete the animation of the route progress bar.
+  // eslint-disable-next-line no-undef
+  NProgress.done()
 })
 
 export default router
