@@ -4,7 +4,6 @@ import Home from '../views/Home.vue'
 import Register from '../views/Register.vue';
 import Login from "../views/Login.vue";
 import store from '@/store';
-import MyOrders from "../views/MyOrders.vue";
 Vue.use(VueRouter)
 
 const routes = [
@@ -54,9 +53,9 @@ const routes = [
     }
   },
   {
-    path: '/my_orders',
-    name: 'MyOrders',
-    component: MyOrders
+    path: '/orders',
+    name: 'Orders',
+    component: () => import(/* webpackChunkName: "orders" */ '../views/MyOrders.vue'),
   }
 ]
 
