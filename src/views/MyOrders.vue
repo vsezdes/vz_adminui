@@ -34,12 +34,16 @@
         </v-flex>
       </v-layout>
     </v-container>
+    <v-row justify-start>
+      <v-col md="10" lg="10" offset-md="1">
+
     <v-data-table
         :headers="order_headers"
         :items="CleanupOrders()"
         :items-per-page="999999"
         item-key="id"
         hide-default-footer
+
         :single-expand="expand"
         :expanded.sync="expanded"
         class="elevation-1"
@@ -69,6 +73,9 @@
         </v-chip>
       </template>
     </v-data-table>
+    </v-col>
+
+    </v-row>
   </BaseTemplate>
 </template>
 
@@ -94,12 +101,14 @@ export default {
         {title: 'возврат', number: -2,color:'orange accent-4'},
       ],
       order_headers: [
-        {text: 'статус', value: 'status'},
+        {text: 'статус',align:'left', value: 'status'},
         {text: 'товары', value: 'items'},
         {text: 'Пользователь', value: 'user.fullName'},
         {text: 'описание', value: 'details', width: '23px'},
         {text: 'сумма', value: 'total'},
         {text: 'дата', value: 'orderDate'},
+        { text: '', value: 'data-table-expand' },
+
       ],
       item_headers: [
         {text: 'название товара', value: 'title'},
