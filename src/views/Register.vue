@@ -15,7 +15,7 @@
         >
           <v-card class="elevation-12">
             <v-toolbar
-                color="#42a7f5"
+                :color="$store.state.custom_colors.auth_forms"
                 dark
                 flat
             >

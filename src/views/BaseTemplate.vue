@@ -3,7 +3,7 @@
     <v-app-bar
         app
         clipped-left
-        color="amber"
+        :color="$store.state.custom_colors.base.header"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <router-link to="/" class="logo">
@@ -37,11 +37,11 @@
         v-model="drawer"
         app
         clipped
-        color="grey lighten-4"
+        :color="$store.state.custom_colors.base.sidebar"
     >
       <v-list
           dense
-          class="grey lighten-4"
+          :color="$store.state.custom_colors.base.sidebar"
       >
         <template v-for="(item, i) in items">
           <v-row
@@ -82,8 +82,9 @@
 
     <v-content>
       <v-container
+          :style="{ background: $store.state.custom_colors.base.bg }"
           fluid
-          class="grey lighten-4 fill-height align-start pa-5"
+          class="fill-height align-start pa-5"
       >
         <v-row>
           <slot></slot>

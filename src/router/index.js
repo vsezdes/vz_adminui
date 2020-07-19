@@ -66,7 +66,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.name) store.state.loader = true
+  store.state.loader = true
   if (to.meta.protected && to.name !== 'Login' && !store.state.isAuthenticated) next({ name: 'Login' })
   else if (to.name === 'Login' && store.state.isAuthenticated) next({ name: 'Home' })
   else next()

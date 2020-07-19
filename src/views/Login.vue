@@ -20,7 +20,7 @@
               color="yellow darken-2"
             ></v-progress-linear>
             <v-toolbar
-                color="#42a7f5"
+                :color="$store.state.custom_colors.auth_forms"
                 dark
                 flat
             >

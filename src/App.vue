@@ -50,6 +50,8 @@
 <script>
 import PreLoader from "@/components/PreLoader";
 import Alert from "./components/Alert";
+import custom_colors from "@/colors";
+
 
 export default {
   name:'app',
@@ -59,11 +61,13 @@ export default {
   },
   data() {
     return {
+      custom_colors:custom_colors,
       loader:true,
       showUpdateUI: false,
     }
   },
   created() {
+    this.$store.state.custom_colors = custom_colors
     console.log(
     this.$store.state.loader,'loader active')
       // simulate AJAX
