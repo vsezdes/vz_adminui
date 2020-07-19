@@ -1,6 +1,7 @@
 <template>
   <FormWrapper
     title="Добавить товар"
+    :show="show"
     @close="$emit('close')"
     icon="mdi-shopping-outline"
   >
@@ -123,6 +124,12 @@ export default {
   },
   apollo: {
     categories: CATEGORIES_QUERY,
+  },
+  props: {
+    show: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -297,8 +304,15 @@ export default {
     bottom: -10px;
   }
 }
-.form-stepper {
+.form-stepper.v-stepper {
   border: none;
   box-shadow: none;
+  padding: 0;
+  .v-stepper__step {
+    padding: 10px;
+  }
+  .v-stepper__content {
+    margin: -10px -54px -10px 22px;
+  }
 }
 </style>

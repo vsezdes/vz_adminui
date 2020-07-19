@@ -9,7 +9,7 @@
         :style="{ top: '80px' }"
         right
         color="pink"
-        @click="drawer = !drawer"
+        @click="showForm = true"
       >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
@@ -71,22 +71,13 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-navigation-drawer
-        class="pa-0"
-        v-model="drawer"
-        temporary
-        fixed
-        right
-        width="450"
-      >
-        <CategoryForm
-          v-if="drawer"
-          :categories="categories"
-          :item="theCat"
-          :select-cat="newCategoryParent"
-          @close="drawer = false"
-        />
-      </v-navigation-drawer>
+      <CategoryForm
+        :show="showForm"
+        :categories="categories"
+        :item="theCat"
+        :select-cat="newCategoryParent"
+        @close="onFormClose"
+      />
     </v-container>
   </BaseTemplate>
 </template>
@@ -106,32 +97,21 @@ export default {
     loading: false,
     newCategoryParent: null,
     theCat: null,
-    drawer: false,
+    showForm: false,
   }),
-  watch: {
-    newCategoryParent(val) {
-      if (val) {
-        this.drawer = true;
-      }
-    },
-    theCat(val) {
-      if (val) {
-        this.drawer = true;
-      }
-    },
-    drawer(val) {
-      if (!val) {
-        this.theCat = null;
-        this.newCategoryParent = null;
-      }
-    }
-  },
   methods: {
+    onFormClose() {
+      this.theCat = null;
+      this.newCategoryParent = null;
+      this.showForm = false;
+    },
     onAddChild(id) {
       this.newCategoryParent = id;
+      this.showForm = true;
     },
     onEdit(cat) {
       this.theCat = cat;
+      this.showForm = true;
     },
     onDelete(id) {
       if (!window.confirm('Удалить категорию?')) return;

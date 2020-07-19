@@ -9,7 +9,7 @@
         :style="{ top: '80px' }"
         right
         color="pink"
-        @click="drawer = !drawer"
+        @click="showForm = !showForm"
       >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
@@ -28,19 +28,10 @@
         </v-col>
       </v-row>
       {{ lastItems.length }}
-      <v-navigation-drawer
-        class="pa-0"
-        v-model="drawer"
-        temporary
-        fixed
-        right
-        width="450"
-      >
-        <ItemForm
-          v-if="drawer"
-          @close="drawer = false"
-        />
-      </v-navigation-drawer>
+      <ItemForm
+        :show="showForm"
+        @close="showForm = false"
+      />
     </v-container>
   </BaseTemplate>
 </template>
@@ -60,15 +51,12 @@ export default {
   apollo: {
     lastItems: LAST_ITEMS,
   },
-  updated() {
-    console.warn('items: ', this.lastItems, this.lastItems.length);
-  },
   computed() {
     this.items = [...this.lastItems];
   },
   data () {
     return {
-      drawer: false,
+      showForm: false,
     }
   },
 }

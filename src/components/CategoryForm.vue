@@ -3,10 +3,10 @@
     :title="!id ? 'Добавить категорию' : 'Изменить категорию'"
     @close="$emit('close')"
     icon="mdi-file-tree-outline"
+    :show="show"
   >
     <v-form
       v-model="valid"
-      class="ma-4"
       lazy-validation
       ref="form"
     >
@@ -68,7 +68,15 @@
         :items="subSubRootCategories"
       />
       <v-divider />
-      <v-btn color="green" outlined @click="validate" :loading="loading">
+      <v-btn
+        class="mt-4"
+        color="green"
+        absolute
+        right
+        outlined
+        @click="validate"
+        :loading="loading"
+      >
         <v-icon>mdi-content-save-outline</v-icon>
         Сохранить</v-btn>
     </v-form>
@@ -100,6 +108,10 @@ export default {
     selectCat: {
       type: Number,
       default: null,
+    },
+    show: {
+      type: Boolean,
+      default: false,
     }
   },
   data: () => ({
