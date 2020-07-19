@@ -20,30 +20,30 @@
             dense
           />
           <v-select
+            v-if="showSecond"
             v-model="categorySecond"
-            :disabled="!categoryFirst"
             label="Категория II уровня"
-            :items="subRootCategories(categoryFirst)"
+            :items="getChildren(categoryFirst)"
             dense
           />
           <v-select
+            v-if="showThird"
             v-model="categoryThird"
-            :disabled="!categorySecond"
             label="Категория III уровня"
-            :items="subRootCategories(categorySecond, true)"
+            :items="getChildren(categorySecond)"
             dense
           />
           <v-select
+            v-if="showFourth"
             v-model="categoryFourth"
-            :disabled="!categoryThird"
             label="Категория IV уровня"
-            :items="subRootCategories(categoryThird, true)"
+            :items="getChildren(categoryThird)"
             dense
           />
         </v-form>
         <v-spacer />
         <v-btn
-          :disabled="!allCatsSelected"
+          :disabled="!catsSelected"
           fab outlined small absolute color="primary"
           class="next-btn mr-3"
           v-if="step === 1"
@@ -137,12 +137,14 @@ export default {
       categoryFirst: null,
       categorySecond: null,
       categoryThird: null,
+      categoryFourth: null,
       valid: false,
       detailsValid: false,
       step: 1,
       itemName: '',
       itemPrice: '',
       images: [],
+      flatCats: [],
     };
   },
   computed: {
@@ -152,22 +154,36 @@ export default {
         value: cat.id,
       }))
     },
-    allCatsSelected() {
-      return false;
+    catsSelected() {
+      const cat = this.getCatById(this.itemCategory);
+      return cat && (!cat.children || cat.children.length === 0);
+    },
+    itemCategory() {
+      return this.categoryFourth || this.categoryThird || this.categorySecond || this.categoryFirst;
     },
     catString() {
       let str = '';
-      const cat1 = this.categories && this.categories.find(c => c.id === this.categoryFirst);
-      if (cat1) {
-        str += cat1.title;
-        const cat2 = cat1.children.find(c => c.id === this.categorySecond);
-        if (cat2) {
-          str += ' » ' + cat2.title;
-          const cat3 = cat2.children.find(c => c.id === this.categoryThird);
-          if (cat3) str += ' » ' + cat3.title;
-        }
-      }
+      const cat1 = this.getCatById(this.categoryFirst);
+      const cat2 = this.getCatById(this.categorySecond);
+      const cat3 = this.getCatById(this.categoryThird);
+      const cat4 = this.getCatById(this.categoryFourth);
+      if (cat1) str += cat1.title;
+      if (cat2) str += ' » ' + cat2.title;
+      if (cat3) str += ' » ' + cat3.title;
+      if (cat4) str += ' » ' + cat4.title;
       return str.toLowerCase();
+    },
+    showSecond() {
+      const cat = this.getCatById(this.categoryFirst);
+      return cat && cat.children && cat.children.length > 0;
+    },
+    showThird() {
+      const cat = this.getCatById(this.categorySecond);
+      return cat && cat.children && cat.children.length > 0;
+    },
+    showFourth() {
+      const cat = this.getCatById(this.categoryThird);
+      return cat && cat.children && cat.children.length > 0;
     },
     item() {
       return {
@@ -178,48 +194,55 @@ export default {
       }
     }
   },
+  watch: {
+    categories(val, oldVal) {
+      if (val && !oldVal) this.flattenCategories();
+    },
+    categoryFirst(val) {
+      if (val) {
+        this.categorySecond = null;
+        this.categoryThird = null;
+        this.categoryFourth = null;
+      }
+    },
+    categorySecond(val) {
+      if (val) {
+        this.categoryThird = null;
+        this.categoryFourth = null;
+      }
+    },
+    categoryThird(val) {
+      if (val) {
+        this.categoryFourth = null;
+      }
+    },
+  },
   methods: {
     ...mapActions(['alert']),
-    getCatById(cat, id) {
-      if(cat.id === id) return cat;
-      for (const key in cat) {
-        console.error(key);
-      }
-
+    getCatById(catId) {
+      if (!catId) return;
+      return this.flatCats && this.flatCats.find(c => c.id === catId);
     },
-    flattenedCategories() {
-      const cats = [];
-      this.categories.forEach(c1 => {
-        delete c1.children
-        cats.push(c1)
-      });
-    },
-    catHasChildren(catId) {
-      this.getCatById(catId);
-
-    },
-    subRootCategories(catId, nextLevel = false) {
-      const items = [];
-      let theCat = null;
-      let children = null;
-      if (nextLevel) {
-        const secondCat = this.categories && this.categories.find(cat => cat.id === this.categoryFirst);
-        theCat = secondCat && secondCat.children.find(cat => cat.id === catId);
+    flattenCategories(children) {
+      if (!children) {
+        this.flatCats = [];
+        this.categories.forEach(cat => {
+          if (cat.children) this.flattenCategories(cat.children);
+          this.flatCats.push(cat);
+        });
       } else {
-        theCat = this.categories && this.categories.find(cat => cat.id === catId);
+        children.forEach(cat => {
+          if (cat.children) this.flattenCategories(cat.children);
+          this.flatCats.push(cat);
+        })
       }
-
-      children = theCat && theCat.children;
-      if (children) {
-        return [
-          ...items,
-          ...children.map(cat => ({
-            text: cat.title,
-            value: cat.id,
-          }))
-        ];
-      }
-      return items;
+    },
+    getChildren(catId) {
+      const cat = this.getCatById(catId);
+      return cat && cat.children.map(cat => ({
+        text: cat.title,
+        value: cat.id,
+      }));
     },
     save() {
       this.$apollo.mutate({
@@ -241,7 +264,7 @@ export default {
           data: {
             title: this.item.title,
             price: parseFloat(this.item.price),
-            categoryId: this.categoryThird,
+            categoryId: this.itemCategory,
             images: this.images.map(i => ({
               ...i,
               coordinates: JSON.stringify(i.coordinates),

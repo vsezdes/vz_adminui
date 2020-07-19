@@ -53,8 +53,10 @@ export default {
     };
   },
   watch: {
+    drawer(open) {
+      if (!open) this.$emit('close');
+    },
     show(val) {
-      console.warn(val)
       this.drawer = val;
     }
   }

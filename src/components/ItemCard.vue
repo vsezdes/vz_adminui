@@ -1,7 +1,7 @@
 <template>
   <v-card
     :loading="loading"
-    class="mx-auto my-12"
+    class="item-card mx-auto my-12"
     max-width="374"
   >
     <v-img
@@ -11,7 +11,14 @@
     ></v-img>
 
     <v-card-title>{{ title }}</v-card-title>
-
+    <div class="item-controls">
+      <v-btn icon @click="$emit('on-edit', id)">
+        <v-icon>mdi-lead-pencil</v-icon>
+      </v-btn>
+      <v-btn icon @click="onDelete">
+        <v-icon>mdi-delete-forever-outline</v-icon>
+      </v-btn>
+    </div>
     <v-card-text>
       <!-- <v-row
         align="center"
@@ -62,7 +69,7 @@
 
 <script>
   export default {
-    props: ['title', 'price', 'images', 'category', 'description'],
+    props: ['id', 'title', 'price', 'images', 'category', 'description'],
     data: () => ({
       loading: false,
       selection: 1,
@@ -73,11 +80,21 @@
       },
     },
     methods: {
-      reserve () {
-        this.loading = true
-
-        setTimeout(() => (this.loading = false), 2000)
+      onDelete () {
+        if (!window.confirm('Удалить товар?')) return;
+        console.warn('delete: ', this.id);
       },
     },
   }
 </script>
+
+<style lang="scss">
+.item-card {
+  .item-controls {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+  }
+}
+
+</style>

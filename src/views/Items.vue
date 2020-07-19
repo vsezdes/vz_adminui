@@ -24,13 +24,15 @@
         >
           <ItemCard
             v-bind="item"
+            @on-edit="onEditItem"
           />
         </v-col>
       </v-row>
-      {{ lastItems.length }}
+      {{ lastItems && lastItems.length }}
       <ItemForm
         :show="showForm"
-        @close="showForm = false"
+        :item="activeItem"
+        @close="onClose"
       />
     </v-container>
   </BaseTemplate>
@@ -51,11 +53,19 @@ export default {
   apollo: {
     lastItems: LAST_ITEMS,
   },
-  computed() {
-    this.items = [...this.lastItems];
+  methods: {
+    onClose() {
+      this.activeItem = null;
+      this.showForm = false;
+    },
+    onEditItem(itemId) {
+      this.activeItem = itemId;
+      this.showForm = true;
+    }
   },
   data () {
     return {
+      activeItem: null,
       showForm: false,
     }
   },
