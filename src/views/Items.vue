@@ -36,7 +36,10 @@
         right
         width="450"
       >
-        <ItemForm />
+        <ItemForm
+          v-if="drawer"
+          @close="drawer = false"
+        />
       </v-navigation-drawer>
     </v-container>
   </BaseTemplate>

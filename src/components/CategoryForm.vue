@@ -1,74 +1,82 @@
 <template>
-  <v-container>
-    <v-card-title class="headline">{{ !id ? 'Добавить категорию' : 'Изменить категорию' }}</v-card-title>
-    <v-row class="text-center">
-      <v-col cols="12">
-        <v-form v-model="valid" lazy-validation ref="form">
-          <v-text-field
-            label="Имя категории"
-            v-model="title"
-            :rules="[
-              v => !!v || 'Обязательно к заполнению'
-            ]"
-          />
-          <v-text-field
-            label="Ярлык категории"
-            v-model="slug"
-            :rules="[
-              v => !!v || 'Обязательно к заполнению'
-            ]"
-          />
-          <v-autocomplete
-            :items="icons"
-            :append-icon="icon && `mdi-${icon}`"
-            color="white"
-            item-text="name"
-            label="Иконка категории"
-            v-model="icon"
-            ref="iconselector"
-            :rules="[
-              v => !!v || 'Обязательно к заполнению'
-            ]"
-            @change="$refs.iconselector.blur()"
+  <FormWrapper
+    :title="!id ? 'Добавить категорию' : 'Изменить категорию'"
+    @close="$emit('close')"
+    icon="mdi-file-tree-outline"
+  >
+    <v-form
+      v-model="valid"
+      class="ma-4"
+      lazy-validation
+      ref="form"
+    >
+      <v-text-field
+        label="Имя категории"
+        v-model="title"
+        :rules="[
+          v => !!v || 'Обязательно к заполнению'
+        ]"
+      />
+      <v-text-field
+        label="Ярлык категории"
+        v-model="slug"
+        :rules="[
+          v => !!v || 'Обязательно к заполнению'
+        ]"
+      />
+      <v-autocomplete
+        :items="icons"
+        :append-icon="icon && `mdi-${icon}`"
+        color="white"
+        item-text="name"
+        label="Иконка категории"
+        v-model="icon"
+        ref="iconselector"
+        :rules="[
+          v => !!v || 'Обязательно к заполнению'
+        ]"
+        @change="$refs.iconselector.blur()"
+      >
+        <template v-slot:item="{ item }">
+          <v-list-item-avatar
+            color="indigo"
+            class="headline font-weight-light white--text"
           >
-            <template v-slot:item="{ item }">
-              <v-list-item-avatar
-                color="indigo"
-                class="headline font-weight-light white--text"
-              >
-                <v-icon dark>{{ `mdi-${item}` }}</v-icon>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title v-text="item"></v-list-item-title>
-              </v-list-item-content>
-            </template>
-          </v-autocomplete>
-          <v-select
-            v-show="!id"
-            v-model="categoryFirst"
-            label="Родительская категория I уровня"
-            :items="rootCategories"
-          />
-          <v-select
-            v-if="categoryFirst && subRootCategories.length > 1"
-            v-model="categorySecond"
-            label="Родительская категория II уровня"
-            :items="subRootCategories"
-          />
-          <v-select
-            v-if="categorySecond && subSubRootCategories.length > 1"
-            v-model="categoryThird"
-            label="Родительская категория III уровня"
-            :items="subSubRootCategories"
-          />
-          <v-btn block color="green" outlined @click="validate" :loading="loading">Сохранить</v-btn>
-        </v-form>
-      </v-col>
-    </v-row>
-  </v-container>
+            <v-icon dark>{{ `mdi-${item}` }}</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title v-text="item"></v-list-item-title>
+          </v-list-item-content>
+        </template>
+      </v-autocomplete>
+      <v-select
+        v-show="!id"
+        v-model="categoryFirst"
+        label="Родительская категория I уровня"
+        :items="rootCategories"
+      />
+      <v-select
+        v-if="categoryFirst && subRootCategories.length > 1"
+        v-model="categorySecond"
+        label="Родительская категория II уровня"
+        :items="subRootCategories"
+      />
+      <v-select
+        v-if="categorySecond && subSubRootCategories.length > 1"
+        v-model="categoryThird"
+        label="Родительская категория III уровня"
+        :items="subSubRootCategories"
+      />
+      <v-divider />
+      <v-btn color="green" outlined @click="validate" :loading="loading">
+        <v-icon>mdi-content-save-outline</v-icon>
+        Сохранить</v-btn>
+    </v-form>
+  </FormWrapper>
 </template>
 
 <script>
+import FormWrapper from '@/components/FormWrapper.vue';
 import { mapActions } from 'vuex';
 import icons from '@/icons'
 import gql from 'graphql-tag';
@@ -77,6 +85,9 @@ const CYRLAT = {"Ё":"YO","Й":"I","Ц":"TS","У":"U","К":"K","Е":"E","Н":"N"
 
 export default {
   name: 'CategoryForm',
+  components: {
+    FormWrapper,
+  },
   props: {
     categories: {
       type: Array,

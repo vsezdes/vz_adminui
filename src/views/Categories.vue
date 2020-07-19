@@ -25,7 +25,7 @@
           <v-card
             class="ma-3"
           >
-            <v-card-title class="headline">
+            <v-card-title class="headline root-title">
               <v-icon class="my-1 mx-2">{{ `mdi-${cat.icon}` }}</v-icon>
               {{ cat.title }}
               <v-spacer />
@@ -77,9 +77,10 @@
         temporary
         fixed
         right
-        width="400"
+        width="450"
       >
         <CategoryForm
+          v-if="drawer"
           :categories="categories"
           :item="theCat"
           :select-cat="newCategoryParent"
@@ -190,7 +191,7 @@ export default {
 .headline .controls {
   display: none;
 }
-.v-card__title.headline {
+.v-card__title.headline.root-title {
   background: #F5F5F5;
   font-size: 16px;
   padding: 5px;

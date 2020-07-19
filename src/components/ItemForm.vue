@@ -1,12 +1,10 @@
 <template>
-  <v-container>
-    <v-card
-      class="mx-auto pa-0"
-      outlined
-      flat
-    >
-    <v-card-title class="headline">Добавить товар</v-card-title>
-    <v-stepper v-model="step" vertical non-linear>
+  <FormWrapper
+    title="Добавить товар"
+    @close="$emit('close')"
+    icon="mdi-shopping-outline"
+  >
+    <v-stepper class="form-stepper" v-model="step" vertical non-linear>
       <v-stepper-step :complete="step > 1" step="1" @click.native="step = 1">
         Категории
         <small>{{ catString }}</small>
@@ -34,10 +32,17 @@
             :items="subRootCategories(categorySecond, true)"
             dense
           />
+          <v-select
+            v-model="categoryFourth"
+            :disabled="!categoryThird"
+            label="Категория IV уровня"
+            :items="subRootCategories(categoryThird, true)"
+            dense
+          />
         </v-form>
         <v-spacer />
         <v-btn
-          :disabled="!categoryThird"
+          :disabled="!allCatsSelected"
           fab outlined small absolute color="primary"
           class="next-btn mr-3"
           v-if="step === 1"
@@ -95,12 +100,7 @@
         <v-btn color="primary" @click="save" :loading="loading">Записать</v-btn>
       </v-stepper-content>
     </v-stepper>
-    <v-card-actions>
-
-    </v-card-actions>
-  </v-card>
-
-  </v-container>
+  </FormWrapper>
 </template>
 
 <script>
@@ -111,12 +111,14 @@ import { LAST_ITEMS } from '@/gql/items.graphql';
 import VImageInput from 'vuetify-image-input';
 import ImageUploader from '@/components/ImageUploader.vue';
 import ItemPreview from '@/components/ItemPreview.vue';
+import FormWrapper from '@/components/FormWrapper.vue';
 
 
 export default {
   components: {
     ImageUploader,
     ItemPreview,
+    FormWrapper,
     [VImageInput.name]: VImageInput,
   },
   apollo: {
@@ -143,6 +145,9 @@ export default {
         value: cat.id,
       }))
     },
+    allCatsSelected() {
+      return false;
+    },
     catString() {
       let str = '';
       const cat1 = this.categories && this.categories.find(c => c.id === this.categoryFirst);
@@ -168,6 +173,24 @@ export default {
   },
   methods: {
     ...mapActions(['alert']),
+    getCatById(cat, id) {
+      if(cat.id === id) return cat;
+      for (const key in cat) {
+        console.error(key);
+      }
+
+    },
+    flattenedCategories() {
+      const cats = [];
+      this.categories.forEach(c1 => {
+        delete c1.children
+        cats.push(c1)
+      });
+    },
+    catHasChildren(catId) {
+      this.getCatById(catId);
+
+    },
     subRootCategories(catId, nextLevel = false) {
       const items = [];
       let theCat = null;
@@ -273,5 +296,9 @@ export default {
     right: 50px;
     bottom: -10px;
   }
+}
+.form-stepper {
+  border: none;
+  box-shadow: none;
 }
 </style>
