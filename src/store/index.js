@@ -8,6 +8,7 @@ export default new Vuex.Store({
     alerts: [],
     user: null,
     isAuthenticated: false,
+    loader:false
   },
   actions: {
     alert: ({ commit }, data) => {
@@ -31,6 +32,9 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    LOADER(state,payload){
+      state.loader=payload;
+    },
     INIT_STORE(state) {
       if (!state.user && localStorage.getItem('user')) {
         state.user = JSON.parse(localStorage.getItem('user'));

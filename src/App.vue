@@ -1,6 +1,11 @@
+<script></script>
 <template>
   <div id="app">
+    <div class="" data-app >
+      <PreLoader/>
+    </div>
     <router-view/>
+
     <Alert />
     <v-dialog
       :value="showUpdateUI"
@@ -43,18 +48,25 @@
 </template>
 
 <script>
+import PreLoader from "@/components/PreLoader";
 import Alert from "./components/Alert";
+
 export default {
   name:'app',
   components:{
-    Alert
+    PreLoader,
+    Alert,
   },
   data() {
     return {
+      loader:true,
       showUpdateUI: false,
     }
   },
   created() {
+    console.log(
+    this.$store.state.loader,'loader active')
+      // simulate AJAX
     if (this.$workbox) {
       this.$workbox.addEventListener("waiting", () => {
         this.showUpdateUI = true;
@@ -62,6 +74,7 @@ export default {
     }
   },
   methods: {
+
     async accept() {
       this.showUpdateUI = false;
       await this.$workbox.messageSW({ type: "SKIP_WAITING" });
