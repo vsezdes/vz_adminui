@@ -4,7 +4,6 @@ import Home from '../views/Home.vue'
 import Register from '../views/Register.vue';
 import Login from "../views/Login.vue";
 import store from '@/store';
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -52,6 +51,11 @@ const routes = [
       store.dispatch('logout');
       next({ name: 'Login' })
     }
+  },
+  {
+    path: '/orders',
+    name: 'Orders',
+    component: () => import(/* webpackChunkName: "orders" */ '../views/MyOrders.vue'),
   }
 ]
 

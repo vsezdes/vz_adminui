@@ -113,6 +113,7 @@ export default {
       { icon: 'mdi-format-list-bulleted-type', text: 'Категории' , href: '/categories'},
       { heading: 'Управление' },
       { icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users' },
+      { icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders' },
     ],
   }),
   computed: {
