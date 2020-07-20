@@ -4,9 +4,8 @@
       <v-layout wrap justify-center justify-lg-start>
         <v-flex md2  sm10>
      <v-select
-         @change="CleanupOrders()"
          v-model="selected_user"
-         :items="all_users"
+         :items="allUsers"
          item-text="fullName"
          item-value="id"
          label="Select"
@@ -19,7 +18,6 @@
         </v-flex>
         <v-flex offset-md-2  md2  sm10>
          <v-select
-             @change="CleanupOrders()"
              :items="status_titles"
              item-text="title"
              item-value="number"
@@ -39,7 +37,7 @@
 
     <v-data-table
         :headers="order_headers"
-        :items="CleanupOrders()"
+        :items="filteredOrders"
         :items-per-page="999999"
         item-key="id"
         hide-default-footer
@@ -88,7 +86,6 @@ export default {
     return {
       expanded: [],
       expand: false,
-      all_users: [],
       selected_user: null,
       selected_status: null,
       status_titles: [
@@ -133,7 +130,7 @@ export default {
         total: 400,
         user: {
           id: 1,
-          firstName: 'John',
+          firstName: 'Mike',
           lastName: 'Doe',
         }
       }, {
@@ -148,7 +145,7 @@ export default {
         ],
         total: 400,
         user: {
-          id: 1,
+          id: 2,
           firstName: 'John',
           lastName: 'Doe',
         }
@@ -159,30 +156,29 @@ export default {
     BaseTemplate
   },
   beforeMount() {
-    this.GetUsers()
     this.selected_status = this.status_titles[0].number
-    this.selected_user=this.all_users[0]
+    this.selected_user=this.allUsers[0]
   },
-  methods: {
-    GetUsers() {
+  computed: {
+    allUsers() {
+      let all_users = []
       let i = 0;
+
       for (i = 0; i < this.fakedata.length; i++) {
-        var order = this.fakedata[i]
-        if (!this.all_users.includes(order.user)) {
+        let order = this.fakedata[i];
+        if (!all_users.includes(order.user)) {
           order.user.fullName = order.user.firstName + ' ' + order.user.lastName
-          this.all_users.push(order.user)
+          all_users.push(order.user)
         }
       }
+      return all_users
     },
-    CleanupOrders() {
+    filteredOrders() {
       let user = this.selected_user
-      console.log(user)
 
       return this.fakedata.filter((obj) => {
         if (user != null) {
-          var n = obj.user.id === user.id && obj.status === this.selected_status || this.selected_status === 'all'
-          console.log(n)
-          return n
+          return obj.user.id === user.id && (obj.status === this.selected_status || this.selected_status === 'all')
         }
       })
     },
