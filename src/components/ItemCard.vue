@@ -5,10 +5,26 @@
     max-width="374"
   >
     <v-img
-      height="250"
       v-if="!!thumb"
       :src="thumb"
-    ></v-img>
+      contain
+    >
+        <v-chip
+          class="ma-2 price"
+          color="orange"
+          text-color="white"
+        >
+          150 000 <small>сом</small> {{ price }}
+        </v-chip>
+    </v-img>
+    <v-chip
+      v-else
+      class="ma-2 price"
+      color="orange"
+      text-color="white"
+    >
+      150 000 <small>сом</small> {{ price }}
+    </v-chip>
 
     <v-card-title>{{ title }}</v-card-title>
     <div class="item-controls">
@@ -39,14 +55,6 @@
         align="center"
         class="mx-0"
       >
-        <v-chip
-          class="ma-2"
-          color="orange"
-          text-color="white"
-        >
-          <v-icon>mdi-cash</v-icon>
-          {{ price }}
-        </v-chip>
       </v-row>
 
       <v-chip small >{{ category }}</v-chip>
@@ -92,8 +100,24 @@
 .item-card {
   .item-controls {
     position: absolute;
-    right: 5px;
+    right: -2px;
     top: 5px;
+    background: #F5F5F5;
+    border-radius: 20px 0 0 20px;
+    padding: 0px 6px;
+    box-shadow: 1px 1px 1px #CCC;
+  }
+  .v-chip.price {
+    font-size: 20px;
+    font-weight: 500;
+    small {
+      margin-top: 3px;
+      padding-left: 4px;
+      font-size: 80%;
+    }
+  }
+  .v-card__title {
+    padding-bottom: 0px;
   }
 }
 
