@@ -1,14 +1,14 @@
-<template>
+<template xmlns:color>
   <v-app id="keep">
     <v-app-bar
         app
         clipped-left
-        :color="$store.state.custom_colors.base.header"
+        color="base_header"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <router-link to="/" class="logo">
         <v-avatar>
-          <v-img height="40" src="../assets/logo.svg" />
+          <v-img height="40" src="../assets/logo.svg"/>
         </v-avatar>
         <span class="title ml-3 mr-5">Всё&nbsp;<span class="font-weight-light">Тут</span></span>
         <v-progress-circular
@@ -24,12 +24,14 @@
         <span v-if="isAuthenticated">
           <span class="mr-5">{{ user.firstName }} {{ user.lastName }}</span>
           <v-avatar class="mr-1" color="orange">
-            <img v-if="user.avatar" src="user.avatar" />
+            <img v-if="user.avatar" src="user.avatar"/>
             <v-icon v-else>mdi-emoticon-cool</v-icon>
           </v-avatar>
           <v-btn icon to="/logout"><v-icon>mdi-logout-variant</v-icon></v-btn>
         </span>
-        <v-btn v-else icon to="/login"><v-icon>mdi-login-variant</v-icon></v-btn>
+        <v-btn v-else icon to="/login">
+          <v-icon>mdi-login-variant</v-icon>
+        </v-btn>
       </div>
     </v-app-bar>
 
@@ -37,11 +39,11 @@
         v-model="drawer"
         app
         clipped
-        :color="$store.state.custom_colors.base.sidebar"
+        color="base_sidebar"
     >
       <v-list
           dense
-          :color="$store.state.custom_colors.base.sidebar"
+          color="base_sidebar"
       >
         <template v-for="(item, i) in items">
           <v-row
@@ -81,24 +83,23 @@
     </v-navigation-drawer>
 
     <v-content>
-      <v-container
-          :style="{ background: $store.state.custom_colors.base.bg }"
-          fluid
+      <v-layout
+          color: base_bg
           class="fill-height align-start pa-5"
       >
         <v-row>
           <slot></slot>
         </v-row>
-      </v-container>
+      </v-layout>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import {mapState} from 'vuex';
 
 export default {
-  name:'BaseTemplate',
+  name: 'BaseTemplate',
   props: {
     source: String,
     loading: {
@@ -109,17 +110,18 @@ export default {
   data: () => ({
     drawer: null,
     items: [
-      { heading: 'Товары' },
-      { icon: 'mdi-package-variant', text: 'Все товары', href: '/items' },
-      { icon: 'mdi-format-list-bulleted-type', text: 'Категории' , href: '/categories'},
-      { heading: 'Управление' },
-      { icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users' },
-      { icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders' },
+      {heading: 'Товары'},
+      {icon: 'mdi-package-variant', text: 'Все товары', href: '/items'},
+      {icon: 'mdi-format-list-bulleted-type', text: 'Категории', href: '/categories'},
+      {heading: 'Управление'},
+      {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
+      {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders'},
     ],
   }),
   computed: {
     ...mapState(['isAuthenticated', 'user']),
-  }
+  },
+
 }
 </script>
 
@@ -127,22 +129,27 @@ export default {
 #keep .v-navigation-drawer__border {
   display: none
 }
+
 .v-subheader {
   text-transform: uppercase;
 }
+
 .logo {
   text-decoration: none;
   position: relative;
 }
+
 .logo .title {
   text-decoration: none;
   color: #755803;
 }
+
 .logo .v-progress-circular {
   position: absolute;
   left: 0;
   top: 1px;
 }
+
 .v-avatar .v-image {
   filter: grayscale(100%);
 }

@@ -15,13 +15,12 @@
         >
           <v-card class="elevation-12">
             <v-progress-linear
-              :active="loading"
-              indeterminate
-              color="yellow darken-2"
+                :active="loading"
+                indeterminate
+                color="yellow darken-2"
             ></v-progress-linear>
             <v-toolbar
-                :color="$store.state.custom_colors.auth_forms"
-                dark
+                color="auth_forms_header"
                 flat
             >
               <v-spacer></v-spacer>
@@ -70,7 +69,7 @@
 
 <script>
 // import gql from 'graphql-tag';
-import { mapActions } from 'vuex';
+import {mapActions} from 'vuex';
 import {mask} from 'vue-the-mask'
 import gql from "graphql-tag";
 
@@ -79,14 +78,12 @@ export default {
   directives: {
     mask
   },
-  components: {
-  },
   data() {
     return {
-      email:'',
-      password:'',
+      email: '',
+      password: '',
       loading: false,
-      passRules:[
+      passRules: [
         v => !!v || '*Это поле обязательно',
       ],
       emailRules: [
@@ -97,7 +94,7 @@ export default {
   },
   methods: {
     ...mapActions(['login', 'alert']),
-    validate () {
+    validate() {
       this.$refs.form.validate()
     },
     loginQuery() {

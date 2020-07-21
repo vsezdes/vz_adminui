@@ -1,20 +1,17 @@
 <script></script>
 <template>
   <div id="app">
-    <div class="" data-app >
-      <PreLoader/>
-    </div>
+    <PreLoader v-if="$store.state.loader"/>
     <router-view/>
-
-    <Alert />
+    <Alert/>
     <v-dialog
-      :value="showUpdateUI"
-      width="400"
+        :value="showUpdateUI"
+        width="400"
     >
       <v-card>
         <v-card-title
-          class="headline grey lighten-2"
-          primary-title
+            class="headline grey lighten-2"
+            primary-title
         >
           Найдены обновления!
         </v-card-title>
@@ -50,27 +47,25 @@
 <script>
 import PreLoader from "@/components/PreLoader";
 import Alert from "./components/Alert";
-import custom_colors from "@/colors";
-
 
 export default {
-  name:'app',
-  components:{
+  name: 'app',
+  components: {
     PreLoader,
     Alert,
   },
   data() {
     return {
-      custom_colors:custom_colors,
-      loader:true,
+      loader: true,
       showUpdateUI: false,
     }
   },
+  beforeCreate() {
+    this.$vuetify.theme.themes.light = this.$theme
+  },
   created() {
-    this.$store.state.custom_colors = custom_colors
-    console.log(
-    this.$store.state.loader,'loader active')
-      // simulate AJAX
+    // simulate AJAX
+
     if (this.$workbox) {
       this.$workbox.addEventListener("waiting", () => {
         this.showUpdateUI = true;
@@ -81,7 +76,7 @@ export default {
 
     async accept() {
       this.showUpdateUI = false;
-      await this.$workbox.messageSW({ type: "SKIP_WAITING" });
+      await this.$workbox.messageSW({type: "SKIP_WAITING"});
     }
   }
 }

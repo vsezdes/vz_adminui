@@ -60,7 +60,7 @@ const routes = [
   {
     path: '*',
     name: 'PageNotFound',
-    component: () => import(/* webpackChunkName: "orders" */ '../views/PageNotFound.vue')
+    component: () => import(/* webpackChunkName: "orders" */ '../views/PageNotFound.vue'),
   }
 ]
 
@@ -71,11 +71,11 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  store.state.loader = true
+  store.commit('LOADER', true);
   if (to.meta.protected && to.name !== 'Login' && !store.state.isAuthenticated) next({ name: 'Login' })
   else if (to.name === 'Login' && store.state.isAuthenticated) next({ name: 'Home' })
   else next()
 })
 
-router.afterEach(() => store.state.loader = false)
+router.afterEach(() => store.commit('LOADER', false))
 export default router
