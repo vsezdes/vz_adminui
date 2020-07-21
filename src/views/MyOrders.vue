@@ -2,7 +2,6 @@
   <BaseTemplate>
     <v-row justify-start>
       <v-col md="10" lg="10" offset-md="1">
-
         <v-layout wrap justify-space-between>
           <v-flex md3 sm10>
             <v-select
@@ -14,9 +13,7 @@
               :hint="'Выберите категорию заказа'"
               menu-props="{maxHeight: 404}"
               persistent-hint
-
             >
-
             </v-select>
           </v-flex>
           <v-flex md3 sm10>
@@ -34,11 +31,9 @@
             >
             </v-select>
           </v-flex>
-
         </v-layout>
       </v-col>
       <v-col md="10" lg="10" offset-md="1">
-
         <v-data-table
           :headers="order_headers"
           :items="CleanupOrders()"
@@ -78,7 +73,6 @@
           </template>
         </v-data-table>
       </v-col>
-
     </v-row>
   </BaseTemplate>
 </template>
@@ -92,7 +86,6 @@ export default {
     return {
       expanded: [],
       expand: false,
-      all_users: [],
       selected_user: null,
       selected_status: null,
       status_titles: [
@@ -112,7 +105,6 @@ export default {
         {text: 'сумма', value: 'total'},
         {text: 'дата', value: 'orderDate'},
         {text: '', value: 'data-table-expand'},
-
       ],
       item_headers: [
         {text: 'название товара', value: 'title'},
@@ -137,7 +129,7 @@ export default {
         total: 400,
         user: {
           id: 1,
-          firstName: 'John',
+          firstName: 'Mike',
           lastName: 'Doe',
         }
       }, {
@@ -152,7 +144,7 @@ export default {
         ],
         total: 400,
         user: {
-          id: 1,
+          id: 2,
           firstName: 'John',
           lastName: 'Doe',
         }
@@ -163,22 +155,24 @@ export default {
     BaseTemplate
   },
   beforeMount() {
-    this.GetUsers()
     this.selected_status = this.status_titles[0].number
     this.selected_user = this.all_users[0]
   },
-  methods: {
-    GetUsers() {
+  computed: {
+    allUsers() {
+      let all_users = []
       let i = 0;
+
       for (i = 0; i < this.fakedata.length; i++) {
-        var order = this.fakedata[i]
-        if (!this.all_users.includes(order.user)) {
+        let order = this.fakedata[i];
+        if (!all_users.includes(order.user)) {
           order.user.fullName = order.user.firstName + ' ' + order.user.lastName
-          this.all_users.push(order.user)
+          all_users.push(order.user)
         }
       }
+      return all_users
     },
-    CleanupOrders() {
+    filteredOrders() {
       let user = this.selected_user
 
       return this.fakedata.filter((obj) => {
