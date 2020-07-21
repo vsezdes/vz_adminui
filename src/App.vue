@@ -5,13 +5,13 @@
     <router-view/>
     <Alert/>
     <v-dialog
-        :value="showUpdateUI"
-        width="400"
+      :value="showUpdateUI"
+      width="400"
     >
       <v-card>
         <v-card-title
-            class="headline grey lighten-2"
-            primary-title
+          class="headline grey lighten-2"
+          primary-title
         >
           Найдены обновления!
         </v-card-title>
@@ -56,7 +56,6 @@ export default {
   },
   data() {
     return {
-      loader: true,
       showUpdateUI: false,
     }
   },

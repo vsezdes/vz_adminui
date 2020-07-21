@@ -6,14 +6,14 @@
         <v-layout wrap justify-space-between>
           <v-flex md3 sm10>
             <v-select
-                @change="CleanupOrders()"
-                :items="status_titles"
-                item-text="title"
-                item-value="number"
-                v-model="selected_status"
-                :hint="'Выберите категорию заказа'"
-                menu-props="{maxHeight: 404}"
-                persistent-hint
+              @change="CleanupOrders()"
+              :items="status_titles"
+              item-text="title"
+              item-value="number"
+              v-model="selected_status"
+              :hint="'Выберите категорию заказа'"
+              menu-props="{maxHeight: 404}"
+              persistent-hint
 
             >
 
@@ -21,16 +21,16 @@
           </v-flex>
           <v-flex md3 sm10>
             <v-select
-                @change="CleanupOrders()"
-                v-model="selected_user"
-                :items="all_users"
-                item-text="fullName"
-                item-value="id"
-                label="Select"
-                :hint="'Выберите пользователя'"
-                persistent-hint
-                return-object
-                single-line
+              @change="CleanupOrders()"
+              v-model="selected_user"
+              :items="all_users"
+              item-text="fullName"
+              item-value="id"
+              label="Select"
+              :hint="'Выберите пользователя'"
+              persistent-hint
+              return-object
+              single-line
             >
             </v-select>
           </v-flex>
@@ -40,26 +40,26 @@
       <v-col md="10" lg="10" offset-md="1">
 
         <v-data-table
-            :headers="order_headers"
-            :items="CleanupOrders()"
-            :items-per-page="999999"
-            item-key="id"
-            hide-default-footer
+          :headers="order_headers"
+          :items="CleanupOrders()"
+          :items-per-page="999999"
+          item-key="id"
+          hide-default-footer
 
-            :single-expand="expand"
-            :expanded.sync="expanded"
-            class="elevation-1"
-            show-expand
-            :calculate-widths='true'
+          :single-expand="expand"
+          :expanded.sync="expanded"
+          class="elevation-1"
+          show-expand
+          :calculate-widths='true'
         >
           <!--      Вставка таблицы в таблицу -->
           <template v-slot:expanded-item="{ headers , item}">
             <td :colspan="headers.length">
               <v-data-table
-                  hide-default-footer
-                  class="amber lighten-2"
-                  :items="item.items"
-                  :headers="item_headers"></v-data-table>
+                hide-default-footer
+                class="amber lighten-2"
+                :items="item.items"
+                :headers="item_headers"></v-data-table>
             </td>
           </template>
           <!--      Определение количества товара -->
@@ -126,9 +126,9 @@ export default {
         orderDate: 'some date',
         status: -2, // статусы описаны ниже
         details: 'asdasdnfdskjfndjfnsdffs' +
-            'sdfsdfsdfsdf /n' +
-            'sdfsdfsdfsdfs /n' +
-            'sdfsdfsdfsdf /n',
+          'sdfsdfsdfsdf /n' +
+          'sdfsdfsdfsdfs /n' +
+          'sdfsdfsdfsdf /n',
         items: [
           {title: 'Tovar1', price: 100, quantity: 1},
           {title: 'Tovar2', price: 200, quantity: 2},
@@ -183,8 +183,7 @@ export default {
 
       return this.fakedata.filter((obj) => {
         if (user != null) {
-          var n = obj.user.id === user.id && obj.status === this.selected_status || this.selected_status === 'all'
-          return n
+          return obj.user.id === user.id && obj.status === this.selected_status || this.selected_status === 'all'
         }
       })
     },

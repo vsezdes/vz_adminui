@@ -1,27 +1,27 @@
 <template>
   <v-app id="inspire">
     <v-container
-        class="fill-height"
-        fluid
+      class="fill-height"
+      fluid
     >
       <v-row
-          align="center"
-          justify="center"
+        align="center"
+        justify="center"
       >
         <v-col
-            cols="12"
-            sm="8"
-            md="4"
+          cols="12"
+          sm="8"
+          md="4"
         >
           <v-card class="elevation-12">
             <v-progress-linear
-                :active="loading"
-                indeterminate
-                color="yellow darken-2"
+              :active="loading"
+              indeterminate
+              color="yellow darken-2"
             ></v-progress-linear>
             <v-toolbar
-                color="auth_forms_header"
-                flat
+              color="auth_forms_header"
+              flat
             >
               <v-spacer></v-spacer>
               <v-spacer></v-spacer>
@@ -34,21 +34,21 @@
             <v-card-text>
               <v-form>
                 <v-text-field
-                    label="* Почта"
-                    name="email"
-                    prepend-icon="mdi-mail"
-                    v-model="email"
-                    type="text"
-                    :rules='emailRules'
+                  label="* Почта"
+                  name="email"
+                  prepend-icon="mdi-mail"
+                  v-model="email"
+                  type="text"
+                  :rules='emailRules'
                 ></v-text-field>
                 <v-text-field
-                    id="password"
-                    label="Пароль"
-                    name="password"
-                    prepend-icon="mdi-lock"
-                    type="password"
-                    v-model="password"
-                    :rules="passRules"
+                  id="password"
+                  label="Пароль"
+                  name="password"
+                  prepend-icon="mdi-lock"
+                  type="password"
+                  v-model="password"
+                  :rules="passRules"
                 ></v-text-field>
               </v-form>
             </v-card-text>
@@ -69,8 +69,8 @@
 
 <script>
 // import gql from 'graphql-tag';
-import {mapActions} from 'vuex';
-import {mask} from 'vue-the-mask'
+import { mapActions } from 'vuex';
+import { mask } from 'vue-the-mask'
 import gql from "graphql-tag";
 
 export default {

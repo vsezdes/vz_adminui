@@ -1,9 +1,9 @@
 <template>
   <BaseTemplate>
     <v-card
-        class="mx-auto text-center"
-        max-width="850"
-        style="padding-top: 65px"
+      class="mx-auto text-center"
+      max-width="850"
+      style="padding-top: 65px"
     >
       <!--      <IconPageNotFound></IconageNotFound>-->
       <v-card-subtitle class="pb-0">
@@ -20,8 +20,8 @@
       <v-card-actions>
         <router-link to="/">
           <v-btn
-              color="orange"
-              text
+            color="orange"
+            text
           >
             на главную
           </v-btn>

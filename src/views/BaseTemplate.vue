@@ -1,9 +1,9 @@
 <template xmlns:color>
   <v-app id="keep">
     <v-app-bar
-        app
-        clipped-left
-        color="base_header"
+      app
+      clipped-left
+      color="base_header"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <router-link to="/" class="logo">
@@ -36,20 +36,20 @@
     </v-app-bar>
 
     <v-navigation-drawer
-        v-model="drawer"
-        app
-        clipped
-        color="base_sidebar"
+      v-model="drawer"
+      app
+      clipped
+      color="base_sidebar"
     >
       <v-list
-          dense
-          color="base_sidebar"
+        dense
+        color="base_sidebar"
       >
         <template v-for="(item, i) in items">
           <v-row
-              v-if="item.heading"
-              :key="i"
-              align="center"
+            v-if="item.heading"
+            :key="i"
+            align="center"
           >
             <v-col cols="6">
               <v-subheader v-if="item.heading">
@@ -58,16 +58,16 @@
             </v-col>
           </v-row>
           <v-divider
-              v-else-if="item.divider"
-              :key="i"
-              dark
-              class="my-4"
+            v-else-if="item.divider"
+            :key="i"
+            dark
+            class="my-4"
           ></v-divider>
           <v-list-item
-              v-else
-              :key="i"
-              link
-              :to="item.href"
+            v-else
+            :key="i"
+            link
+            :to="item.href"
           >
             <v-list-item-action>
               <v-icon>{{ item.icon }}</v-icon>
@@ -84,8 +84,8 @@
 
     <v-content>
       <v-layout
-          color: base_bg
-          class="fill-height align-start pa-5"
+        color: base_bg
+        class="fill-height align-start pa-5"
       >
         <v-row>
           <slot></slot>
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
   name: 'BaseTemplate',
