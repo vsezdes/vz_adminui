@@ -207,6 +207,7 @@ export default {
       this.itemPrice = val.price;
       this.images = val.images;
       this.fillCategoriesByLast(val.categoryId);
+      this.step = 2;
     },
     categories(val, oldVal) {
       if (val && !oldVal) this.flattenCategories();

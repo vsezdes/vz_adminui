@@ -1,5 +1,5 @@
 <template>
-  <BaseTemplate>
+  <BaseTemplate :loading="$apollo.loading">
     <v-container fluid>
       <v-btn
         fixed
