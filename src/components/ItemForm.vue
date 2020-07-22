@@ -236,10 +236,20 @@ export default {
       const cats = [];
       let cat = null;
       for (let i = 0; i < 4; i++) {
-        cat = this.getCatById((cat && cat.parentId) || id);
+        cat = this.getCatById((cat && cat.parentId) || (i === 0 && id));
         if (cat) cats.unshift(cat);
       }
-      console.warn('cvats', cats);
+      if (cats.length === 0) return;
+      if (cats[0]) this.categoryFirst = cats[0].id;
+      this.$nextTick(() => {
+        if (cats[1]) this.categorySecond = cats[1].id;
+        this.$nextTick(() => {
+          if (cats[2]) this.categoryThird = cats[2].id;
+          this.$nextTick(() => {
+            if (cats[3]) this.categoryFourth = cats[3].id;
+          });
+        });
+      });
     },
     onClose() {
       this.$emit('close');
