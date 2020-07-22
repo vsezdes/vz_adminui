@@ -11,7 +11,28 @@ import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
 
 import wb from "./registerServiceWorker";
+
 Vue.prototype.$workbox = wb;
+
+Vue.prototype.$theme = {
+  primary: '#FF5252',
+  secondary: '#424242',
+  accent: '#82B1FF',
+  error: '#FF5252',
+  info: '#2196F3',
+  success: '#4CAF50',
+  warning: '#FFC107',
+  // base
+  base_header: '#FFC107',
+  base_bg: '#F5F5F5',
+  base_sidebar: '#F5F5F5',
+  // preload
+  preloader_bg: '#FFC107',
+  preloader_circle: '#42A7F5',
+  // login & register
+  auth_forms_header: '#42A7F5',
+  auth_forms_button: '#42A7F5'
+}
 
 // HTTP connection to the API
 const httpLink = createHttpLink({

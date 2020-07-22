@@ -1,7 +1,8 @@
 <template>
   <div id="app">
+    <PreLoader v-if="$store.state.loader"/>
     <router-view/>
-    <Alert />
+    <Alert/>
     <v-dialog
       :value="showUpdateUI"
       width="400"
@@ -43,18 +44,26 @@
 </template>
 
 <script>
+import PreLoader from "@/components/PreLoader";
 import Alert from "./components/Alert";
+
 export default {
-  name:'app',
-  components:{
-    Alert
+  name: 'app',
+  components: {
+    PreLoader,
+    Alert,
   },
   data() {
     return {
       showUpdateUI: false,
     }
   },
+  beforeCreate() {
+    this.$vuetify.theme.themes.light = this.$theme
+  },
   created() {
+    // simulate AJAX
+
     if (this.$workbox) {
       this.$workbox.addEventListener("waiting", () => {
         this.showUpdateUI = true;
@@ -62,9 +71,10 @@ export default {
     }
   },
   methods: {
+
     async accept() {
       this.showUpdateUI = false;
-      await this.$workbox.messageSW({ type: "SKIP_WAITING" });
+      await this.$workbox.messageSW({type: "SKIP_WAITING"});
     }
   }
 }
