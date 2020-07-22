@@ -76,24 +76,56 @@
 </template>
 
 <script>
-  export default {
-    props: ['id', 'title', 'price', 'images', 'category', 'description'],
-    data: () => ({
-      loading: false,
-      selection: 1,
-    }),
-    computed: {
-      thumb() {
-        return this.images && this.images.length > 0 && this.images[0].url;
-      },
+import gql from 'graphql-tag';
+import { LAST_ITEMS } from '@/gql/items.graphql';
+export default {
+  props: ['id', 'title', 'price', 'images', 'category', 'description'],
+  data: () => ({
+    loading: false,
+    selection: 1,
+  }),
+  computed: {
+    thumb() {
+      return this.images && this.images.length > 0 && this.images[0].url;
     },
-    methods: {
-      onDelete () {
-        if (!window.confirm('Удалить товар?')) return;
-        console.warn('delete: ', this.id);
-      },
+  },
+  methods: {
+    onDelete () {
+      if (!window.confirm('Удалить товар?')) return;
+      this.loading = true;
+
+      this.$apollo.mutate({
+        // Query
+        mutation: gql`mutation delItem($id: Int!) {
+          delItem(id: $id) {
+            id
+            title
+          }
+        }`,
+        // Parameters
+        variables: {
+          id: this.id,
+        },
+        update: (store, { data: { delItem }}) => {
+          const data = store.readQuery({ query: LAST_ITEMS });
+          if (!delItem.id) return;
+
+          const lastItems = data.lastItems.filter(i => i.id !== delItem.id);
+          store.writeQuery({ query: LAST_ITEMS, data: { lastItems } });
+        },
+      }).then((data) => {
+        // Result
+        console.log(data)
+        this.loading = false;
+      }).catch((error) => {
+        // Error
+        console.error(error)
+        this.loading = false;
+      })
+      console.warn('delete: ', this.id);
     },
-  }
+  },
+}
 </script>
 
 <style lang="scss">

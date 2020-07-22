@@ -5,9 +5,9 @@
     max-width="344"
   >
     <v-img
-      v-if="!!data && data.thumb"
+      v-if="!!thumb"
       :style="{ border: '1px solid #EEE' }"
-      :src="data.thumb"
+      :src="thumb"
       height="200px"
     ></v-img>
 
@@ -44,6 +44,14 @@ export default {
   data: () => ({
     show: false,
   }),
+  computed: {
+    thumb() {
+      if (this.data && this.data.images && this.data.images[0]) {
+        return this.data.images[0].url;
+      }
+      return null;
+    }
+  },
   props: {
     data: {
       type: Object,

@@ -97,7 +97,7 @@
 
       <v-stepper-step step="4">Сохранить</v-stepper-step>
       <v-stepper-content step="4">
-        <ItemPreview :data="item" />
+        <ItemPreview :data="itemPreview" />
         <v-btn color="primary" @click="save" :loading="loading">Записать</v-btn>
       </v-stepper-content>
     </v-stepper>
@@ -144,9 +144,11 @@ export default {
       categoryFourth: null,
       valid: false,
       detailsValid: false,
+      id: null,
       step: 1,
       itemName: '',
       itemPrice: '',
+      itemDescription: '',
       images: [],
       selectedCats: [],
       flatCats: [],
@@ -190,22 +192,27 @@ export default {
       const cat = this.getCatById(this.categoryThird);
       return cat && cat.children && cat.children.length > 0;
     },
-    // item() {
-    //   return {
-    //     title: this.itemName,
-    //     price: this.itemPrice,
-    //     thumb: this.images.length > 0 && this.images[0].url,
-    //     images: this.images,
-    //   }
-    // }
+    itemPreview() {
+      return {
+        title: this.itemName,
+        price: this.itemPrice,
+        description: this.itemDescription,
+        thumb: this.images.length > 0 && this.images[0].url,
+        images: this.images,
+      }
+    }
   },
   watch: {
     item(val) {
       if (!val) return;
       console.warn(val, this.images)
+      this.id = val.id;
       this.itemName = val.title;
       this.itemPrice = val.price;
-      this.images = val.images;
+      this.images = val.images.map(i => ({
+        asset_id: i.asset_id,
+        url: i.url,
+      }));
       this.fillCategoriesByLast(val.categoryId);
       this.step = 2;
     },
@@ -300,9 +307,10 @@ export default {
         }`,
         // Parameters
         variables: {
+          id: this.id,
           data: {
-            title: this.item.title,
-            price: parseFloat(this.item.price),
+            title: this.itemName,
+            price: this.itemPrice,
             categoryId: this.itemCategory,
             images: this.images.map(i => ({
               ...i,
