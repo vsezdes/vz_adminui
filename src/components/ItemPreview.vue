@@ -1,10 +1,11 @@
 <template>
   <v-card
+    v-if="data"
     class="mx-auto mb-7"
     max-width="344"
   >
     <v-img
-      v-if="!!data.thumb"
+      v-if="!!data && data.thumb"
       :style="{ border: '1px solid #EEE' }"
       :src="data.thumb"
       height="200px"

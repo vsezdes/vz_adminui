@@ -2,7 +2,7 @@
   <FormWrapper
     title="Добавить товар"
     :show="show"
-    @close="$emit('close')"
+    @close="onClose"
     icon="mdi-shopping-outline"
   >
     <v-stepper class="form-stepper" v-model="step" vertical non-linear>
@@ -130,6 +130,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    item: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -144,6 +148,7 @@ export default {
       itemName: '',
       itemPrice: '',
       images: [],
+      selectedCats: [],
       flatCats: [],
     };
   },
@@ -185,16 +190,24 @@ export default {
       const cat = this.getCatById(this.categoryThird);
       return cat && cat.children && cat.children.length > 0;
     },
-    item() {
-      return {
-        title: this.itemName,
-        price: this.itemPrice,
-        thumb: this.images.length > 0 && this.images[0].url,
-        images: this.images,
-      }
-    }
+    // item() {
+    //   return {
+    //     title: this.itemName,
+    //     price: this.itemPrice,
+    //     thumb: this.images.length > 0 && this.images[0].url,
+    //     images: this.images,
+    //   }
+    // }
   },
   watch: {
+    item(val) {
+      if (!val) return;
+      console.warn(val, this.images)
+      this.itemName = val.title;
+      this.itemPrice = val.price;
+      this.images = val.images;
+      this.fillCategoriesByLast(val.categoryId);
+    },
     categories(val, oldVal) {
       if (val && !oldVal) this.flattenCategories();
     },
@@ -219,6 +232,21 @@ export default {
   },
   methods: {
     ...mapActions(['alert']),
+    fillCategoriesByLast(id) {
+      const cats = [];
+      let cat = null;
+      for (let i = 0; i < 4; i++) {
+        cat = this.getCatById((cat && cat.parentId) || id);
+        if (cat) cats.unshift(cat);
+      }
+      console.warn('cvats', cats);
+    },
+    onClose() {
+      this.$emit('close');
+      this.step = 1;
+      this.categoryFirst = null;
+
+    },
     getCatById(catId) {
       if (!catId) return;
       return this.flatCats && this.flatCats.find(c => c.id === catId);

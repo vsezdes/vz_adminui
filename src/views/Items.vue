@@ -58,8 +58,11 @@ export default {
       this.activeItem = null;
       this.showForm = false;
     },
+    getItemById(id) {
+      return this.lastItems && this.lastItems.find(i => i.id === id)
+    },
     onEditItem(itemId) {
-      this.activeItem = itemId;
+      this.activeItem = this.getItemById(itemId);
       this.showForm = true;
     }
   },

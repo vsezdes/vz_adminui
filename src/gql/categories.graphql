@@ -7,21 +7,25 @@ export default gql`
       title
       icon
       slug
+      parentId
       children {
         id
         title
         icon
         slug
+        parentId
         children {
           id
           title
           icon
           slug
+          parentId
           children {
             id
             title
             icon
             slug
+            parentId
           }
         }
       }
