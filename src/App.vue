@@ -1,4 +1,3 @@
-<script></script>
 <template>
   <div id="app">
     <PreLoader v-if="$store.state.loader"/>

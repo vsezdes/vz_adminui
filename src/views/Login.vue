@@ -25,9 +25,8 @@
             >
               <v-spacer></v-spacer>
               <v-spacer></v-spacer>
-              <v-toolbar-title>Вход</v-toolbar-title>
+              <v-toolbar-title style="color: white">Вход</v-toolbar-title>
               <v-spacer></v-spacer>
-
               <router-link style="color: white;font-weight: bold" to="Register">Регистрация</router-link>
 
             </v-toolbar>
@@ -55,7 +54,7 @@
             <v-card-actions>
               <v-layout row wrap>
                 <v-spacer></v-spacer>
-                <v-btn style="color: white" @click="loginQuery" color="#42a7f5">Войти</v-btn>
+                <v-btn style="color: white" @click="loginQuery" color="auth_forms_button">Войти</v-btn>
                 <v-spacer></v-spacer>
 
               </v-layout>

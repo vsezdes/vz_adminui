@@ -15,7 +15,7 @@
         >
           <v-card class="elevation-12">
             <v-toolbar
-              :color="$store.state.custom_colors.auth_forms"
+              color="auth_forms_header"
               dark
               flat
             >
@@ -83,7 +83,7 @@
             <v-card-actions>
               <v-layout row wrap>
                 <v-spacer></v-spacer>
-                <v-btn style="color:white" color="#42a7f5" @click="register"
+                <v-btn style="color:white" color="auth_forms_button" @click="register"
 
                 >Зарегистрироваться
                 </v-btn>

@@ -1,11 +1,10 @@
 <template>
   <BaseTemplate>
-    <v-row justify-start>
-      <v-col md="10" lg="10" offset-md="1">
+    <v-layout justify-center wrap>
+      <v-flex md10 sm10 xs10>
         <v-layout wrap justify-space-between>
-          <v-flex md3 sm10>
+          <v-flex md3 sm10 xs12>
             <v-select
-              @change="CleanupOrders()"
               :items="status_titles"
               item-text="title"
               item-value="number"
@@ -18,9 +17,8 @@
           </v-flex>
           <v-flex md3 sm10>
             <v-select
-              @change="CleanupOrders()"
               v-model="selected_user"
-              :items="all_users"
+              :items="allUsers"
               item-text="fullName"
               item-value="id"
               label="Select"
@@ -32,15 +30,14 @@
             </v-select>
           </v-flex>
         </v-layout>
-      </v-col>
-      <v-col md="10" lg="10" offset-md="1">
+      </v-flex>
+      <v-flex md sm10>
         <v-data-table
           :headers="order_headers"
-          :items="CleanupOrders()"
+          :items="filteredOrders"
           :items-per-page="999999"
           item-key="id"
           hide-default-footer
-
           :single-expand="expand"
           :expanded.sync="expanded"
           class="elevation-1"
@@ -72,8 +69,8 @@
             </v-chip>
           </template>
         </v-data-table>
-      </v-col>
-    </v-row>
+      </v-flex>
+    </v-layout>
   </BaseTemplate>
 </template>
 
@@ -87,7 +84,7 @@ export default {
       expanded: [],
       expand: false,
       selected_user: null,
-      selected_status: null,
+      selected_status: 'all',
       status_titles: [
         {title: 'все', number: 'all', color: null},
         {title: 'новый', number: 1, color: 'blue darken-1'},
@@ -98,10 +95,10 @@ export default {
         {title: 'возврат', number: -2, color: 'orange accent-4'},
       ],
       order_headers: [
-        {text: 'статус', align: 'left', value: 'status'},
+        {text: 'статус', value: 'status'},
         {text: 'товары', value: 'items'},
         {text: 'Пользователь', value: 'user.fullName'},
-        {text: 'описание', value: 'details', width: '23px'},
+        {text: 'описание', value: 'details', width: '255px'},
         {text: 'сумма', value: 'total'},
         {text: 'дата', value: 'orderDate'},
         {text: '', value: 'data-table-expand'},
@@ -132,7 +129,8 @@ export default {
           firstName: 'Mike',
           lastName: 'Doe',
         }
-      }, {
+      },
+      {
         id: 2,
         orderDate: 'some date',
         status: -1, // статусы описаны ниже
@@ -155,14 +153,12 @@ export default {
     BaseTemplate
   },
   beforeMount() {
-    this.selected_status = this.status_titles[0].number
-    this.selected_user = this.all_users[0]
+    this.selected_user = this.allUsers[0]
   },
   computed: {
     allUsers() {
       let all_users = []
       let i = 0;
-
       for (i = 0; i < this.fakedata.length; i++) {
         let order = this.fakedata[i];
         if (!all_users.includes(order.user)) {
