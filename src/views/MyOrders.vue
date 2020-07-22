@@ -173,7 +173,7 @@ export default {
 
       return this.fakedata.filter((obj) => {
         if (user != null) {
-          return obj.user.id === user.id && obj.status === this.selected_status || this.selected_status === 'all'
+          return obj.user.id === user.id && (obj.status === this.selected_status || this.selected_status === 'all')
         }
       })
     },
