@@ -18,12 +18,6 @@
       :disabled="images.length > 4"
       class="add-img mr-3"
       @click="cloudinaryUploader"><v-icon>mdi-cloud-upload</v-icon></v-btn>
-    <v-btn
-      :disabled="images.length === 0"
-      fab outlined small absolute color="primary"
-      class="next-btn mr-3"
-      @click="$emit('next', true)"
-    ><v-icon>mdi-arrow-right</v-icon></v-btn>
   </div>
 </template>
 

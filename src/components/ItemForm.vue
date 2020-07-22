@@ -91,16 +91,21 @@
           v-on:update:images="images.push($event)"
           v-on:delete:images="images = images.filter(i => i.asset_id !== $event)"
           :show="step === 3"
-          @next="step = 4"
         />
       </v-stepper-content>
-
-      <v-stepper-step step="4">Сохранить</v-stepper-step>
-      <v-stepper-content step="4">
-        <ItemPreview :data="itemPreview" />
-        <v-btn color="primary" @click="save" :loading="loading">Записать</v-btn>
-      </v-stepper-content>
     </v-stepper>
+      <v-btn
+        class="mt-4"
+        color="green"
+        absolute
+        right
+        outlined
+        :disabled="!(itemName && itemPrice && images.length > 0)"
+        @click="save"
+        :loading="loading"
+      >
+        <v-icon>mdi-content-save-outline</v-icon>
+        Сохранить</v-btn>
   </FormWrapper>
 </template>
 
@@ -111,14 +116,13 @@ import CATEGORIES_QUERY from '@/gql/categories.graphql';
 import { LAST_ITEMS } from '@/gql/items.graphql';
 import VImageInput from 'vuetify-image-input';
 import ImageUploader from '@/components/ImageUploader.vue';
-import ItemPreview from '@/components/ItemPreview.vue';
+// import ItemPreview from '@/components/ItemPreview.vue';
 import FormWrapper from '@/components/FormWrapper.vue';
 
 
 export default {
   components: {
     ImageUploader,
-    ItemPreview,
     FormWrapper,
     [VImageInput.name]: VImageInput,
   },
@@ -205,7 +209,7 @@ export default {
   watch: {
     item(val) {
       if (!val) return;
-      console.warn(val, this.images)
+      console.warn('item:', val, this.images)
       this.id = val.id;
       this.itemName = val.title;
       this.itemPrice = val.price;
@@ -298,7 +302,9 @@ export default {
             id
             title
             price
+            description
             category
+            categoryId
             images {
               asset_id
               url
@@ -310,7 +316,7 @@ export default {
           id: this.id,
           data: {
             title: this.itemName,
-            price: this.itemPrice,
+            price: parseFloat(this.itemPrice),
             categoryId: this.itemCategory,
             images: this.images.map(i => ({
               ...i,
@@ -325,8 +331,18 @@ export default {
         update: (store, { data: { saveItem }}) => {
           const data = store.readQuery({ query: LAST_ITEMS });
           console.warn(data, saveItem);
-          data.lastItems.unshift(saveItem);
-          store.writeQuery({ query: LAST_ITEMS, data })
+          const item = data.lastItems.find(i => i.id === this.id);
+          let lastItems = null;
+          if (item) {
+            lastItems = [...data.lastItems.map(i => {
+              if (i.id === this.id) return saveItem;
+              return i;
+            })];
+          } else {
+            lastItems = [...data.lastItems];
+            lastItems.unshift(saveItem);
+          }
+          store.writeQuery({ query: LAST_ITEMS, data: { lastItems } })
         },
         // Optimistic UI
         // Will be treated as a 'fake' result as soon as the request is made
@@ -347,10 +363,10 @@ export default {
         });
         console.log(data)
         this.loading = false;
-        this.itemName = null;
-        this.itemPrice = null;
+        this.itemName = '';
+        this.itemPrice = '';
         this.images = [];
-        this.step = 2;
+        this.$emit('close');
       }).catch((error) => {
         this.alert({
           type: 'error',

@@ -14,7 +14,7 @@
           color="orange"
           text-color="white"
         >
-          150 000 <small>сом</small> {{ price }}
+          {{ price || 0}} <small>сом</small>
         </v-chip>
     </v-img>
     <v-chip
@@ -23,7 +23,7 @@
       color="orange"
       text-color="white"
     >
-      150 000 <small>сом</small> {{ price }}
+      {{ price || 0 }} <small>сом</small>
     </v-chip>
 
     <v-card-title>{{ title }}</v-card-title>
@@ -86,7 +86,7 @@ export default {
   }),
   computed: {
     thumb() {
-      return this.images && this.images.length > 0 && this.images[0].url;
+      return this.images && this.images[0] && this.images[0].url;
     },
   },
   methods: {
