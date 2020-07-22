@@ -1,23 +1,23 @@
 <template>
   <v-app id="inspire">
     <v-container
-        class="fill-height"
-        fluid
+      class="fill-height"
+      fluid
     >
       <v-row
-          align="center"
-          justify="center"
+        align="center"
+        justify="center"
       >
         <v-col
-            cols="12"
-            sm="8"
-            md="4"
+          cols="12"
+          sm="8"
+          md="4"
         >
           <v-card class="elevation-12">
             <v-toolbar
-                color="#42a7f5"
-                dark
-                flat
+              color="auth_forms_header"
+              dark
+              flat
             >
               <v-spacer></v-spacer>
               <v-spacer></v-spacer>
@@ -28,64 +28,65 @@
             <v-card-text>
               <v-form>
                 <ImageUploader
-                    :images="image"
-                    v-on:update:images="image.push($event);imageChange()"
-                    v-on:delete:images="image = []"
-                    v-model="image"
-                    :show="true"
+                  :images="image"
+                  v-on:update:images="image.push($event);imageChange()"
+                  v-on:delete:images="image = []"
+                  v-model="image"
+                  :show="true"
                 />
                 <v-img v-if="image.length>0" style="min-height: 200px;min-width: 200px" :src="image[0].url"/>
                 <v-text-field
-                    label="* Имя"
-                    name="login"
-                    prepend-icon="mdi-account"
-                    type="text"
-                    v-model="firstname"
-                    :rules="nameRules"
+                  label="* Имя"
+                  name="login"
+                  prepend-icon="mdi-account"
+                  type="text"
+                  v-model="firstname"
+                  :rules="nameRules"
                 ></v-text-field>
                 <v-text-field
-                    label="* Фамилия"
-                    name="surname"
-                    prepend-icon="mdi-account"
-                    type="text"
-                    v-model="surname"
-                    :rules="nameRules"
+                  label="* Фамилия"
+                  name="surname"
+                  prepend-icon="mdi-account"
+                  type="text"
+                  v-model="surname"
+                  :rules="nameRules"
                 ></v-text-field>
                 <v-text-field
-                    label="* Телефон"
-                    name="phone"
-                    prepend-icon="mdi-phone"
-                    v-mask="'+996(###)###-###'"
-                    placeholder="+996(999)123-456"
-                    :rules="phoneRules"
-                    v-model="phone"
-                    type="text"
+                  label="* Телефон"
+                  name="phone"
+                  prepend-icon="mdi-phone"
+                  v-mask="'+996(###)###-###'"
+                  placeholder="+996(999)123-456"
+                  :rules="phoneRules"
+                  v-model="phone"
+                  type="text"
                 />
                 <v-text-field
-                    label="* Почта"
-                    name="email"
-                    prepend-icon="mdi-mail"
-                    v-model="email"
-                    type="text"
-                    :rules='emailRules'
+                  label="* Почта"
+                  name="email"
+                  prepend-icon="mdi-mail"
+                  v-model="email"
+                  type="text"
+                  :rules='emailRules'
                 ></v-text-field>
                 <v-text-field
-                    id="password"
-                    label="* Пароль"
-                    name="password"
-                    prepend-icon="mdi-lock"
-                    type="password"
-                    v-model="password"
-                    :rules="passRules"
+                  id="password"
+                  label="* Пароль"
+                  name="password"
+                  prepend-icon="mdi-lock"
+                  type="password"
+                  v-model="password"
+                  :rules="passRules"
                 ></v-text-field>
               </v-form>
             </v-card-text>
             <v-card-actions>
               <v-layout row wrap>
                 <v-spacer></v-spacer>
-                <v-btn style="color:white" color="#42a7f5" @click="register"
+                <v-btn style="color:white" color="auth_forms_button" @click="register"
 
-                >Зарегистрироваться</v-btn>
+                >Зарегистрироваться
+                </v-btn>
                 <v-spacer></v-spacer>
 
               </v-layout>
@@ -118,12 +119,12 @@ export default {
   data() {
     return {
       loading: false,
-      valid:false,
-      firstname:'',
-      surname:'',
-      phone:'',
-      email:'',
-      password:'',
+      valid: false,
+      firstname: '',
+      surname: '',
+      phone: '',
+      email: '',
+      password: '',
       image: [],
       nameRules: [
         v => !!v || '*Это поле обязательно',
@@ -133,25 +134,25 @@ export default {
         v => !!v || '*Это поле обязательно',
         v => /.+@.+\..+/.test(v) || 'Указанная вами почта имеет неверный формат',
       ],
-      passRules:[
+      passRules: [
         v => !!v || '*Это поле обязательно',
         v => (v && v.length >= 8) || 'Пароль должен быть длиннее 8-ми символов',
       ],
-      phoneRules:[
-        v => (v && v.length >= 1) || '*Это поле обязательно',
-        v => (v && v.length > 9) || 'Неверный формат номера',
+      phoneRules: [
+        v => (v && v.length <= 1) || '*Это поле обязательно',
+        v => (v && v.length < 17) || 'Неверный формат номера',
       ]
     };
   },
   methods: {
-    validate () {
+    validate() {
       this.$refs.form.validate()
     },
-    imageChange(){
+    imageChange() {
       console.log(this.image)
     },
     register() {
-      this.image=this.image[0]
+      this.image = this.image[0]
       this.$apollo.mutate({
         // Query
         mutation: gql`query register { register(

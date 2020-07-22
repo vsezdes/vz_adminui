@@ -1,17 +1,17 @@
 <template>
   <v-app id="inspire">
     <v-container
-        class="fill-height"
-        fluid
+      class="fill-height"
+      fluid
     >
       <v-row
-          align="center"
-          justify="center"
+        align="center"
+        justify="center"
       >
         <v-col
-            cols="12"
-            sm="8"
-            md="4"
+          cols="12"
+          sm="8"
+          md="4"
         >
           <v-card class="elevation-12">
             <v-progress-linear
@@ -20,43 +20,41 @@
               color="yellow darken-2"
             ></v-progress-linear>
             <v-toolbar
-                color="#42a7f5"
-                dark
-                flat
+              color="auth_forms_header"
+              flat
             >
               <v-spacer></v-spacer>
               <v-spacer></v-spacer>
-              <v-toolbar-title>Вход</v-toolbar-title>
+              <v-toolbar-title style="color: white">Вход</v-toolbar-title>
               <v-spacer></v-spacer>
-
               <router-link style="color: white;font-weight: bold" to="Register">Регистрация</router-link>
 
             </v-toolbar>
             <v-card-text>
               <v-form>
                 <v-text-field
-                    label="* Почта"
-                    name="email"
-                    prepend-icon="mdi-mail"
-                    v-model="email"
-                    type="text"
-                    :rules='emailRules'
+                  label="* Почта"
+                  name="email"
+                  prepend-icon="mdi-mail"
+                  v-model="email"
+                  type="text"
+                  :rules='emailRules'
                 ></v-text-field>
                 <v-text-field
-                    id="password"
-                    label="Пароль"
-                    name="password"
-                    prepend-icon="mdi-lock"
-                    type="password"
-                    v-model="password"
-                    :rules="passRules"
+                  id="password"
+                  label="Пароль"
+                  name="password"
+                  prepend-icon="mdi-lock"
+                  type="password"
+                  v-model="password"
+                  :rules="passRules"
                 ></v-text-field>
               </v-form>
             </v-card-text>
             <v-card-actions>
               <v-layout row wrap>
                 <v-spacer></v-spacer>
-                <v-btn style="color: white" @click="loginQuery" color="#42a7f5">Войти</v-btn>
+                <v-btn style="color: white" @click="loginQuery" color="auth_forms_button">Войти</v-btn>
                 <v-spacer></v-spacer>
 
               </v-layout>
@@ -71,7 +69,7 @@
 <script>
 // import gql from 'graphql-tag';
 import { mapActions } from 'vuex';
-import {mask} from 'vue-the-mask'
+import { mask } from 'vue-the-mask'
 import gql from "graphql-tag";
 
 export default {
@@ -79,14 +77,12 @@ export default {
   directives: {
     mask
   },
-  components: {
-  },
   data() {
     return {
-      email:'',
-      password:'',
+      email: '',
+      password: '',
       loading: false,
-      passRules:[
+      passRules: [
         v => !!v || '*Это поле обязательно',
       ],
       emailRules: [
@@ -97,7 +93,7 @@ export default {
   },
   methods: {
     ...mapActions(['login', 'alert']),
-    validate () {
+    validate() {
       this.$refs.form.validate()
     },
     loginQuery() {
