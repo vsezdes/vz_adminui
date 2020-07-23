@@ -16,13 +16,12 @@
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-sheet color="white">
+      <v-sheet color="white" class="no-radius">
         <v-layout fluid>
           <v-row no-gutters>
             <v-col :cols="12" :lg="9">
                 <v-carousel
-                  cycle
-                  tile
+                  continuous
                   height="calc(100vh - 65px)"
                   width="calc(100vw * 3/4)"
                   show-arrows-on-hover
@@ -35,6 +34,7 @@
                     <v-sheet
                       color="#F5F5F5"
                       height="100%"
+                      class="no-radius"
                     >
                       <v-row
                         class="fill-height"
@@ -117,6 +117,9 @@ export default {
 }
 </script>
 <style lang="scss">
+.no-radius {
+  border-radius: 0 !important;
+}
 .item-details {
   .price {
     font-size: 40px;
