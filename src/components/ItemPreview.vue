@@ -73,13 +73,8 @@
                     {{ item.title }}
                   </strong>
                 </v-card-subtitle>
-                <v-card-text>
-                  Lorem ipsum dolor sit amet...
-                  Lorem ipsum dolor sit amet...
-                  Lorem ipsum dolor sit amet...
-                  Lorem ipsum dolor sit amet...
-                  Lorem ipsum dolor sit amet...
-                  Lorem ipsum dolor sit amet...
+                <v-card-text class="description">
+                  {{ item.description }}
                 </v-card-text>
               </v-card>
             </v-col>
@@ -123,6 +118,9 @@ export default {
 .item-details {
   .price {
     font-size: 40px;
+  }
+  .description {
+    white-space: pre-line;
   }
 }
 
