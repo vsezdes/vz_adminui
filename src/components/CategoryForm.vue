@@ -76,6 +76,7 @@
         outlined
         @click="validate"
         :loading="loading"
+        :disabled="loading"
       >
         <v-icon>mdi-content-save-outline</v-icon>
         Сохранить</v-btn>
@@ -249,8 +250,6 @@ export default {
       });
     },
     submitForm() {
-
-      console.warn(this.valid, this.id, this);
       if (!this.valid) return false;
       this.loading = true;
       this.$apollo.mutate({
@@ -261,7 +260,7 @@ export default {
             title
             slug
             icon
-            parent
+            parentId
             children {
               id
             }

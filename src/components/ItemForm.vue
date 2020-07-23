@@ -112,7 +112,7 @@
         absolute
         right
         outlined
-        :disabled="!(itemName && itemPrice && images.length > 0)"
+        :disabled="!(itemName && itemPrice && images.length > 0) || loading"
         @click="save"
         :loading="loading"
       >
@@ -331,6 +331,7 @@ export default {
       }));
     },
     save() {
+      this.loading = true;
       this.$apollo.mutate({
         // Query
         mutation: gql`mutation saveItem($id: Int, $data: ItemInput!) {
