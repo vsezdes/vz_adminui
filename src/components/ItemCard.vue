@@ -3,11 +3,14 @@
     :loading="loading"
     class="item-card mx-auto my-12"
     max-width="374"
+    min-height="300"
+    hover
+    flat
   >
     <v-img
       v-if="!!thumb"
       :src="thumb"
-      contain
+      height="200"
     >
         <v-chip
           class="ma-2 price"
@@ -16,6 +19,18 @@
         >
           {{ price || 0}} <small>сом</small>
         </v-chip>
+        <v-btn
+          icon
+          outlined
+          absolute
+          right
+          bottom
+          class="expand"
+        >
+          <v-avatar color="white">
+            <v-icon>mdi-arrow-expand-all</v-icon>
+          </v-avatar>
+        </v-btn>
     </v-img>
     <v-chip
       v-else
@@ -26,7 +41,17 @@
       {{ price || 0 }} <small>сом</small>
     </v-chip>
 
-    <v-card-title>{{ title }}</v-card-title>
+    <v-card-title>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <h2
+            v-bind="attrs"
+            v-on="on"
+          >{{ title }}</h2>
+        </template>
+        <span>{{ title }}</span>
+      </v-tooltip>
+    </v-card-title>
     <div class="item-controls">
       <v-btn icon @click="$emit('on-edit', id)">
         <v-icon>mdi-lead-pencil</v-icon>
@@ -57,11 +82,12 @@
       >
       </v-row>
 
-      <v-chip small >{{ category }}</v-chip>
+      <v-chip small>{{ category }}</v-chip>
       <div>{{ description }}</div>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>
+
 
     <!-- <v-card-actions>
       <v-btn
@@ -130,7 +156,12 @@ export default {
 
 <style lang="scss">
 .item-card {
+  &.v-sheet {
+    margin-top: 44px !important;
+    margin-bottom: 24px !important;
+  }
   .item-controls {
+    display: none;
     position: absolute;
     right: -2px;
     top: 5px;
@@ -138,6 +169,26 @@ export default {
     border-radius: 20px 0 0 20px;
     padding: 0px 6px;
     box-shadow: 1px 1px 1px #CCC;
+  }
+  &:hover {
+    .item-controls {
+      display: block;
+    }
+  }
+  .v-image {
+    .v-avatar {
+      border: 1px solid #EEE !important;
+      &:hover {
+        border: 1px solid #333 !important;
+      }
+    }
+    .v-btn.expand {
+      color: #CCC;
+      &:hover {
+        color: #333;
+        background: #EEE;
+      }
+    }
   }
   .v-chip.price {
     font-size: 20px;
@@ -150,6 +201,32 @@ export default {
   }
   .v-card__title {
     padding-bottom: 0px;
+    min-height: 56px;
+  }
+  .v-card__title h2{
+    overflow: hidden;
+    position: relative;
+    line-height: 1.2em;
+    max-height: 2.3em;
+    font-size: 0.85em;
+    text-align: justify;
+    margin-right: -1em;
+    padding-right: 1em;
+  }
+  .v-card__title h2:before {
+    content: '...';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+  .v-card__title h2:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    margin-top: 0.2em;
+    background: white;
   }
 }
 
