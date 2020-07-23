@@ -26,6 +26,7 @@
           right
           bottom
           class="expand"
+          @click="$emit('on-expand', id)"
         >
           <v-avatar color="white">
             <v-icon>mdi-arrow-expand-all</v-icon>
