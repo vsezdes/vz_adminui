@@ -27,14 +27,6 @@
             </v-toolbar>
             <v-card-text>
               <v-form>
-                <ImageUploader
-                  :images="image"
-                  v-on:update:images="image.push($event);imageChange()"
-                  v-on:delete:images="image = []"
-                  v-model="image"
-                  :show="true"
-                />
-                <v-img v-if="image.length>0" style="min-height: 200px;min-width: 200px" :src="image[0].url"/>
                 <v-text-field
                   label="* Имя"
                   name="login"
@@ -101,20 +93,13 @@
 <script>
 // import gql from 'graphql-tag';
 
-import VImageInput from 'vuetify-image-input';
-import ImageUploader from '@/components/ImageUploader.vue';
-// import TheMask from 'vue-the-mask'
-import {mask} from 'vue-the-mask'
+import { mask } from 'vue-the-mask'
 import gql from "graphql-tag";
 
 export default {
   name: "Register",
   directives: {
     mask
-  },
-  components: {
-    ImageUploader,
-    [VImageInput.name]: VImageInput,
   },
   data() {
     return {
@@ -125,7 +110,6 @@ export default {
       phone: '',
       email: '',
       password: '',
-      image: [],
       nameRules: [
         v => !!v || '*Это поле обязательно',
         v => (v && v.length > 3) || 'Введите не менее 3-х символов',

@@ -61,6 +61,14 @@ const routes = [
     }
   },
   {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import(/* webpackChunkName: "orders" */ '../views/Profile.vue'),
+    meta: {
+      protected: true,
+    }
+  },
+  {
     path: '*',
     name: 'PageNotFound',
     component: () => import(/* webpackChunkName: "orders" */ '../views/PageNotFound.vue'),
