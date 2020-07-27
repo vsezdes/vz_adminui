@@ -1,19 +1,17 @@
 <template>
   <BaseTemplate>
     <v-layout wrap style="margin-top: 50px" justify-center>
-      {{ drawer }}
       <v-flex offset-0  offset-xs-3 xs6 md2 lg2 class="text-center">
         <v-avatar rounded size="150px" color="base_header" >
           <v-img v-if="avatar!=='mdi-account'" :src="avatar"/>
-          <v-icon color="grey darken-3" v-else size="140px"> {{ avatar }}</v-icon>
+          <v-icon color="grey darken-3" v-else size="140px"> {{ user.avatar }}</v-icon>
         </v-avatar>
         <v-btn
           style="width:100% ;margin: 20px 0"
           color="info"
           dark
-          @click="editablle = true"
-          :disabled="editablle"
-          v-on="on"
+          @click="editable = true"
+          :disabled="editable"
         >
           Изменить профиль
         </v-btn>
@@ -54,7 +52,7 @@
                   <v-btn color="error"  @click="dialog = false">Отмена</v-btn>
                 </v-flex>
                 <v-flex md4 lg4>
-                  <v-btn color="success"  @click="dialog = false">Сохранить</v-btn>
+                  <v-btn color="success"  @click="dialog = false;console.log(user)">Сохранить</v-btn>
                 </v-flex>
               </v-layout>
             </v-card-actions>
@@ -68,14 +66,15 @@
               <v-layout wrap justify-space-around>
                 <v-flex xs11 md5 lg5>
                   <v-text-field md5 lg5
-                                :disabled="!editablle"
+                                :disabled="!editable"
                                 label="* Имя"
                                 name="login"
                                 prepend-icon="mdi-account"
                                 type="text"
-                                v-model="firstname"
-                                :rules="nameRules"
+                                v-model="user.firstName"
                   ></v-text-field>
+<!--                                :rules="nameRules"-->
+<!--                  ></v-text-field>-->
                 </v-flex>
 
                 <v-flex xs11 md5 lg5>
@@ -84,9 +83,11 @@
                     name="surname"
                     prepend-icon="mdi-account"
                     type="text"
-                    v-model="surname"
-                    :rules="nameRules"
+                    v-model="user.lastName"
                   ></v-text-field>
+
+<!--                    :rules="nameRules"-->
+<!--                  ></v-text-field>-->
                 </v-flex>
 
                 <v-flex xs11 md5 lg5>
@@ -96,14 +97,16 @@
                     prepend-icon="mdi-phone"
                     v-mask="'+996(###)###-###'"
                     placeholder="+996(999)123-456"
-                    :rules="phoneRules"
-                    v-model="phone"
+                    v-model="user.phone"
                     type="text"
                   />
+                  {{ user }}
+<!--                  :rules="phoneRules"-->
+<!--                  />-->
                 </v-flex>
                 <v-flex xs11 md5 lg5 content="center" class="justify-center" >
                   <span style="position:absolute;">Пол:</span>
-                  <v-radio-group v-model="gender" row class="justify-center" >
+                  <v-radio-group v-model="user.gender" row class="justify-center" >
                     <v-radio
                       label="Ж"
                       color="blue"
@@ -121,7 +124,7 @@
                     label="* Почта"
                     name="mail"
                     prepend-icon="mdi-mail"
-                    v-model="mail"
+                    v-model="user.email"
                   ></v-text-field>
                 </v-flex>
 
@@ -131,22 +134,21 @@
                     label="Адрес"
                     name="address"
                     prepend-icon="mdi-map"
-                    v-model="address"
+                    v-model="user.address"
                   ></v-text-field>
                 </v-flex>
+
                 <v-flex xs12 md11 lg11>
                   <v-layout justify-space-between>
                     <v-flex lg3 md3 >
-                      <v-btn :disabled="!editablle" color="error" @click="editablle=false;firstname=''"> Отмена</v-btn>
+                      <v-btn v-show="editable" color="error" @click="editable = false;user=Object.assign({},$store.state.user)
+"> Отмена</v-btn>
                     </v-flex>
                     <v-flex lg3 md3>
-                      <v-btn :disabled="!editablle" color="success"> Сохранить</v-btn>
+                      <v-btn v-show="editable" color="success" @click="editable=false;editUser()"> Сохран</v-btn>
                     </v-flex>
                   </v-layout>
                 </v-flex>
-
-
-
               </v-layout>
             </v-form>
           </v-card-text>
@@ -159,6 +161,8 @@
 <script>
 import BaseTemplate from "@/views/BaseTemplate.vue";
 import { mask } from 'vue-the-mask'
+import {mapActions} from "vuex";
+import gql from "graphql-tag";
 
 
 export default {
@@ -172,23 +176,60 @@ export default {
   props:['drawer'],
   data() {
     return {
-      editablle:false,
+      user:Object.assign({}, this.$store.state.user),
+      editable:false,
       dialog:false,
       avatar: 'mdi-account',
       phone: '',
-      mail:'',
       birth_date: '',
-      address: '',
       gender: '',
-      firstname: '',
-      surname: '',
       old_password:'',
       new_password: '',
       new_password2: '',
     }
   },
+  methods:{
+    ...mapActions(['login', 'alert']),
+    validate() {
+      this.$refs.form.validate()
+    },
+    editUser() {
+      this.loading = true;
+      this.$apollo.mutate({
+        // Query
+        mutation : gql`mutation saveUser($id: Int!, $data: String!) {
+            saveUser(id:$id, data:$data) {
+              phone
+              email
+              firstName
+              lastName
+              password
+              items
+            }
+          }`,
+        variables: {
+          id: this.user.id,
+          data: this.user
+        }
+        }).then(data => {
+          console.info('ok')
+        this.loading = false;
+        if (data.data.authUser) console.log(this.$store.state.user,);
+        // TODO: Remove this when login starts working
+        // else this.login(this.user).then(() => this.$router.push('/'))
+      }).catch(error => {
+        console.info(error)
+        this.loading = false;
+        this.alert({
+          type: 'error',
+          message: error,
+        });
+      });
+    }
+  },
   created() {
-    console.info(this.drawer)
+    // console.info(this.drawer)
+    console.log(this.user)
   }
 }
 </script>

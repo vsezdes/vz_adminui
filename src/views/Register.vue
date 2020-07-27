@@ -132,11 +132,7 @@ export default {
     validate() {
       this.$refs.form.validate()
     },
-    imageChange() {
-      console.log(this.image)
-    },
     register() {
-      this.image = this.image[0]
       this.$apollo.mutate({
         // Query
         mutation: gql`query register { register(
@@ -151,9 +147,6 @@ export default {
       })
     },
   },
-  created() {
-    console.warn(this)
-  }
 }
 </script>
 
