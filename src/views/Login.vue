@@ -121,15 +121,15 @@ export default {
         if (data.data.authUser) this.login(data.data.authUser);
         // TODO: Remove this when login starts working
         else this.login({
-          id: 0,
+          // id: 0,
           email:'some_mail@mail.com',
           phone:'123123',
           firstName: 'Test',
           lastName: 'User',
-          address:"советская 1",
-          gender:'female',
-          token: 'DFGH$#%WHWS#$UYHDFTERH$#3wh45$',
-          avatar: null,
+          // address:"советская 1",
+          // gender:'female',
+          // token: 'DFGH$#%WHWS#$UYHDFTERH$#3wh45$',
+          // avatar: null,
         }).then(() => this.$router.push('/'))
       }).catch(error => {
         this.loading = false;

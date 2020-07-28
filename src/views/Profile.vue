@@ -141,8 +141,7 @@
                 <v-flex xs12 md11 lg11>
                   <v-layout justify-space-between>
                     <v-flex lg3 md3 >
-                      <v-btn v-show="editable" color="error" @click="editable = false;user=Object.assign({},$store.state.user)
-"> Отмена</v-btn>
+                      <v-btn v-show="editable" color="error" @click="editable = false;mapState"> Отмена</v-btn>
                     </v-flex>
                     <v-flex lg3 md3>
                       <v-btn v-show="editable" color="success" @click="editable=false;editUser()"> Сохран</v-btn>
@@ -161,8 +160,9 @@
 <script>
 import BaseTemplate from "@/views/BaseTemplate.vue";
 import { mask } from 'vue-the-mask'
-import {mapActions} from "vuex";
 import gql from "graphql-tag";
+import { mapState } from 'vuex';
+// import store from "@/store";
 
 
 export default {
@@ -176,7 +176,7 @@ export default {
   props:['drawer'],
   data() {
     return {
-      user:Object.assign({}, this.$store.state.user),
+      id:null,
       editable:false,
       dialog:false,
       avatar: 'mdi-account',
@@ -188,33 +188,37 @@ export default {
       new_password2: '',
     }
   },
+  computed: {
+    ...mapState(['user'])
+  },
   methods:{
-    ...mapActions(['login', 'alert']),
     validate() {
       this.$refs.form.validate()
     },
     editUser() {
+      console.log(this.$store.state.user)
+      this['id','token'] = Object.create(this.user)['id','token']
+      delete this.user.token
+      delete this.user.id
       this.loading = true;
       this.$apollo.mutate({
         // Query
-        mutation : gql`mutation saveUser($id: Int!, $data: String!) {
-            saveUser(id:$id, data:$data) {
+        mutation : gql`mutation saveUser($id: Int!,$data: UserInput!) {
+            saveUser(id:$id, data:$data,) {
               phone
               email
               firstName
               lastName
-              password
-              items
             }
           }`,
         variables: {
-          id: this.user.id,
+          id: 13,
           data: this.user
         }
         }).then(data => {
           console.info('ok')
         this.loading = false;
-        if (data.data.authUser) console.log(this.$store.state.user,);
+        if (data.data.authUser) console.log(this.$store.state.user);
         // TODO: Remove this when login starts working
         // else this.login(this.user).then(() => this.$router.push('/'))
       }).catch(error => {

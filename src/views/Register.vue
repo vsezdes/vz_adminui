@@ -139,7 +139,7 @@ export default {
                 data: {
                  lastName: surname,
                  firstName: firstname,
-                 phone: phonr,
+                 phone: phone,
                  email: email,
                  pass:password,
                  avatar:image})
