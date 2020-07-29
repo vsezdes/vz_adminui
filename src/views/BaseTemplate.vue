@@ -150,7 +150,7 @@ export default {
   top: 1px;
 }
 
-.v-avatar .v-image {
+.logo .v-avatar .v-image {
   filter: grayscale(100%);
 }
 </style>

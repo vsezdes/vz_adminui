@@ -397,7 +397,7 @@ export default {
         // Result
         this.alert({
           type: 'success',
-          message: 'Товар добавлен',
+          message: this.id ? 'Товар изменен' : 'Товар добавлен',
         });
         console.log(data)
         this.loading = false;
