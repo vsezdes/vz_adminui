@@ -1,6 +1,6 @@
 <template>
   <BaseTemplate>
-    <v-layout wrap style="margin-top: 50px" justify-center>
+    <v-layout wrap style="margin-top: 50px" justify-center :disabled="!editable">
       <v-flex offset-0  offset-xs-3 xs6 md2 lg2 class="text-center">
         <v-avatar rounded size="150px" color="base_header" >
           <v-img v-if="avatar!=='mdi-account'" :src="avatar"/>
@@ -15,49 +15,7 @@
         >
           Изменить профиль
         </v-btn>
-        <v-dialog  @click.stop="dialog = true" v-model="dialog" persistent max-width="400px">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              style="width:100% ;margin: 20px 0"
-              color="primary"
-              dark
-              v-bind="attrs"
-              v-on="on"
-            >
-              Изменить пароль
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title class="auth_forms_header text-center" style="padding-top:10px">
-              <span class="headline" style="color:white;width: 100%;">Смена пароля</span>
-            </v-card-title>
-            <v-card-text>
-              <v-container>
-                <v-layout wrap justify="center">
-                  <v-flex lg12 sm12 md10>
-                    <v-text-field label="Текущий пароль" type="password" required></v-text-field>
-                  </v-flex>
-                  <v-flex lg12 sm12 md10 style="margin: -20px 0">
-                    <v-text-field label="Новый пароль" type="password" required></v-text-field>
-                  </v-flex>
-                  <v-flex lg12 sm12 md10 >
-                    <v-text-field label="Повтор нового пароля" type="password" required></v-text-field>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card-text>
-            <v-card-actions>
-              <v-layout justify-space-around>
-                <v-flex md4 lg4>
-                  <v-btn color="error"  @click="dialog = false">Отмена</v-btn>
-                </v-flex>
-                <v-flex md4 lg4>
-                  <v-btn color="success"  @click="dialog = false;console.log(user)">Сохранить</v-btn>
-                </v-flex>
-              </v-layout>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        <PasswordChange ></PasswordChange>
       </v-flex>
       <v-flex offset-1 sm12 md6 lg6 align-self-center>
         <v-card>
@@ -79,6 +37,7 @@
 
                 <v-flex xs11 md5 lg5>
                   <v-text-field
+                    :disabled="!editable"
                     label="* Фамилия"
                     name="surname"
                     prepend-icon="mdi-account"
@@ -92,6 +51,7 @@
 
                 <v-flex xs11 md5 lg5>
                   <v-text-field
+                    :disabled="!editable"
                     label="* Телефон"
                     name="phone"
                     prepend-icon="mdi-phone"
@@ -100,13 +60,12 @@
                     v-model="user.phone"
                     type="text"
                   />
-                  {{ user }}
 <!--                  :rules="phoneRules"-->
 <!--                  />-->
                 </v-flex>
                 <v-flex xs11 md5 lg5 content="center" class="justify-center" >
                   <span style="position:absolute;">Пол:</span>
-                  <v-radio-group v-model="user.gender" row class="justify-center" >
+                  <v-radio-group v-model="user.gender" :disabled="!editable" row class="justify-center" >
                     <v-radio
                       label="Ж"
                       color="blue"
@@ -121,6 +80,7 @@
                 </v-flex>
                 <v-flex xs11 md11 lg11>
                   <v-text-field
+                    :disabled="!editable"
                     label="* Почта"
                     name="mail"
                     prepend-icon="mdi-mail"
@@ -130,6 +90,7 @@
 
                 <v-flex xs11 md11 lg11>
                   <v-text-field
+                    :disabled="!editable"
                     id="address"
                     label="Адрес"
                     name="address"
@@ -141,7 +102,7 @@
                 <v-flex xs12 md11 lg11>
                   <v-layout justify-space-between>
                     <v-flex lg3 md3 >
-                      <v-btn v-show="editable" color="error" @click="editable = false;mapState"> Отмена</v-btn>
+                      <v-btn v-show="editable" color="error" @click="Cancel();editable = false;"> Отмена</v-btn>
                     </v-flex>
                     <v-flex lg3 md3>
                       <v-btn v-show="editable" color="success" @click="editable=false;editUser()"> Сохран</v-btn>
@@ -161,13 +122,15 @@
 import BaseTemplate from "@/views/BaseTemplate.vue";
 import { mask } from 'vue-the-mask'
 import gql from "graphql-tag";
-import { mapState } from 'vuex';
+import PasswordChange from "@/components/PasswordChange";
+// import { mapState } from 'vuex';
 // import store from "@/store";
 
 
 export default {
   name: "Profile",
   components: {
+    PasswordChange,
     BaseTemplate
   },
   directives:{
@@ -176,31 +139,24 @@ export default {
   props:['drawer'],
   data() {
     return {
+      user: {...this.$store.state.user},
       id:null,
       editable:false,
-      dialog:false,
       avatar: 'mdi-account',
       phone: '',
       birth_date: '',
       gender: '',
-      old_password:'',
-      new_password: '',
-      new_password2: '',
+
     }
   },
-  computed: {
-    ...mapState(['user'])
-  },
-  methods:{
-    validate() {
-      this.$refs.form.validate()
+methods:{
+    Cancel(){
+      this.user=Object.assign({},this.$store.state.user)
     },
     editUser() {
-      console.log(this.$store.state.user)
-      this['id','token'] = Object.create(this.user)['id','token']
-      delete this.user.token
-      delete this.user.id
-      this.loading = true;
+      // this['id','token'] = Object.create(this.user)['id','token']
+      // this.$store.commit('EDIT_USER')
+      delete this.user.token, this.user.id, this.user.gender
       this.$apollo.mutate({
         // Query
         mutation : gql`mutation saveUser($id: Int!,$data: UserInput!) {
@@ -209,6 +165,7 @@ export default {
               email
               firstName
               lastName
+              token
             }
           }`,
         variables: {
@@ -216,14 +173,9 @@ export default {
           data: this.user
         }
         }).then(data => {
-          console.info('ok')
-        this.loading = false;
-        if (data.data.authUser) console.log(this.$store.state.user);
-        // TODO: Remove this when login starts working
-        // else this.login(this.user).then(() => this.$router.push('/'))
+        if (data.data.saveUser) this.$store.commit('LOGIN',data.data.saveUser);
       }).catch(error => {
-        console.info(error)
-        this.loading = false;
+        console.error(error)
         this.alert({
           type: 'error',
           message: error,
@@ -231,13 +183,5 @@ export default {
       });
     }
   },
-  created() {
-    // console.info(this.drawer)
-    console.log(this.user)
-  }
 }
 </script>
-
-<style scoped>
-
-</style>
