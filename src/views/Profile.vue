@@ -30,9 +30,8 @@
                                 prepend-icon="mdi-account"
                                 type="text"
                                 v-model="user.firstName"
+                                :rules="nameRules"
                   ></v-text-field>
-<!--                                :rules="nameRules"-->
-<!--                  ></v-text-field>-->
                 </v-flex>
 
                 <v-flex xs11 md5 lg5>
@@ -43,10 +42,8 @@
                     prepend-icon="mdi-account"
                     type="text"
                     v-model="user.lastName"
+                    :rules="nameRules"
                   ></v-text-field>
-
-<!--                    :rules="nameRules"-->
-<!--                  ></v-text-field>-->
                 </v-flex>
 
                 <v-flex xs11 md5 lg5>
@@ -59,9 +56,8 @@
                     placeholder="+996(999)123-456"
                     v-model="user.phone"
                     type="text"
+                    :rules="phoneRules"
                   />
-<!--                  :rules="phoneRules"-->
-<!--                  />-->
                 </v-flex>
                 <v-flex xs11 md5 lg5 content="center" class="justify-center" >
                   <span style="position:absolute;">Пол:</span>
@@ -85,6 +81,7 @@
                     name="mail"
                     prepend-icon="mdi-mail"
                     v-model="user.email"
+                    :rules="emailRules"
                   ></v-text-field>
                 </v-flex>
 
@@ -123,9 +120,6 @@ import BaseTemplate from "@/views/BaseTemplate.vue";
 import { mask } from 'vue-the-mask'
 import gql from "graphql-tag";
 import PasswordChange from "@/components/PasswordChange";
-// import { mapState } from 'vuex';
-// import store from "@/store";
-
 
 export default {
   name: "Profile",
@@ -146,7 +140,18 @@ export default {
       phone: '',
       birth_date: '',
       gender: '',
-
+      nameRules: [
+        v => !!v || '*Это поле обязательно',
+        v => (v && v.length > 3) || 'Введите не менее 3-х символов',
+      ],
+      emailRules: [
+        v => !!v || '*Это поле обязательно',
+        v => /.+@.+\..+/.test(v) || 'Указанная вами почта имеет неверный формат',
+      ],
+      phoneRules: [
+        v => (v && v.length <= 1) || '*Это поле обязательно',
+        v => (v && v.length < 17) || 'Неверный формат номера',
+      ]
     }
   },
 methods:{
@@ -154,8 +159,6 @@ methods:{
       this.user=Object.assign({},this.$store.state.user)
     },
     editUser() {
-      // this['id','token'] = Object.create(this.user)['id','token']
-      // this.$store.commit('EDIT_USER')
       delete this.user.token, this.user.id, this.user.gender
       this.$apollo.mutate({
         // Query
@@ -173,13 +176,12 @@ methods:{
           data: this.user
         }
         }).then(data => {
-        if (data.data.saveUser) this.$store.commit('LOGIN',data.data.saveUser);
-      }).catch(error => {
-        console.error(error)
-        this.alert({
-          type: 'error',
-          message: error,
-        });
+          if (data.data.saveUser) this.$store.commit('LOGIN',data.data.saveUser);
+        }).catch(error => {
+          this.alert({
+            type: 'error',
+            message: error,
+          });
       });
     }
   },

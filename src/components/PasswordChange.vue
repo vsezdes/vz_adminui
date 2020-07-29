@@ -19,13 +19,13 @@
         <v-container>
           <v-layout wrap justify="center">
             <v-flex lg12 sm12 md10>
-              <v-text-field label="Текущий пароль" type="password" v-model="old_password" required></v-text-field>
+              <v-text-field :rules="passRules" label="Текущий пароль" type="password" v-model="old_password" required></v-text-field>
             </v-flex>
             <v-flex lg12 sm12 md10 style="margin: -20px 0">
-              <v-text-field label="Новый пароль" type="password" v-model="new_password" required></v-text-field>
+              <v-text-field :rules="passRules" label="Новый пароль" type="password" v-model="new_password" required></v-text-field>
             </v-flex>
             <v-flex lg12 sm12 md10 >
-              <v-text-field label="Повтор нового пароля" type="password" v-model="new_password2" required></v-text-field>
+              <v-text-field :rules="passRules" label="Повтор нового пароля" type="password" v-model="new_password2" required></v-text-field>
             </v-flex>
           </v-layout>
         </v-container>
@@ -36,7 +36,7 @@
             <v-btn color="error"  @click="dialog = false">Отмена</v-btn>
           </v-flex>
           <v-flex md4 lg4>
-            <v-btn color="success"  @click="dialog = false;console.log(user)">Сохранить</v-btn>
+            <v-btn color="success"  @click="dialog = false;">Сохранить</v-btn>
           </v-flex>
         </v-layout>
       </v-card-actions>
@@ -55,6 +55,10 @@ name: "PasswordChange",
       old_password:'',
       new_password: '',
       new_password2: '',
+      passRules: [
+        v => !!v || '*Это поле обязательно',
+        v => (v && v.length >= 8) || 'Пароль должен быть длиннее 8-ми символов',
+      ],
     }
   },
   computed:{
@@ -80,7 +84,6 @@ name: "PasswordChange",
       }).then(data => {
         if (data.data.saveUser) this.$store.commit('LOGIN',data.data.saveUser);
       }).catch(error => {
-        console.error(error)
         this.alert({
           type: 'error',
           message: error,
