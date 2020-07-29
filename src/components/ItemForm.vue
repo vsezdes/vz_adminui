@@ -72,6 +72,18 @@
               v => !!v || 'Обязательно к заполнению'
             ]"
           />
+          <v-textarea
+            label="Описание"
+            class="mb-5"
+            dense
+            v-model="internalDescription"
+            @keydown="onDescriptionChange"
+            auto-grow
+            counter
+            :counter-value="onDescriptionCount"
+            color="deep-purple"
+            rows="2"
+          />
         </v-form>
         <v-btn
           :disabled="!detailsValid"
@@ -100,7 +112,7 @@
         absolute
         right
         outlined
-        :disabled="!(itemName && itemPrice && images.length > 0)"
+        :disabled="!(itemName && itemPrice && images.length > 0) || loading"
         @click="save"
         :loading="loading"
       >
@@ -116,7 +128,6 @@ import CATEGORIES_QUERY from '@/gql/categories.graphql';
 import { LAST_ITEMS } from '@/gql/items.graphql';
 import VImageInput from 'vuetify-image-input';
 import ImageUploader from '@/components/ImageUploader.vue';
-// import ItemPreview from '@/components/ItemPreview.vue';
 import FormWrapper from '@/components/FormWrapper.vue';
 
 
@@ -156,6 +167,7 @@ export default {
       images: [],
       selectedCats: [],
       flatCats: [],
+      maxChars: 800,
     };
   },
   computed: {
@@ -204,6 +216,14 @@ export default {
         thumb: this.images.length > 0 && this.images[0].url,
         images: this.images,
       }
+    },
+    internalDescription: {
+      get() {
+        return this.itemDescription;
+      },
+      set(v){
+        if (v.length <= this.maxChars) this.itemDescription = v;
+      }
     }
   },
   watch: {
@@ -213,6 +233,7 @@ export default {
       this.id = val.id;
       this.itemName = val.title;
       this.itemPrice = val.price;
+      this.itemDescription = val.description;
       this.images = val.images.map(i => ({
         asset_id: i.asset_id,
         url: i.url,
@@ -222,6 +243,9 @@ export default {
     },
     categories(val, oldVal) {
       if (val && !oldVal) this.flattenCategories();
+    },
+    show(val) {
+      if (!val) this.onClose();
     },
     categoryFirst(val) {
       if (val) {
@@ -244,6 +268,19 @@ export default {
   },
   methods: {
     ...mapActions(['alert']),
+    onDescriptionCount(val) {
+      return `${val ? val.length : 0} / ${this.maxChars}`;
+    },
+    onDescriptionChange(evt) {
+      if (evt.target.value.length >= this.maxChars) {
+        if ((evt.keyCode >= 48 && evt.keyCode <= 90) || evt.keyCode === 32) {
+          evt.preventDefault();
+          return;
+        } else {
+          console.error(evt.keyCode, evt);
+        }
+      }
+    },
     fillCategoriesByLast(id) {
       const cats = [];
       let cat = null;
@@ -267,7 +304,6 @@ export default {
       this.$emit('close');
       this.step = 1;
       this.categoryFirst = null;
-
     },
     getCatById(catId) {
       if (!catId) return;
@@ -295,6 +331,7 @@ export default {
       }));
     },
     save() {
+      this.loading = true;
       this.$apollo.mutate({
         // Query
         mutation: gql`mutation saveItem($id: Int, $data: ItemInput!) {
@@ -317,6 +354,7 @@ export default {
           data: {
             title: this.itemName,
             price: parseFloat(this.itemPrice),
+            description: this.itemDescription.substring(0, this.maxChars),
             categoryId: this.itemCategory,
             images: this.images.map(i => ({
               ...i,
@@ -359,7 +397,7 @@ export default {
         // Result
         this.alert({
           type: 'success',
-          message: 'Товар добавлен',
+          message: this.id ? 'Товар изменен' : 'Товар добавлен',
         });
         console.log(data)
         this.loading = false;
@@ -399,6 +437,12 @@ export default {
   }
   .v-stepper__content {
     margin: -10px -54px -10px 22px;
+  }
+  .v-textarea {
+    .v-text-field__slot {
+      max-height: 300px;
+      overflow: auto;
+    }
   }
 }
 </style>

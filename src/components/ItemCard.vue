@@ -26,6 +26,7 @@
           right
           bottom
           class="expand"
+          @click="$emit('on-expand', id)"
         >
           <v-avatar color="white">
             <v-icon>mdi-arrow-expand-all</v-icon>
@@ -82,8 +83,7 @@
       >
       </v-row>
 
-      <v-chip small>{{ category }}</v-chip>
-      <div>{{ description }}</div>
+      <v-chip small color="accent">{{ category }}</v-chip>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>

@@ -1,5 +1,6 @@
 <template>
   <BaseTemplate :loading="$apollo.loading">
+    <ItemPreview :item="expandedItem" @close="expandedId = null"/>
     <v-container fluid>
       <v-btn
         fixed
@@ -25,6 +26,7 @@
           <ItemCard
             v-bind="item"
             @on-edit="onEditItem"
+            @on-expand="expandedId = $event"
           />
         </v-col>
       </v-row>
@@ -40,6 +42,7 @@
 
 <script>
 import ItemCard from '@/components/ItemCard';
+import ItemPreview from '@/components/ItemPreview';
 import ItemForm from '@/components/ItemForm';
 import { LAST_ITEMS } from '@/gql/items.graphql';
 import BaseTemplate from '@/views/BaseTemplate.vue';
@@ -48,10 +51,16 @@ export default {
   components: {
     BaseTemplate,
     ItemCard,
+    ItemPreview,
     ItemForm,
   },
   apollo: {
     lastItems: LAST_ITEMS,
+  },
+  computed: {
+    expandedItem() {
+      return this.getItemById(this.expandedId);
+    }
   },
   methods: {
     onClose() {
@@ -69,6 +78,7 @@ export default {
   data () {
     return {
       activeItem: null,
+      expandedId: null,
       showForm: false,
     }
   },

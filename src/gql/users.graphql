@@ -1,0 +1,16 @@
+import gql from 'graphql-tag'
+
+export const ALL_USERS = gql`
+  query allUsers {
+    users {
+      id
+      firstName
+      lastName
+      token
+      joined
+      avatar
+      phone
+      email
+    }
+  }
+`
