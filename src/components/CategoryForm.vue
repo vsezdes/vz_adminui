@@ -76,6 +76,7 @@
         outlined
         @click="validate"
         :loading="loading"
+        :disabled="loading"
       >
         <v-icon>mdi-content-save-outline</v-icon>
         Сохранить</v-btn>
@@ -249,8 +250,6 @@ export default {
       });
     },
     submitForm() {
-
-      console.warn(this.valid, this.id, this);
       if (!this.valid) return false;
       this.loading = true;
       this.$apollo.mutate({
@@ -261,7 +260,7 @@ export default {
             title
             slug
             icon
-            parent
+            parentId
             children {
               id
             }
@@ -285,14 +284,14 @@ export default {
           const data = store.readQuery({ query: CATEGORIES_QUERY });
           if (this.id) return;
           console.log('update', this.id, saveCategory);
-          if (!saveCategory.parent) {
+          if (!saveCategory.parentId) {
             data.categories.push(saveCategory);
             // Write our data back to the cache.
             store.writeQuery({ query: CATEGORIES_QUERY, data })
           } else {
             let dataAdded = false;
             let updatedCats = data.categories.map(c => {
-              if (c.id === saveCategory.parent) {
+              if (c.id === saveCategory.parentId) {
                 dataAdded = true;
                 c.children.push(saveCategory);
               }
@@ -304,7 +303,7 @@ export default {
                 return {
                   ...c,
                   children: c.children.map(child => {
-                    if (child.id === saveCategory.parent) {
+                    if (child.id === saveCategory.parentId) {
                       dataAdded = true;
                       child.children.push(saveCategory);
                     }
@@ -322,7 +321,7 @@ export default {
                     return {
                       ...child,
                       chidlren: child.children.map(grandchild => {
-                        if (grandchild.id === saveCategory.parent) {
+                        if (grandchild.id === saveCategory.parentId) {
                           grandchild.children.push(saveCategory);
                         }
                         return grandchild;

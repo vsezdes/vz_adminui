@@ -15,7 +15,7 @@ import wb from "./registerServiceWorker";
 Vue.prototype.$workbox = wb;
 
 Vue.prototype.$theme = {
-  primary: '#FF5252',
+  primary: '#755803',
   secondary: '#424242',
   accent: '#82B1FF',
   error: '#FF5252',
@@ -28,10 +28,10 @@ Vue.prototype.$theme = {
   base_sidebar: '#F5F5F5',
   // preload
   preloader_bg: '#FFC107',
-  preloader_circle: '#42A7F5',
+  preloader_circle: '#FFC107',
   // login & register
-  auth_forms_header: '#42A7F5',
-  auth_forms_button: '#42A7F5'
+  auth_forms_header: '#FFC107',
+  auth_forms_button: '#FFC107'
 }
 
 // HTTP connection to the API

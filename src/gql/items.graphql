@@ -6,6 +6,7 @@ export const LAST_ITEMS = gql`
       id
       title
       price
+      description
       category
       categoryId
       images {
@@ -22,6 +23,7 @@ export default gql`
       id
       title
       price
+      description
       category
       images {
         asset_id
