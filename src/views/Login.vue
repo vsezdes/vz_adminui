@@ -103,6 +103,8 @@ export default {
         query: gql`query authUser($user: String!, $pass: String!) {
           authUser(login: $user, password: $pass) {
             id
+            phone
+            email
             firstName
             lastName
             token
@@ -115,14 +117,19 @@ export default {
         }
       }).then(data => {
         this.loading = false;
-        if (data.data.authUser) this.login(data.data.authUser)
-          .then(() => this.$router.push('/'));
+        console.log(data.data.authUser)
+        if (data.data.authUser) this.login(data.data.authUser);
         // TODO: Remove this when login starts working
         else this.login({
+          // id: 0,
+          email:'some_mail@mail.com',
+          phone:'123123',
           firstName: 'Test',
           lastName: 'User',
-          token: 'DFGH$#%WHWS#$UYHDFTERH$#3wh45$',
-          avatar: null,
+          // address:"советская 1",
+          // gender:'female',
+          // token: 'DFGH$#%WHWS#$UYHDFTERH$#3wh45$',
+          // avatar: null,
         }).then(() => this.$router.push('/'))
       }).catch(error => {
         this.loading = false;
