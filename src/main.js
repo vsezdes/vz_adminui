@@ -48,8 +48,6 @@ const cache = new InMemoryCache()
 // init store from localstorage
 store.commit('INIT_STORE');
 
-console.error(store, store.state.token);
-
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
   const token = localStorage.getItem('token');

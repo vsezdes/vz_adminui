@@ -2,12 +2,13 @@
   <v-dialog  @click.stop="dialog = true" v-model="dialog" persistent max-width="400px">
     <template v-slot:activator="{ on, attrs }">
       <v-btn
-        style="width:100% ;margin: 20px 0"
-        color="primary"
-        dark
+        color="error"
+        outlined
+        small
         v-bind="attrs"
         v-on="on"
       >
+        <v-icon size="14" class="mr-1">mdi-key-change</v-icon>
         Изменить пароль
       </v-btn>
     </template>

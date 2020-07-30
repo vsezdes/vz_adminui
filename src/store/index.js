@@ -49,6 +49,9 @@ export default new Vuex.Store({
     DEL_ALERT(state, timestamp) {
       state.alerts = state.alerts.filter(a => a.ts !== timestamp);
     },
+    SAVE_USER(state, user) {
+      state.user = user;
+    },
     LOGIN(state, user) {
       state.user = user;
       state.token = user.token;
