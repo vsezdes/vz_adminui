@@ -115,10 +115,10 @@ export default {
         }
       }).then(data => {
         this.loading = false;
-        if (data.data.authUser) this.login(data.data.authUser);
+        if (data.data.authUser) this.login(data.data.authUser)
+          .then(() => this.$router.push('/'));
         // TODO: Remove this when login starts working
         else this.login({
-          id: 0,
           firstName: 'Test',
           lastName: 'User',
           token: 'DFGH$#%WHWS#$UYHDFTERH$#3wh45$',

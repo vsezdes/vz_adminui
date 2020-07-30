@@ -7,7 +7,7 @@ export default new Vuex.Store({
   state: {
     alerts: [],
     user: null,
-    isAuthenticated: false,
+    token: null,
     loader:false
   },
   actions: {
@@ -24,10 +24,12 @@ export default new Vuex.Store({
     login: ({ commit }, user) => {
       const parsedUser = JSON.stringify(user);
       localStorage.setItem('user', parsedUser);
+      localStorage.setItem('token', user.token || '');
       commit('LOGIN', user);
     },
     logout: ({ commit }, user) => {
       localStorage.removeItem('user');
+      localStorage.removeItem('token');
       commit('LOGOUT', user);
     },
   },
@@ -38,7 +40,7 @@ export default new Vuex.Store({
     INIT_STORE(state) {
       if (!state.user && localStorage.getItem('user')) {
         state.user = JSON.parse(localStorage.getItem('user'));
-        state.isAuthenticated = true;
+        state.token = localStorage.getItem('token');
       }
     },
     SET_ALERT(state, alert) {
@@ -49,11 +51,11 @@ export default new Vuex.Store({
     },
     LOGIN(state, user) {
       state.user = user;
-      state.isAuthenticated = true;
+      state.token = user.token;
     },
     LOGOUT(state) {
       state.user = null;
-      state.isAuthenticated = false;
+      state.token = null;
     }
   },
   modules: {
