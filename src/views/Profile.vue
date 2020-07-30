@@ -1,5 +1,5 @@
 <template>
-  <BaseTemplate>
+  <BaseTemplate :loading="loading">
     <v-layout wrap class="profile-form mt-5" justify-center>
       <v-flex offset-0 offset-xs-3 xs6 md2 lg2 class="avatar text-center">
         <v-avatar rounded size="150px" color="base_header" >
@@ -117,10 +117,10 @@
                 <v-flex xs12 md11 lg11>
                   <v-layout justify-space-between>
                     <v-flex lg3 md3 >
-                      <v-btn v-show="editable" color="error" @click="onCancel"> Отмена</v-btn>
+                      <v-btn v-show="editable" :disabled="loading" color="error" @click="onCancel"> Отмена</v-btn>
                     </v-flex>
                     <v-flex lg3 md3>
-                      <v-btn v-show="editable" color="success" @click="editUser"> Сохранить</v-btn>
+                      <v-btn v-show="editable" :disabled="loading" color="success" @click="editUser"> Сохранить</v-btn>
                     </v-flex>
                   </v-layout>
                 </v-flex>
@@ -165,6 +165,7 @@ export default {
         address: '',
       },
       editable:false,
+      loading: false,
       nameRules: [
         v => !!v || '*Это поле обязательно',
         v => (v && v.length > 3) || 'Введите не менее 3-х символов',
@@ -197,6 +198,7 @@ export default {
       this.getUserState();
     },
     editUser() {
+      this.loading = true;
       this.$apollo.mutate({
         // Query
         mutation : gql`mutation saveUser($id: Int!,$data: UserInput!) {
@@ -219,11 +221,13 @@ export default {
           }
         }
         }).then(data => {
+          this.loading = false;
           if (data.data.saveUser) {
             this.$store.commit('SAVE_USER', data.data.saveUser);
             this.editable = false;
           }
         }).catch(error => {
+          this.loading = false;
           this.alert({
             type: 'error',
             message: error,
