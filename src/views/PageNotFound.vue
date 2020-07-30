@@ -2,21 +2,19 @@
   <BaseTemplate>
     <v-card
       class="mx-auto text-center"
-      max-width="850"
-      style="padding-top: 65px"
+      max-width="90vw"
+      max-height="50vt"
+      style="overflow: hidden"
+
     >
-      <!--      <IconPageNotFound></IconageNotFound>-->
-      <v-card-subtitle class="pb-0">
-        <h1 style="color: red;margin-bottom: -100px">404</h1>
-        <div class=""
-             style="height: 400px;width:800px;background-position:center;;background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);"></div>
+      <v-card-text
+      >
+        <h1  class="fourzerofour" style="font-size: 10vw;margin-top:40px;color: red;position: absolute;z-index: 1" >404</h1>
+        <v-img style="width:100%;position: relative"
+                      src="../assets/404image.gif"/>
 
-      </v-card-subtitle>
-
-      <v-card-text class="text--primary">
-        <div>Извините, запрашиваемая страница не найдена</div>
+        <div style="position: relative;">Извините, запрашиваемая страница не найдена</div>
       </v-card-text>
-
       <v-card-actions>
         <router-link to="/">
           <v-btn
@@ -35,14 +33,10 @@
 import BaseTemplate from "@/views/BaseTemplate";
 // import IconPageNotFound from "@/components/IconPageNotFound";
 export default {
-  name: "404",
+  name: "PageNotFound",
   components: {
     // IconPageNotFound,
     BaseTemplate
   }
 }
 </script>
-
-<style scoped>
-
-</style>
