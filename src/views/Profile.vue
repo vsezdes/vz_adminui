@@ -107,7 +107,6 @@
                 <v-flex xs11 md11 lg11>
                   <v-text-field
                     :disabled="!editable"
-                    id="address"
                     label="Адрес"
                     name="address"
                     prepend-icon="mdi-map"
@@ -163,6 +162,7 @@ export default {
         email: '',
         birthDate: '',
         gender: '',
+        address: '',
       },
       editable:false,
       nameRules: [
@@ -184,6 +184,9 @@ export default {
   },
   methods:{
     ...mapActions(['alert']),
+    changeAvatar() {
+      console.warn('raise change avatar window here');
+    },
     getUserState() {
       Object.keys(this.form).forEach(key => {
         this.$set(this.form, key, this.user[key]);
@@ -197,12 +200,16 @@ export default {
       this.$apollo.mutate({
         // Query
         mutation : gql`mutation saveUser($id: Int!,$data: UserInput!) {
-            saveUser(id:$id, data:$data,) {
-              phone
-              email
+            saveUser(id:$id, data:$data) {
+              id
               firstName
               lastName
+              email
+              phone
+              address
+              gender
               token
+              avatar
             }
           }`,
         variables: {
@@ -214,6 +221,7 @@ export default {
         }).then(data => {
           if (data.data.saveUser) {
             this.$store.commit('SAVE_USER', data.data.saveUser);
+            this.editable = false;
           }
         }).catch(error => {
           this.alert({

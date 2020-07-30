@@ -50,6 +50,8 @@ export default new Vuex.Store({
       state.alerts = state.alerts.filter(a => a.ts !== timestamp);
     },
     SAVE_USER(state, user) {
+      const parsedUser = JSON.stringify(user);
+      localStorage.setItem('user', parsedUser);
       state.user = user;
     },
     LOGIN(state, user) {
