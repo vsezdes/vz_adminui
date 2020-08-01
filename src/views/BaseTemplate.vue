@@ -21,7 +21,7 @@
       </router-link>
       <v-spacer></v-spacer>
       <div class="auth-box">
-        <span v-if="isAuthenticated">
+        <span v-if="token">
           <span class="mr-5">{{ user.firstName }} {{ user.lastName }}</span>
           <v-avatar class="mr-1" color="orange">
             <img v-if="user.avatar" src="user.avatar"/>
@@ -120,7 +120,7 @@ export default {
     ],
   }),
   computed: {
-    ...mapState(['isAuthenticated', 'user']),
+    ...mapState(['token', 'user']),
   },
 
 }
