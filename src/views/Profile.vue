@@ -1,38 +1,34 @@
 <template>
-  <BaseTemplate>
-    <v-layout wrap style="margin-top: 50px" justify-center :disabled="!editable">
-      <v-flex offset-0  offset-xs-3 xs6 md2 lg2 class="text-center">
-        <v-btn
-          color="primary"
-          class="text-none"
-          rounded
-          depressed
-          @click="onButtonClick"
-        >
-          Изменить фото профиля
-        </v-btn>
-        <input rules=""
-          ref="uploader"
-          class="d-none"
-          type="file"
-          @change="onAddFiles"
-        />
-        <v-img :src="file.url" ></v-img>
-<!--        <v-btn @click="UploadImage"> asdasdasdasd </v-btn>-->
+  <BaseTemplate :loading="loading">
+    <v-layout wrap class="profile-form mt-5" justify-center>
+      <v-flex offset-0 offset-xs-3 xs6 md2 lg2 class="avatar text-center">
         <v-avatar rounded size="150px" color="base_header" >
-          <v-img v-if="avatar!=='mdi-account'" :src="avatar"/>
-          <v-icon color="grey darken-3" v-else size="140px"> {{ user.avatar }}</v-icon>
+          <v-img
+            v-if="form && form.avatar"
+            :src="form.avatar.url"
+          />
+          <v-icon
+            v-else
+            color="grey darken-3"
+            size="140px"
+          >
+            mdi-account
+          </v-icon>
         </v-avatar>
+        <SingleImageUpload v-if="editable" :form="form"/>
+
+        <v-divider class="my-2"/>
         <v-btn
-          style="width:100% ;margin: 20px 0"
+          class="mb-3"
           color="info"
-          dark
+          text
+          small
           @click="editable = true"
           :disabled="editable"
         >
-          Изменить профиль
+          <v-icon size="14" class="mr-1">mdi-pencil</v-icon> Изменить профиль
         </v-btn>
-        <PasswordChange ></PasswordChange>
+        <PasswordChange />
       </v-flex>
       <v-flex offset-1 sm12 md6 lg6 align-self-center>
         <v-card>
@@ -46,9 +42,9 @@
                     name="login"
                     prepend-icon="mdi-account"
                     type="text"
-                    v-model="user.firstName"
+                    v-model="form.firstName"
                     :rules="nameRules"
-                  ></v-text-field>
+                  />
                 </v-flex>
 
                 <v-flex xs11 md5 lg5>
@@ -58,7 +54,7 @@
                     name="surname"
                     prepend-icon="mdi-account"
                     type="text"
-                    v-model="user.lastName"
+                    v-model="form.lastName"
                     :rules="nameRules"
                   ></v-text-field>
                 </v-flex>
@@ -71,14 +67,14 @@
                     prepend-icon="mdi-phone"
                     v-mask="'+996(###)###-###'"
                     placeholder="+996(999)123-456"
-                    v-model="user.phone"
+                    v-model="form.phone"
                     type="text"
                     :rules="phoneRules"
                   />
                 </v-flex>
                 <v-flex xs11 md5 lg5 content="center" class="justify-center" >
                   <span style="position:absolute;">Пол:</span>
-                  <v-radio-group v-model="user.gender" :disabled="!editable" row class="justify-center" >
+                  <v-radio-group v-model="form.gender" :disabled="!editable" row class="justify-center" >
                     <v-radio
                       label="Ж"
                       color="blue"
@@ -97,7 +93,7 @@
                     label="* Почта"
                     name="mail"
                     prepend-icon="mdi-mail"
-                    v-model="user.email"
+                    v-model="form.email"
                     :rules="emailRules"
                   ></v-text-field>
                 </v-flex>
@@ -105,21 +101,20 @@
                 <v-flex xs11 md11 lg11>
                   <v-text-field
                     :disabled="!editable"
-                    id="address"
                     label="Адрес"
                     name="address"
                     prepend-icon="mdi-map"
-                    v-model="user.address"
+                    v-model="form.address"
                   ></v-text-field>
                 </v-flex>
 
                 <v-flex xs12 md11 lg11>
                   <v-layout justify-space-between>
                     <v-flex lg3 md3 >
-                      <v-btn v-show="editable" color="error" @click="Cancel();editable = false;"> Отмена</v-btn>
+                      <v-btn v-show="editable" :disabled="loading" color="error" @click="onCancel"> Отмена</v-btn>
                     </v-flex>
                     <v-flex lg3 md3>
-                      <v-btn v-show="editable" color="success" @click="editable=false;editUser()"> Сохран</v-btn>
+                      <v-btn v-show="editable" :disabled="loading" color="success" @click="editUser"> Сохранить</v-btn>
                     </v-flex>
                   </v-layout>
                 </v-flex>
@@ -137,12 +132,13 @@ import BaseTemplate from "@/views/BaseTemplate.vue";
 import { mask } from 'vue-the-mask'
 import gql from "graphql-tag";
 import PasswordChange from "@/components/PasswordChange";
-// import SingleImageUpload from "@/components/SingleImageUpload";
+import { mapState, mapActions } from 'vuex';
+import SingleImageUpload from "@/components/SingleImageUpload";
 
 export default {
   name: "Profile",
   components: {
-    // SingleImageUpload,
+    SingleImageUpload,
     PasswordChange,
     BaseTemplate
   },
@@ -150,18 +146,22 @@ export default {
     mask
   },
   props:['drawer'],
+  mounted() {
+    this.getUserState();
+  },
   data() {
     return {
-      isError: false,
-      errorText: null,
-      file:'',
-      user: {...this.$store.state.user},
-      id:null,
+      form: {
+        firstName: '',
+        lastName: '',
+        phone: '',
+        email: '',
+        birthDate: '',
+        gender: '',
+        address: '',
+      },
       editable:false,
-      avatar: 'mdi-account',
-      phone: '',
-      birth_date: '',
-      gender: '',
+      loading: false,
       nameRules: [
         v => !!v || '*Это поле обязательно',
         v => (v && v.length > 3) || 'Введите не менее 3-х символов',
@@ -176,77 +176,51 @@ export default {
       ]
     }
   },
-methods:{
-  onButtonClick() {
-    this.isSelecting = true
-    window.addEventListener('focus', () => {
-      this.isSelecting = false
-    }, { once: true })
-    this.$refs.uploader.click()
+  computed: {
+    ...mapState(['user']),
   },
-  onAddFiles(file) {
-    window.console.log(file.target.files[0]);
-    this.uploadFileToCloudinary(file.target.files[0]).then((fileResponse) => {
-      this.file=fileResponse;
-    });
-  },
-  uploadFileToCloudinary(file) {
-    return new Promise(function (resolve, reject) {
-      //Ideally these to lines would be in a .env file
-      const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/vsetut2020/upload';
-      const CLOUDINARY_UPLOAD_PRESET = 'bc5bf78g';
-      let formData = new FormData();
-      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-      formData.append('folder', 'cloudinary-demo');
-      formData.append('file', file);
-      let request = new XMLHttpRequest();
-      request.open('POST', CLOUDINARY_URL, true);
-      request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-      request.onreadystatechange = () => {
-        // File uploaded successfully
-        if (request.readyState === 4 && request.status === 200) {
-          let response = JSON.parse(request.responseText);
-          resolve(response);
-        }
-        // Not successfull, let find our what happened
-        if (request.status !== 200) {
-          let response = JSON.parse(request.responseText);
-          let error = response.error.message;
-          this.errorText = 'error uploading files ' + error;
-          this.isError = true;
-          reject(error);
-        }
-      };
-      request.onerror = (err) => {
-        alert('error: ' + err);
-        reject(err);
-      };
-      request.send(formData);
-    });
-  },
-    Cancel(){
-      this.user={...this.$store.state.user}
+  methods:{
+    ...mapActions(['alert']),
+    getUserState() {
+      Object.keys(this.form).forEach(key => {
+        this.$set(this.form, key, this.user[key]);
+      });
+    },
+    onCancel(){
+      this.editable = false;
+      this.getUserState();
     },
     editUser() {
-      delete this.user.token, this.user.id, this.user.gender
+      this.loading = true;
       this.$apollo.mutate({
         // Query
         mutation : gql`mutation saveUser($id: Int!,$data: UserInput!) {
-          saveUser(id:$id, data:$data,) {
-            phone
-            email
-            firstName
-            lastName
-            token
-          }
+            saveUser(id:$id, data:$data) {
+              id
+              firstName
+              lastName
+              email
+              phone
+              address
+              gender
+              token
+              avatar
+            }
           }`,
         variables: {
-          id: 13,
-          data: this.user
+          id: this.user.id,
+          data: {
+            ...this.form
+          }
         }
         }).then(data => {
-          if (data.data.saveUser) this.$store.commit('LOGIN',data.data.saveUser);
+          this.loading = false;
+          if (data.data.saveUser) {
+            this.$store.commit('SAVE_USER', data.data.saveUser);
+            this.editable = false;
+          }
         }).catch(error => {
+          this.loading = false;
           this.alert({
             type: 'error',
             message: error,
@@ -256,3 +230,11 @@ methods:{
   },
 }
 </script>
+
+<style lang="scss">
+.profile-form {
+  .avatar {
+    position: relative;
+  }
+}
+</style>
