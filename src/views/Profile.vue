@@ -15,8 +15,9 @@
             mdi-account
           </v-icon>
         </v-avatar>
-        <SingleImageUpload v-if="editable" :form="form"/>
-
+        <SingleImageUpload style="height: 0" v-if="editable" :loader="loading" :form="form"/>
+        <v-btn @click="loading=true"></v-btn>
+        {{ loading }}
         <v-divider class="my-2"/>
         <v-btn
           class="mb-3"

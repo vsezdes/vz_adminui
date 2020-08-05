@@ -1,7 +1,28 @@
+<style scoped >
+.control_buttons{
+  top: -50px;
+  min-height: 15px;
+  min-width: 15px;
+  //position: relative;
+  background: #CADADA;
+}
+
+</style>
+
 <template>
-  <div class="all">
+  <v-flex>
     <v-btn
-      class="edit"
+      style="left: -35px;background-color: red;  top: -140px;
+"
+      icon
+      color="white"
+      class="control_buttons"
+    @click="$delete(form, 'avatar');">
+      <v-icon>mdi-close</v-icon>
+    </v-btn>
+    <v-btn
+      style="right: -35px"
+      class="control_buttons"
       icon
       @click="onButtonClick"
     >
@@ -12,21 +33,23 @@
       class="d-none"
       type="file"
       @change="onAddFiles"
+      hidden
     />
     <v-img :src="file.url"></v-img>
-  </div>
+  </v-flex>
 </template>
 <script>
 export default {
   name: 'SingleImageUpload',
+  props: ['form'],
   data() {
     return {
-      file: ''
+      file: '',
     }
   },
-  props: ['form'],
   methods: {
     onButtonClick() {
+      // this.$emit('loading',true)
       this.isSelecting = true
       window.addEventListener('focus', () => {
         this.isSelecting = false
@@ -37,8 +60,10 @@ export default {
       this.uploadFileToCloudinary(file.target.files[0]).then((fileResponse) => {
         this.$set(this.form, 'avatar', fileResponse);
       });
+      // this.$emit('loading',false)
     },
     uploadFileToCloudinary(file) {
+      this.$emit('loading' , true)
       return new Promise(function (resolve, reject) {
         //Ideally these to lines would be in a .env file
         const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/vsetut2020/upload';
@@ -75,16 +100,3 @@ export default {
   }
 }
 </script>
-<style>
-.all {
-  right: -15px;
-  top: 0;
-  min-height: 15px;
-  min-width: 15px;
-  position: absolute;
-}
-
-.v-btn.edit {
-  background: #CADADA;
-}
-</style>
