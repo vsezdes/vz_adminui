@@ -6,9 +6,7 @@
   //position: relative;
   background: #CADADA;
 }
-
 </style>
-
 <template>
   <v-flex>
     <v-btn
@@ -24,6 +22,7 @@
       style="right: -35px"
       class="control_buttons"
       icon
+      :loading="loading"
       @click="onButtonClick"
     >
       <v-icon>mdi-pencil</v-icon>
@@ -43,14 +42,13 @@ export default {
   name: 'SingleImageUpload',
   data() {
     return {
-      // loading:avatar_loading,
+      loading:false,
       file: '',
     }
   },
-  props: ['avatar_loading','form'],
+  props: ['form'],
   methods: {
     onButtonClick() {
-      // this.$emit('loading',true)
       this.isSelecting = true
       window.addEventListener('focus', () => {
         this.isSelecting = false
@@ -58,14 +56,13 @@ export default {
       this.$refs.uploader.click()
     },
     onAddFiles(file) {
-      this.avatar_loading = true
+      this.loading = true
       this.uploadFileToCloudinary(file.target.files[0]).then((fileResponse) => {
         if (fileResponse.format === 'png' || fileResponse.format === 'jpg') {this.$set(this.form, 'avatar', fileResponse)}
+        this.loading = false
       });
-      // this.$emit('loading',false)
     },
     uploadFileToCloudinary(file) {
-      // this.$emit('loading' , true)
       return new Promise(function (resolve, reject) {
         //Ideally these to lines would be in a .env file
         const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/vsetut2020/upload';

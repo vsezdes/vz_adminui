@@ -4,19 +4,11 @@
       <v-flex offset-0 offset-xs-3 xs6 md2 lg2 class="avatar text-center">
 
         <v-avatar rounded size="150px" color="base_header" >
-          <v-progress-circular
-            v-if="avatar_loading"
-            :size="154"
-            style="position: absolute"
-            indeterminate color="blue" >
-          </v-progress-circular>
-
           <v-img
             v-if="form && form.avatar"
             :src="form.avatar.url"
           />
           <v-icon
-            style="background-color: #FFC107"
             v-else
             color="grey darken-3"
             size="140px"
