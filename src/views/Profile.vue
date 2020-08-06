@@ -2,10 +2,11 @@
   <BaseTemplate :loading="loading">
     <v-layout wrap class="profile-form mt-5" justify-center>
       <v-flex offset-0 offset-xs-3 xs6 md2 lg2 class="avatar text-center">
+
         <v-avatar rounded size="150px" color="base_header" >
           <v-img
-            v-if="form && form.avatar"
-            :src="form && form.avatar"
+            v-if="form.avatar"
+            :src="form.avatar"
           />
           <v-icon
             v-else
@@ -15,14 +16,7 @@
             mdi-account
           </v-icon>
         </v-avatar>
-        <v-btn
-          v-if="editable"
-          class="edit"
-          icon
-          @click="changeAvatar"
-        >
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
+        <SingleImageUpload style="height: 0" v-if="editable" :form="form"/>
         <v-divider class="my-2"/>
         <v-btn
           class="mb-3"
@@ -139,10 +133,12 @@ import { mask } from 'vue-the-mask'
 import gql from "graphql-tag";
 import PasswordChange from "@/components/PasswordChange";
 import { mapState, mapActions } from 'vuex';
+import SingleImageUpload from "@/components/SingleImageUpload";
 
 export default {
   name: "Profile",
   components: {
+    SingleImageUpload,
     PasswordChange,
     BaseTemplate
   },
@@ -163,6 +159,7 @@ export default {
         birthDate: '',
         gender: '',
         address: '',
+        avatar:'',
       },
       editable:false,
       loading: false,
@@ -185,9 +182,6 @@ export default {
   },
   methods:{
     ...mapActions(['alert']),
-    changeAvatar() {
-      console.warn('raise change avatar window here');
-    },
     getUserState() {
       Object.keys(this.form).forEach(key => {
         this.$set(this.form, key, this.user[key]);
@@ -238,16 +232,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .profile-form {
   .avatar {
     position: relative;
-    .v-btn.edit {
-      position: absolute;
-      right: 25px;
-      top: 110px;
-      background: #CADADA;
-    }
   }
 }
 </style>
