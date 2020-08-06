@@ -41,12 +41,13 @@
 <script>
 export default {
   name: 'SingleImageUpload',
-  props: ['form'],
   data() {
     return {
+      // loading:avatar_loading,
       file: '',
     }
   },
+  props: ['avatar_loading','form'],
   methods: {
     onButtonClick() {
       // this.$emit('loading',true)
@@ -57,13 +58,14 @@ export default {
       this.$refs.uploader.click()
     },
     onAddFiles(file) {
+      this.avatar_loading = true
       this.uploadFileToCloudinary(file.target.files[0]).then((fileResponse) => {
-        this.$set(this.form, 'avatar', fileResponse);
+        if (fileResponse.format === 'png' || fileResponse.format === 'jpg') {this.$set(this.form, 'avatar', fileResponse)}
       });
       // this.$emit('loading',false)
     },
     uploadFileToCloudinary(file) {
-      this.$emit('loading' , true)
+      // this.$emit('loading' , true)
       return new Promise(function (resolve, reject) {
         //Ideally these to lines would be in a .env file
         const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/vsetut2020/upload';
@@ -83,10 +85,10 @@ export default {
           }
           // Not successfull, let find our what happened
           if (request.status !== 200) {
+            formData=''
             let response = JSON.parse(request.responseText);
             let error = response.error.message;
             this.errorText = 'error uploading files ' + error;
-            this.isError = true;
             reject(error);
           }
         };

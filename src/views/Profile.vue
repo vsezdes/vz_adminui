@@ -2,12 +2,21 @@
   <BaseTemplate :loading="loading">
     <v-layout wrap class="profile-form mt-5" justify-center>
       <v-flex offset-0 offset-xs-3 xs6 md2 lg2 class="avatar text-center">
+
         <v-avatar rounded size="150px" color="base_header" >
+          <v-progress-circular
+            v-if="avatar_loading"
+            :size="154"
+            style="position: absolute"
+            indeterminate color="blue" >
+          </v-progress-circular>
+
           <v-img
             v-if="form && form.avatar"
             :src="form.avatar.url"
           />
           <v-icon
+            style="background-color: #FFC107"
             v-else
             color="grey darken-3"
             size="140px"
@@ -15,9 +24,7 @@
             mdi-account
           </v-icon>
         </v-avatar>
-        <SingleImageUpload style="height: 0" v-if="editable" :loader="loading" :form="form"/>
-        <v-btn @click="loading=true"></v-btn>
-        {{ loading }}
+        <SingleImageUpload style="height: 0" v-if="editable" :avatar_loading="avatar_loading" :form="form"/>
         <v-divider class="my-2"/>
         <v-btn
           class="mb-3"
@@ -152,6 +159,7 @@ export default {
   },
   data() {
     return {
+      avatar_loading:false, //change to false when it working
       form: {
         firstName: '',
         lastName: '',
