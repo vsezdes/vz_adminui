@@ -76,9 +76,13 @@
 
 <script>
 import BaseTemplate from "./BaseTemplate";
+import ALL_ORDERS from '@/gql/orders.graphql';
 
 export default {
-  name: "MyOrders",
+  name: "Orders",
+  apollo: {
+    orders: ALL_ORDERS,
+  },
   data() {
     return {
       expanded: [],
@@ -100,7 +104,7 @@ export default {
         {text: 'Пользователь', value: 'user.fullName'},
         {text: 'описание', value: 'details', width: '255px'},
         {text: 'сумма', value: 'total'},
-        {text: 'дата', value: 'orderDate'},
+        {text: 'дата', value: 'created'},
         {text: '', value: 'data-table-expand'},
       ],
       item_headers: [
@@ -108,45 +112,6 @@ export default {
         {text: 'сумма', value: 'price'},
         {text: 'количество', value: 'quantity'},
       ],
-
-      //FAKEDATA
-      fakedata: [{
-        id: 1,
-        orderDate: 'some date',
-        status: -2, // статусы описаны ниже
-        details: 'asdasdnfdskjfndjfnsdffs' +
-          'sdfsdfsdfsdf /n' +
-          'sdfsdfsdfsdfs /n' +
-          'sdfsdfsdfsdf /n',
-        items: [
-          {title: 'Tovar1', price: 100, quantity: 1},
-          {title: 'Tovar2', price: 200, quantity: 2},
-          {title: 'Tovar3', price: 300, quantity: 3},
-        ],
-        total: 400,
-        user: {
-          id: 1,
-          firstName: 'Mike',
-          lastName: 'Doe',
-        }
-      },
-      {
-        id: 2,
-        orderDate: 'some date',
-        status: -1, // статусы описаны ниже
-        details: '',
-        items: [
-          {title: 'Tovar4', price: 100, quantity: 1},
-          {title: 'Tovar5', price: 200, quantity: 2},
-          {title: 'Tovar6', price: 300, quantity: 3},
-        ],
-        total: 400,
-        user: {
-          id: 2,
-          firstName: 'John',
-          lastName: 'Doe',
-        }
-      }],
     };
   },
   components: {
@@ -159,11 +124,13 @@ export default {
     allUsers() {
       let all_users = []
       let i = 0;
-      for (i = 0; i < this.fakedata.length; i++) {
-        let order = this.fakedata[i];
-        if (!all_users.includes(order.user)) {
-          order.user.fullName = order.user.firstName + ' ' + order.user.lastName
-          all_users.push(order.user)
+      if (this.orders) {
+        for (i = 0; i < this.orders.length; i++) {
+          let order = this.orders[i];
+          if (!all_users.includes(order.user)) {
+            order.user.fullName = order.user.firstName + ' ' + order.user.lastName
+            all_users.push(order.user)
+          }
         }
       }
       return all_users
@@ -171,7 +138,7 @@ export default {
     filteredOrders() {
       let user = this.selected_user
 
-      return this.fakedata.filter((obj) => {
+      return this.orders.filter((obj) => {
         if (user != null) {
           return obj.user.id === user.id && (obj.status === this.selected_status || this.selected_status === 'all')
         }

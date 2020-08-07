@@ -1,0 +1,21 @@
+import gql from 'graphql-tag'
+
+export default gql`
+  query allOrders {
+    orders {
+      created
+      details
+      status
+      total
+      items {
+        id
+        title
+        price
+      }
+      user {
+        id
+        firstName
+      }
+    }
+  }
+`
