@@ -32,7 +32,7 @@
                   name="login"
                   prepend-icon="mdi-account"
                   type="text"
-                  v-model="firstname"
+                  v-model="user.firstName"
                   :rules="nameRules"
                 ></v-text-field>
                 <v-text-field
@@ -40,7 +40,7 @@
                   name="surname"
                   prepend-icon="mdi-account"
                   type="text"
-                  v-model="surname"
+                  v-model="user.lastName"
                   :rules="nameRules"
                 ></v-text-field>
                 <v-text-field
@@ -50,14 +50,14 @@
                   v-mask="'+996(###)###-###'"
                   placeholder="+996(999)123-456"
                   :rules="phoneRules"
-                  v-model="phone"
+                  v-model="user.phone"
                   type="text"
                 />
                 <v-text-field
                   label="* Почта"
                   name="email"
                   prepend-icon="mdi-mail"
-                  v-model="email"
+                  v-model="user.email"
                   type="text"
                   :rules='emailRules'
                 ></v-text-field>
@@ -67,7 +67,7 @@
                   name="password"
                   prepend-icon="mdi-lock"
                   type="password"
-                  v-model="password"
+                  v-model="user.password"
                   :rules="passRules"
                 ></v-text-field>
               </v-form>
@@ -95,6 +95,7 @@
 
 import { mask } from 'vue-the-mask'
 import gql from "graphql-tag";
+import {mapActions} from "vuex";
 
 export default {
   name: "Register",
@@ -104,15 +105,16 @@ export default {
   data() {
     return {
       loading: false,
-      valid: false,
-      firstname: '',
-      surname: '',
-      phone: '',
-      email: '',
-      password: '',
+      user: {
+        firstName: '',
+        lastName: '',
+        phone: '',
+        email: '',
+        password: '',
+      },
       nameRules: [
         v => !!v || '*Это поле обязательно',
-        v => (v && v.length > 3) || 'Введите не менее 3-х символов',
+        v => (v && v.length >= 3) || 'Введите не менее 3-х символов',
       ],
       emailRules: [
         v => !!v || '*Это поле обязательно',
@@ -124,26 +126,43 @@ export default {
       ],
       phoneRules: [
         v => (v && v.length <= 1) || '*Это поле обязательно',
-        v => (v && v.length < 17) || 'Неверный формат номера',
+        v => (v && v.length < 16) || 'Неверный формат номера',
       ]
     };
   },
   methods: {
+    ...mapActions(['alert']),
     validate() {
       this.$refs.form.validate()
     },
     register() {
       this.$apollo.mutate({
         // Query
-        mutation: gql`query register { register(
-                data: {
-                 lastName: surname,
-                 firstName: firstname,
-                 phone: phone,
-                 email: email,
-                 pass:password,
-                 avatar:image})
-                 { firstName lastName token avatar } }`,
+        mutation: gql`mutation saveUser($data: UserInput!) {
+            saveUser(data:$data) {
+              firstName
+              lastName
+              email
+              phone
+            }
+          }`,
+        variables: {
+          data: {
+            ...this.user
+          }
+        },
+      }).then(data => {
+        this.loading = false;
+        if (data.data.saveUser) {
+          this.$store.commit('SAVE_USER', data.data.saveUser);
+          this.editable = false;
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.alert({
+          type: 'error',
+          message: error,
+        });
       })
     },
   },
