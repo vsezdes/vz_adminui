@@ -1,12 +1,11 @@
 <template>
   <v-flex>
     <v-btn
-      style="left: -35px;background-color: red;  top: -140px;
-"
+      style="left: -35px;background-color: red;  top: -140px;"
       icon
       color="white"
       class="control_buttons"
-    @click="$delete(form, 'avatar');">
+      @click="$delete(form, 'avatar');">
       <v-icon>mdi-close</v-icon>
     </v-btn>
     <v-btn
@@ -50,7 +49,6 @@ export default {
       this.$refs.uploader.click()
     },
     onAddFiles(file) {
-      console.log(file)
       if( (!file.target.value.endsWith('.png') && !file.target.value.endsWith('.jpg') ) || file.target.files[0].size > 8000000 ){
         this.alert({
           type: 'error',
@@ -60,7 +58,7 @@ export default {
       }
       this.loading = true
       this.uploadFileToCloudinary(file.target.files[0]).then((fileResponse) => {
-        if (fileResponse.format === 'png' || fileResponse.format === 'jpg') {this.$set(this.form, 'avatar', fileResponse.url )}
+        this.$set(this.form, 'avatar', fileResponse.url )
         this.loading = false
       });
     },
@@ -87,7 +85,7 @@ export default {
             formData=''
             let response = JSON.parse(request.responseText);
             let error = response.error.message;
-            this.errorText = 'Upload file only with .png & .jpg extension !' + error;
+            this.errorText = error;
             reject(error);
           }
         };
