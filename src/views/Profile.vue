@@ -5,8 +5,8 @@
 
         <v-avatar rounded size="150px" color="base_header" >
           <v-img
-            v-if="form && form.avatar"
-            :src="form.avatar.url"
+            v-if="form.avatar"
+            :src="form.avatar"
           />
           <v-icon
             v-else
@@ -16,7 +16,7 @@
             mdi-account
           </v-icon>
         </v-avatar>
-        <SingleImageUpload style="height: 0" v-if="editable" :avatar_loading="avatar_loading" :form="form"/>
+        <SingleImageUpload style="height: 0" v-if="editable" :form="form"/>
         <v-divider class="my-2"/>
         <v-btn
           class="mb-3"
@@ -151,7 +151,6 @@ export default {
   },
   data() {
     return {
-      avatar_loading:false, //change to false when it working
       form: {
         firstName: '',
         lastName: '',
@@ -160,6 +159,7 @@ export default {
         birthDate: '',
         gender: '',
         address: '',
+        avatar:'',
       },
       editable:false,
       loading: false,

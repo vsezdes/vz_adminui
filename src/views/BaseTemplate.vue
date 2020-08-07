@@ -24,7 +24,7 @@
         <span v-if="token">
           <span class="mr-5">{{ user.firstName }} {{ user.lastName }}</span>
           <v-avatar class="mr-1" color="orange">
-            <img v-if="user.avatar" src="user.avatar"/>
+            <img v-if="user.avatar" :src="user.avatar"/>
             <v-icon v-else>mdi-emoticon-cool</v-icon>
           </v-avatar>
           <v-btn icon to="/logout"><v-icon>mdi-logout-variant</v-icon></v-btn>

@@ -1,12 +1,3 @@
-<style scoped >
-.control_buttons{
-  top: -50px;
-  min-height: 15px;
-  min-width: 15px;
-  //position: relative;
-  background: #CADADA;
-}
-</style>
 <template>
   <v-flex>
     <v-btn
@@ -38,6 +29,8 @@
   </v-flex>
 </template>
 <script>
+import {mapActions} from "vuex";
+
 export default {
   name: 'SingleImageUpload',
   data() {
@@ -48,6 +41,7 @@ export default {
   },
   props: ['form'],
   methods: {
+    ...mapActions(['alert']),
     onButtonClick() {
       this.isSelecting = true
       window.addEventListener('focus', () => {
@@ -56,9 +50,17 @@ export default {
       this.$refs.uploader.click()
     },
     onAddFiles(file) {
+      console.log(file)
+      if( (!file.target.value.endsWith('.png') && !file.target.value.endsWith('.jpg') ) || file.target.files[0].size > 8000000 ){
+        this.alert({
+          type: 'error',
+          message:  'Поддерживаются файлы форматов .png , .jpg и размером не более 10мб!'
+        });
+        return
+      }
       this.loading = true
       this.uploadFileToCloudinary(file.target.files[0]).then((fileResponse) => {
-        if (fileResponse.format === 'png' || fileResponse.format === 'jpg') {this.$set(this.form, 'avatar', fileResponse)}
+        if (fileResponse.format === 'png' || fileResponse.format === 'jpg') {this.$set(this.form, 'avatar', fileResponse.url )}
         this.loading = false
       });
     },
@@ -85,12 +87,11 @@ export default {
             formData=''
             let response = JSON.parse(request.responseText);
             let error = response.error.message;
-            this.errorText = 'error uploading files ' + error;
+            this.errorText = 'Upload file only with .png & .jpg extension !' + error;
             reject(error);
           }
         };
         request.onerror = (err) => {
-          alert('error: ' + err);
           reject(err);
         };
         request.send(formData);
@@ -99,3 +100,13 @@ export default {
   }
 }
 </script>
+
+<style scoped >
+.control_buttons{
+  top: -50px;
+  min-height: 15px;
+  min-width: 15px;
+//position: relative;
+  background: #CADADA;
+}
+</style>
