@@ -138,7 +138,7 @@ export default {
     filteredOrders() {
       let user = this.selected_user
 
-      return this.orders.filter((obj) => {
+      return this.orders && this.orders.filter((obj) => {
         if (user != null) {
           return obj.user.id === user.id && (obj.status === this.selected_status || this.selected_status === 'all')
         }
