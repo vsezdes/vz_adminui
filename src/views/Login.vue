@@ -125,7 +125,7 @@ export default {
           this.alert({
             type: 'error',
             message: 'Пользователь с такими почтой и паролем не найден!'
-          })
+          });
       }).catch(error => {
         this.loading = false;
         this.alert({

@@ -30,7 +30,12 @@
           />
         </v-col>
       </v-row>
-      {{ lastItems && lastItems.length }}
+      <v-btn
+        v-if="showLoadMore"
+        @click="loadMore"
+        block
+        :loading="$apolloData.queries.lastItems.loading"
+      >Показать еще...</v-btn>
       <ItemForm
         :show="showForm"
         :item="activeItem"
@@ -55,9 +60,17 @@ export default {
     ItemForm,
   },
   apollo: {
-    lastItems: LAST_ITEMS,
+    lastItems: {
+      query: LAST_ITEMS,
+      variables: {
+        page: 0,
+      },
+    },
   },
   computed: {
+    loading() {
+      return this.$apolloData.queries.lastItems.loading;
+    },
     expandedItem() {
       return this.getItemById(this.expandedId);
     }
@@ -73,13 +86,37 @@ export default {
     onEditItem(itemId) {
       this.activeItem = this.getItemById(itemId);
       this.showForm = true;
-    }
+    },
+    loadMore() {
+      console.warn(this);
+      this.page++
+      // Fetch more data and transform the original result
+      this.$apollo.queries.lastItems.fetchMore({
+        // New variables
+        variables: {
+          page: this.page,
+        },
+        // Transform the previous result with new data
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          const newItems = fetchMoreResult.lastItems;
+          this.showLoadMore = (previousResult.lastItems.length / this.page) === newItems.length;
+          return {
+            lastItems: [
+              // Merging the tag list
+              ...previousResult.lastItems, ...newItems,
+            ],
+          }
+        },
+      })
+    },
   },
   data () {
     return {
       activeItem: null,
       expandedId: null,
       showForm: false,
+      showLoadMore: true,
+      page: 0,
     }
   },
 }

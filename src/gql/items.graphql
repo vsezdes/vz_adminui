@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const LAST_ITEMS = gql`
-  query lastItems {
-    lastItems {
+  query lastItems($page: Int) {
+    lastItems(page: $page) {
       id
       title
       price
