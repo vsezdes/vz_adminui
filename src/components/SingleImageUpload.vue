@@ -5,7 +5,7 @@
       icon
       color="white"
       class="control_buttons"
-      @click="$delete(form, 'avatar');">
+      @click="$set(form, 'avatar', null);">
       <v-icon>mdi-close</v-icon>
     </v-btn>
     <v-btn

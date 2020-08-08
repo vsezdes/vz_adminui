@@ -156,7 +156,7 @@ export default {
         lastName: '',
         phone: '',
         email: '',
-        birthDate: '',
+        // birthDate: '',
         gender: '',
         address: '',
         avatar:'',
@@ -183,8 +183,11 @@ export default {
   methods:{
     ...mapActions(['alert']),
     getUserState() {
-      Object.keys(this.form).forEach(key => {
-        this.$set(this.form, key, this.user[key]);
+      Object.keys(this.user).forEach(key => {
+          if (typeof this.form[key] == "undefined"){
+            return
+          }
+          this.$set(this.form, key, this.user[key])
       });
     },
     onCancel(){

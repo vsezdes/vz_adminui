@@ -21,7 +21,8 @@
               :search="search"
             >
               <template v-slot:item.joined="{ item }">
-                <span>{{new Date(+item.joined).toLocaleString()}}</span>
+<!--                <span>{{new Date(+item.joined).toLocaleString()}}</span>-->
+                <span>{{ FormatDateToString( item.joined )}}</span>
               </template>
               <template v-slot:item.avatar="{ item }">
                 <v-avatar tile>
@@ -39,8 +40,10 @@
 <script>
 import { ALL_USERS } from '@/gql/users.graphql';
 import BaseTemplate from '@/views/BaseTemplate.vue';
+import {DateFormat} from '@/mixins/DateFormat'
 
 export default {
+  mixins:[ DateFormat ],
   components: {
     BaseTemplate,
   },
