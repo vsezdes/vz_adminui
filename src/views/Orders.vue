@@ -44,9 +44,13 @@
           show-expand
           :calculate-widths='true'
         >
+<!--          Преобразование формата created -->
+          <template v-slot:item.created="{ item }">
+            <span>{{ FormatDateToString( item.created) }}</span>
+          </template>
           <!--      Вставка таблицы в таблицу -->
-          <template v-slot:expanded-item="{ headers , item}">
-            <td :colspan="headers.length">
+          <template  v-slot:expanded-item="{ headers , item}">
+            <td v-if="item.items" :colspan="headers.length">
               <v-data-table
                 hide-default-footer
                 class="amber lighten-2"
@@ -55,8 +59,10 @@
             </td>
           </template>
           <!--      Определение количества товара -->
-          <template v-slot:item.items="{ item }">
-            {{ item.items.length }}
+          <template  v-slot:item.items="{ item }">
+            <v-flex v-if="item.items">
+              {{ item.items.length }}
+            </v-flex>
           </template>
           <!--      Определение статуса заказа -->
           <template v-slot:item.status="{ item }">
@@ -77,12 +83,14 @@
 <script>
 import BaseTemplate from "./BaseTemplate";
 import ALL_ORDERS from '@/gql/orders.graphql';
+import { DateFormat } from '@/mixins/DateFormat'
 
 export default {
   name: "Orders",
   apollo: {
     orders: ALL_ORDERS,
   },
+  mixins:[ DateFormat ],
   data() {
     return {
       expanded: [],
@@ -136,6 +144,7 @@ export default {
       return all_users
     },
     filteredOrders() {
+      console.log(this.orders)
       let user = this.selected_user
 
       return this.orders && this.orders.filter((obj) => {
