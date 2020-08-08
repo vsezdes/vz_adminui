@@ -46,7 +46,7 @@
         >
 <!--          Преобразование формата created -->
           <template v-slot:item.created="{ item }">
-            <span>{{ FormatDateToString( item.created) }}</span>
+            <span>{{ formatDateToString(item.created) }}</span>
           </template>
           <!--      Вставка таблицы в таблицу -->
           <template  v-slot:expanded-item="{ headers , item}">
@@ -144,7 +144,6 @@ export default {
       return all_users
     },
     filteredOrders() {
-      console.log(this.orders)
       let user = this.selected_user
 
       return this.orders && this.orders.filter((obj) => {

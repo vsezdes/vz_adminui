@@ -21,8 +21,7 @@
               :search="search"
             >
               <template v-slot:item.joined="{ item }">
-<!--                <span>{{new Date(+item.joined).toLocaleString()}}</span>-->
-                <span>{{ FormatDateToString( item.joined )}}</span>
+                <span>{{ formatDateToString(item.joined) }}</span>
               </template>
               <template v-slot:item.avatar="{ item }">
                 <v-avatar tile>

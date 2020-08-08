@@ -37,13 +37,13 @@
               <v-layout wrap justify-space-around>
                 <v-flex xs11 md5 lg5>
                   <v-text-field md5 lg5
-                                :disabled="!editable"
-                                label="* Имя"
-                                name="login"
-                                prepend-icon="mdi-account"
-                                type="text"
-                                v-model="form.firstName"
-                                :rules="nameRules"
+                    :disabled="!editable"
+                    label="* Имя"
+                    name="login"
+                    prepend-icon="mdi-account"
+                    type="text"
+                    v-model="form.firstName"
+                    :rules="nameRules"
                   />
                 </v-flex>
 
