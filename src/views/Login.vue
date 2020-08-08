@@ -119,20 +119,13 @@ export default {
         }
       }).then(data => {
         this.loading = false;
-        console.log(data.data.authUser)
-        if (data.data.authUser) this.login(data.data.authUser).then(() => this.$router.push('/'));
-        // TODO: Remove this when login starts working
-        else this.login({
-          id: 100500,
-          email:'some_mail@mail.com',
-          phone:'123123',
-          firstName: 'Test',
-          lastName: 'User',
-          address:"советская 1",
-          gender:'female',
-          token: 'DFGH$#%WHWS#$UYHDFTERH$#3wh45$',
-          avatar: null,
-        }).then(() => this.$router.push('/'))
+        if (data.data.authUser)
+          this.login(data.data.authUser).then(() => this.$router.push('/'));
+        else
+          this.alert({
+            type: 'error',
+            message: 'Пользователь с такими почтой и паролем не найден!'
+          });
       }).catch(error => {
         this.loading = false;
         this.alert({
