@@ -95,7 +95,7 @@
 
 import { mask } from 'vue-the-mask'
 import gql from "graphql-tag";
-import {mapActions} from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   name: "Register",

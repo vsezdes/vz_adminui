@@ -37,13 +37,13 @@
               <v-layout wrap justify-space-around>
                 <v-flex xs11 md5 lg5>
                   <v-text-field md5 lg5
-                    :disabled="!editable"
-                    label="* Имя"
-                    name="login"
-                    prepend-icon="mdi-account"
-                    type="text"
-                    v-model="form.firstName"
-                    :rules="nameRules"
+                                :disabled="!editable"
+                                label="* Имя"
+                                name="login"
+                                prepend-icon="mdi-account"
+                                type="text"
+                                v-model="form.firstName"
+                                :rules="nameRules"
                   />
                 </v-flex>
 
@@ -184,10 +184,10 @@ export default {
     ...mapActions(['alert']),
     getUserState() {
       Object.keys(this.user).forEach(key => {
-          if (typeof this.form[key] == "undefined"){
-            return
-          }
-          this.$set(this.form, key, this.user[key])
+        if (typeof this.form[key] == "undefined"){
+          return
+        }
+        this.$set(this.form, key, this.user[key])
       });
     },
     onCancel(){
@@ -217,18 +217,18 @@ export default {
             ...this.form
           }
         }
-        }).then(data => {
-          this.loading = false;
-          if (data.data.saveUser) {
-            this.$store.commit('SAVE_USER', data.data.saveUser);
-            this.editable = false;
-          }
-        }).catch(error => {
-          this.loading = false;
-          this.alert({
-            type: 'error',
-            message: error,
-          });
+      }).then(data => {
+        this.loading = false;
+        if (data.data.saveUser) {
+          this.$store.commit('SAVE_USER', data.data.saveUser);
+          this.editable = false;
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.alert({
+          type: 'error',
+          message: error,
+        });
       });
     }
   },

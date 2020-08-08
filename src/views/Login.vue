@@ -119,7 +119,6 @@ export default {
         }
       }).then(data => {
         this.loading = false;
-        console.log(data.data.authUser)
         if (data.data.authUser) this.login(data.data.authUser).then(() => this.$router.push('/'));
         // TODO: Remove this when login starts working
         else this.login({
