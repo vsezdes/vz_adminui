@@ -33,7 +33,7 @@
       <v-flex offset-1 sm12 md6 lg6 align-self-center>
         <v-card>
           <v-card-text>
-            <v-form>
+            <v-form v-model="isValid" >
               <v-layout wrap justify-space-around>
                 <v-flex xs11 md5 lg5>
                   <v-text-field md5 lg5
@@ -114,7 +114,10 @@
                       <v-btn v-show="editable" :disabled="loading" color="error" @click="onCancel"> Отмена</v-btn>
                     </v-flex>
                     <v-flex lg3 md3>
-                      <v-btn v-show="editable" :disabled="loading" color="success" @click="editUser"> Сохранить</v-btn>
+                      {{ isValid }}
+                      {{ loading }}
+                      {{ !isValid || loading }}
+                      <v-btn v-show="editable" :disabled="!isValid || loading" color="success" @click="editUser"> Сохранить</v-btn>
                     </v-flex>
                   </v-layout>
                 </v-flex>
@@ -151,6 +154,7 @@ export default {
   },
   data() {
     return {
+      isValid:false,
       form: {
         firstName: '',
         lastName: '',
@@ -172,7 +176,7 @@ export default {
         v => /.+@.+\..+/.test(v) || 'Указанная вами почта имеет неверный формат',
       ],
       phoneRules: [
-        v => (v && v.length <= 1) || '*Это поле обязательно',
+        v => (v && v.length >= 1) || '*Это поле обязательно',
         v => (v && v.length < 17) || 'Неверный формат номера',
       ]
     }
