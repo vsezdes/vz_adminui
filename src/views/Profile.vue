@@ -114,9 +114,6 @@
                       <v-btn v-show="editable" :disabled="loading" color="error" @click="onCancel"> Отмена</v-btn>
                     </v-flex>
                     <v-flex lg3 md3>
-                      {{ isValid }}
-                      {{ loading }}
-                      {{ !isValid || loading }}
                       <v-btn v-show="editable" :disabled="!isValid || loading" color="success" @click="editUser"> Сохранить</v-btn>
                     </v-flex>
                   </v-layout>

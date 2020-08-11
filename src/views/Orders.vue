@@ -125,8 +125,10 @@ export default {
   components: {
     BaseTemplate
   },
-  beforeMount() {
-    this.selected_user = this.allUsers[0]
+  methods:{
+  selectFirstUser(users){
+    this.selected_user = users[0]
+  }
   },
   computed: {
     allUsers() {
@@ -141,7 +143,8 @@ export default {
           }
         }
       }
-      return all_users
+      this.selectFirstUser(all_users)
+      return all_users;
     },
     filteredOrders() {
       let user = this.selected_user
