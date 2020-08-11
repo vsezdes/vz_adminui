@@ -33,6 +33,8 @@
       </v-flex>
       <v-flex md sm10>
         <v-data-table
+          no-data-text="Нет заказов"
+          dense
           :headers="order_headers"
           :items="filteredOrders"
           :items-per-page="999999"
@@ -52,8 +54,9 @@
           <template  v-slot:expanded-item="{ headers , item}">
             <td v-if="item.items" :colspan="headers.length">
               <v-data-table
+                dense
                 hide-default-footer
-                class="amber lighten-2"
+                id="order_items_table"
                 :items="item.items"
                 :headers="item_headers"></v-data-table>
             </td>
@@ -108,11 +111,11 @@ export default {
       ],
       order_headers: [
         {text: 'статус', value: 'status'},
-        {text: 'товары', value: 'items'},
         {text: 'Пользователь', value: 'user.fullName'},
         {text: 'описание', value: 'details', width: '255px'},
         {text: 'сумма', value: 'total'},
         {text: 'дата', value: 'created'},
+        {text: 'товары', value: 'items'},
         {text: '', value: 'data-table-expand'},
       ],
       item_headers: [
@@ -126,9 +129,9 @@ export default {
     BaseTemplate
   },
   methods:{
-  selectFirstUser(users){
-    this.selected_user = users[0]
-  }
+    selectFirstUser(users){
+      this.selected_user = users[0]
+    }
   },
   computed: {
     allUsers() {
@@ -159,6 +162,8 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+#order_items_table tbody tr:nth-child(odd) {
+  background-color: lightgray;
+}
 </style>

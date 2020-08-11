@@ -21,17 +21,37 @@
       </router-link>
       <v-spacer></v-spacer>
       <div class="auth-box">
+
         <span v-if="token">
           <span class="mr-5">{{ user.firstName }} {{ user.lastName }}</span>
           <v-avatar class="mr-1" color="orange">
             <img v-if="user.avatar" :src="user.avatar"/>
             <v-icon v-else>mdi-emoticon-cool</v-icon>
           </v-avatar>
-          <v-btn icon to="/logout"><v-icon>mdi-logout-variant</v-icon></v-btn>
         </span>
         <v-btn v-else icon to="/login">
           <v-icon>mdi-login-variant</v-icon>
         </v-btn>
+        <v-menu bottom left offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              icon
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+
+          <v-list style="text-align: center" class="text-center">
+            <v-list-item>
+              <v-btn style="min-width: 130px" to="/profile"><v-icon>mdi-account</v-icon>Профиль</v-btn>
+            </v-list-item>
+            <v-list-item>
+              <v-btn style="min-width: 130px" to="/logout"><v-icon>mdi-logout-variant</v-icon>Выйти</v-btn>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
     </v-app-bar>
 
@@ -109,6 +129,12 @@ export default {
   },
   data: () => ({
     drawer: null,
+    it: [
+      { title: 'Click Me' },
+      { title: 'Click Me' },
+      { title: 'Click Me' },
+      { title: 'Click Me 2' },
+    ],
     items: [
       {heading: 'Товары'},
       {icon: 'mdi-package-variant', text: 'Все товары', href: '/items'},
@@ -116,7 +142,6 @@ export default {
       {heading: 'Управление'},
       {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
       {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders'},
-      {icon: 'mdi-account', text: 'Мой профиль', href: '/profile'},
     ],
   }),
   computed: {
