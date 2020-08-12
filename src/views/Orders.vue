@@ -31,7 +31,7 @@
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex md sm10>
+      <v-flex lg10 md12 sm12 style="overflow: auto">
         <v-data-table
           no-data-text="Нет заказов"
           dense
@@ -40,6 +40,7 @@
           :items-per-page="999999"
           item-key="id"
           hide-default-footer
+          hide-actions
           :single-expand="expand"
           :expanded.sync="expanded"
           class="elevation-1"
@@ -52,8 +53,12 @@
           </template>
           <!--      Вставка таблицы в таблицу -->
           <template  v-slot:expanded-item="{ headers , item}">
-            <td v-if="item.items" :colspan="headers.length">
+            <td  style="padding: 5px" v-if="item.items" :colspan="headers.length">
               <v-data-table
+                style="padding: 2px"
+                :align="'center'"
+                justify-center
+                class="text-center"
                 dense
                 hide-default-footer
                 id="order_items_table"
@@ -111,17 +116,17 @@ export default {
       ],
       order_headers: [
         {text: 'статус', value: 'status'},
-        {text: 'Пользователь', value: 'user.fullName'},
-        {text: 'описание', value: 'details', width: '255px'},
-        {text: 'сумма', value: 'total'},
+        {text: 'Пользователь', value: 'user.fullName',width: '150px'},
+        {text: 'описание', value: 'details', width: '200px'},
+        {text: 'сумма', value: 'total',width: '90px'},
         {text: 'дата', value: 'created'},
-        {text: 'товары', value: 'items'},
+        {text: 'товары', value: 'items',width: '100px'},
         {text: '', value: 'data-table-expand'},
       ],
       item_headers: [
-        {text: 'название товара', value: 'title'},
-        {text: 'сумма', value: 'price'},
-        {text: 'количество', value: 'quantity'},
+        {text: 'название товара', value: 'title',align:'center'},
+        {text: 'сумма', value: 'price', align:'center'},
+        {text: 'количество', value: 'quantity', align:'center'},
       ],
     };
   },

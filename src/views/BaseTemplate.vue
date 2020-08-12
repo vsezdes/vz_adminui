@@ -21,35 +21,66 @@
       </router-link>
       <v-spacer></v-spacer>
       <div class="auth-box">
-
-        <span v-if="token">
-          <span class="mr-5">{{ user.firstName }} {{ user.lastName }}</span>
-          <v-avatar class="mr-1" color="orange">
-            <img v-if="user.avatar" :src="user.avatar"/>
-            <v-icon v-else>mdi-emoticon-cool</v-icon>
-          </v-avatar>
-        </span>
-        <v-btn v-else icon to="/login">
-          <v-icon>mdi-login-variant</v-icon>
-        </v-btn>
-        <v-menu bottom left offset-y>
+        <v-menu bottom left offset-y v-model="profile_menu_open">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              icon
-              v-bind="attrs"
-              v-on="on"
+            <v-container :style="isExpanded"
             >
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </template>
+              <span v-if="token" >
+                <span class="mr-5">{{ user.firstName }} {{ user.lastName }} </span>
+                <v-avatar class="mr-1" color="orange">
+                  <v-img v-if="user.avatar" :src="user.avatar"/>
+                  <v-icon v-else>mdi-emoticon-cool</v-icon>
+                </v-avatar>
+              </span>
 
-          <v-list style="text-align: center" class="text-center">
-            <v-list-item>
-              <v-btn style="min-width: 130px" to="/profile"><v-icon>mdi-account</v-icon>Профиль</v-btn>
+              <v-btn v-else icon to="/login">
+                <v-icon>mdi-login-variant</v-icon>
+              </v-btn>
+
+              <v-btn
+                icon
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-chevron-down</v-icon>
+              </v-btn>
+            </v-container>
+          </template>
+          <v-list>
+          <template v-for="(item, i) in profile_menu">
+            <v-row
+              v-if="item.heading"
+              :key="i"
+              align="center"
+            >
+              <v-col cols="6">
+                <v-subheader v-if="item.heading">
+                  {{ item.heading }}
+                </v-subheader>
+              </v-col>
+            </v-row>
+            <v-divider
+              v-else-if="item.divider"
+              :key="i"
+              dark
+              class="my-4"
+            ></v-divider>
+            <v-list-item
+              v-else
+              :key="i"
+              link
+              :to="item.href"
+            >
+              <v-list-item-action>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title class="grey--text">
+                  {{ item.text }}
+                </v-list-item-title>
+              </v-list-item-content>
             </v-list-item>
-            <v-list-item>
-              <v-btn style="min-width: 130px" to="/logout"><v-icon>mdi-logout-variant</v-icon>Выйти</v-btn>
-            </v-list-item>
+          </template>
           </v-list>
         </v-menu>
       </div>
@@ -129,11 +160,10 @@ export default {
   },
   data: () => ({
     drawer: null,
-    it: [
-      { title: 'Click Me' },
-      { title: 'Click Me' },
-      { title: 'Click Me' },
-      { title: 'Click Me 2' },
+    profile_menu_open:false,
+    profile_menu:[
+      {icon: 'mdi-account', text: 'Мой профиль', href: '/profile'},
+      {icon: 'mdi-logout-variant', text: 'Выход', href: '/logout'},
     ],
     items: [
       {heading: 'Товары'},
@@ -146,8 +176,12 @@ export default {
   }),
   computed: {
     ...mapState(['token', 'user']),
+    isExpanded:function (){
+      return{
+        background: this.profile_menu_open ? 'white' :''
+      }
+    }
   },
-
 }
 </script>
 
