@@ -20,12 +20,11 @@
         />
       </router-link>
       <v-spacer></v-spacer>
-      <div class="auth-box">
-        <v-menu bottom left offset-y v-model="profile_menu_open">
+      <div class="auth-box" style=";height: 100%;position: absolute;right: 20px;">
+        <v-menu style="border-radius: 0" offset-y v-model="profile_menu_open">
           <template v-slot:activator="{ on, attrs }">
-            <v-container :style="isExpanded"
-            >
-              <span v-if="token" >
+            <v-container :style="isExpanded" style="padding: 4px 15px ;height: 100%;">
+              <span v-if="token" style="top: 10px">
                 <span class="mr-5">{{ user.firstName }} {{ user.lastName }} </span>
                 <v-avatar class="mr-1" color="orange">
                   <v-img v-if="user.avatar" :src="user.avatar"/>
@@ -46,11 +45,9 @@
               </v-btn>
             </v-container>
           </template>
-          <v-list>
-          <template v-for="(item, i) in profile_menu">
+          <v-flex v-for="(item, i) in profile_menu" :key="i" style="background: white">
             <v-row
               v-if="item.heading"
-              :key="i"
               align="center"
             >
               <v-col cols="6">
@@ -66,22 +63,20 @@
               class="my-4"
             ></v-divider>
             <v-list-item
+              style="padding: 0"
               v-else
               :key="i"
               link
               :to="item.href"
             >
-              <v-list-item-action>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title class="grey--text">
+                  <v-icon style="padding: 0 12px">{{ item.icon }}</v-icon>
                   {{ item.text }}
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-          </template>
-          </v-list>
+          </v-flex>
         </v-menu>
       </div>
     </v-app-bar>
@@ -160,8 +155,8 @@ export default {
   },
   data: () => ({
     drawer: null,
-    profile_menu_open:false,
-    profile_menu:[
+    profile_menu_open: false,
+    profile_menu: [
       {icon: 'mdi-account', text: 'Мой профиль', href: '/profile'},
       {icon: 'mdi-logout-variant', text: 'Выход', href: '/logout'},
     ],
@@ -176,16 +171,17 @@ export default {
   }),
   computed: {
     ...mapState(['token', 'user']),
-    isExpanded:function (){
-      return{
-        background: this.profile_menu_open ? 'white' :''
+    isExpanded: function () {
+      return {
+        background: this.profile_menu_open ? 'white' : ''
       }
     }
   },
+
 }
 </script>
 
-<style>
+<style scoped>
 #keep .v-navigation-drawer__border {
   display: none
 }
@@ -212,5 +208,9 @@ export default {
 
 .logo .v-avatar .v-image {
   filter: grayscale(100%);
+}
+
+.v-menu__content {
+  border-radius: 0 !important;
 }
 </style>
