@@ -20,10 +20,10 @@
         />
       </router-link>
       <v-spacer></v-spacer>
-      <div class="auth-box" style=";height: 100%;position: absolute;right: 20px;">
+      <div class="auth-box" style="height: 100%;position: absolute;right: 20px;">
         <v-menu style="border-radius: 0" offset-y v-model="profile_menu_open">
           <template v-slot:activator="{ on, attrs }">
-            <v-container :style="isExpanded" style="padding: 4px 15px ;height: 100%;">
+            <v-container :style="isExpanded" style="display: flex; align-items: center;padding: 0 15px ;height: 100%;">
               <span v-if="token" style="top: 10px">
                 <span class="mr-5">{{ user.firstName }} {{ user.lastName }} </span>
                 <v-avatar class="mr-1" color="orange">
@@ -130,8 +130,8 @@
 
     <v-content>
       <v-layout
-        color: base_bg
-        class="fill-height align-start pa-5"
+          color: base_bg
+          class="fill-height align-start pa-5"
       >
         <v-row>
           <slot></slot>
@@ -142,7 +142,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import {mapState} from 'vuex';
 
 export default {
   name: 'BaseTemplate',
@@ -177,7 +177,6 @@ export default {
       }
     }
   },
-
 }
 </script>
 
