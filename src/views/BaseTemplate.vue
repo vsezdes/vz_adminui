@@ -20,18 +20,64 @@
         />
       </router-link>
       <v-spacer></v-spacer>
-      <div class="auth-box">
-        <span v-if="token">
-          <span class="mr-5">{{ user.firstName }} {{ user.lastName }}</span>
-          <v-avatar class="mr-1" color="orange">
-            <img v-if="user.avatar" :src="user.avatar"/>
-            <v-icon v-else>mdi-emoticon-cool</v-icon>
-          </v-avatar>
-          <v-btn icon to="/logout"><v-icon>mdi-logout-variant</v-icon></v-btn>
-        </span>
-        <v-btn v-else icon to="/login">
-          <v-icon>mdi-login-variant</v-icon>
-        </v-btn>
+      <div class="auth-box" style="height: 100%;position: absolute;right: 20px;">
+        <v-menu style="border-radius: 0" offset-y v-model="profile_menu_open">
+          <template v-slot:activator="{ on, attrs }">
+            <v-container :style="isExpanded" style="display: flex; align-items: center;padding: 0 15px ;height: 100%;">
+              <span v-if="token" style="top: 10px">
+                <span class="mr-5">{{ user.firstName }} {{ user.lastName }} </span>
+                <v-avatar class="mr-1" color="orange">
+                  <v-img v-if="user.avatar" :src="user.avatar"/>
+                  <v-icon v-else>mdi-emoticon-cool</v-icon>
+                </v-avatar>
+              </span>
+
+              <v-btn v-else icon to="/login">
+                <v-icon>mdi-login-variant</v-icon>
+              </v-btn>
+
+              <v-btn
+                icon
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-chevron-down</v-icon>
+              </v-btn>
+            </v-container>
+          </template>
+          <v-flex v-for="(item, i) in profile_menu" :key="i" style="background: white">
+            <v-row
+              v-if="item.heading"
+              align="center"
+            >
+              <v-col cols="6">
+                <v-subheader v-if="item.heading">
+                  {{ item.heading }}
+                </v-subheader>
+              </v-col>
+            </v-row>
+            <v-divider
+              v-else-if="item.divider"
+              :key="i"
+              dark
+              class="my-4"
+            ></v-divider>
+            <v-list-item
+              style="padding: 0"
+              v-else
+              :key="i"
+              link
+              :to="item.href"
+            >
+              <v-list-item-content>
+                <v-list-item-title class="grey--text">
+                  <v-icon style="padding: 0 12px">{{ item.icon }}</v-icon>
+                  {{ item.text }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-flex>
+        </v-menu>
       </div>
     </v-app-bar>
 
@@ -84,8 +130,8 @@
 
     <v-content>
       <v-layout
-        color: base_bg
-        class="fill-height align-start pa-5"
+          color: base_bg
+          class="fill-height align-start pa-5"
       >
         <v-row>
           <slot></slot>
@@ -96,7 +142,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import {mapState} from 'vuex';
 
 export default {
   name: 'BaseTemplate',
@@ -109,6 +155,11 @@ export default {
   },
   data: () => ({
     drawer: null,
+    profile_menu_open: false,
+    profile_menu: [
+      {icon: 'mdi-account', text: 'Мой профиль', href: '/profile'},
+      {icon: 'mdi-logout-variant', text: 'Выход', href: '/logout'},
+    ],
     items: [
       {heading: 'Товары'},
       {icon: 'mdi-package-variant', text: 'Все товары', href: '/items'},
@@ -116,17 +167,20 @@ export default {
       {heading: 'Управление'},
       {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
       {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders'},
-      {icon: 'mdi-account', text: 'Мой профиль', href: '/profile'},
     ],
   }),
   computed: {
     ...mapState(['token', 'user']),
+    isExpanded: function () {
+      return {
+        background: this.profile_menu_open ? 'white' : ''
+      }
+    }
   },
-
 }
 </script>
 
-<style>
+<style scoped>
 #keep .v-navigation-drawer__border {
   display: none
 }
@@ -153,5 +207,9 @@ export default {
 
 .logo .v-avatar .v-image {
   filter: grayscale(100%);
+}
+
+.v-menu__content {
+  border-radius: 0 !important;
 }
 </style>

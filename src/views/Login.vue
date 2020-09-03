@@ -31,7 +31,7 @@
 
             </v-toolbar>
             <v-card-text>
-              <v-form>
+              <v-form v-model="isValid">
                 <v-text-field
                   label="* Почта"
                   name="email"
@@ -54,7 +54,7 @@
             <v-card-actions>
               <v-layout row wrap>
                 <v-spacer></v-spacer>
-                <v-btn style="color: white" @click="loginQuery" color="auth_forms_button">Войти</v-btn>
+                <v-btn style="color: white" @click="loginQuery" :disabled='!isValid' color="auth_forms_button">Войти</v-btn>
                 <v-spacer></v-spacer>
 
               </v-layout>
@@ -79,6 +79,7 @@ export default {
   },
   data() {
     return {
+      isValid:false,
       email: '',
       password: '',
       loading: false,

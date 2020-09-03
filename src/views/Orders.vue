@@ -31,32 +31,46 @@
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex md sm10>
+      <v-flex lg10 md12 sm12 style="overflow: auto">
         <v-data-table
+          no-data-text="Нет заказов"
+          dense
           :headers="order_headers"
           :items="filteredOrders"
           :items-per-page="999999"
           item-key="id"
           hide-default-footer
+          hide-actions
           :single-expand="expand"
           :expanded.sync="expanded"
           class="elevation-1"
           show-expand
           :calculate-widths='true'
         >
+<!--          Преобразование формата created -->
+          <template v-slot:item.created="{ item }">
+            <span>{{ formatDateToString(item.created) }}</span>
+          </template>
           <!--      Вставка таблицы в таблицу -->
-          <template v-slot:expanded-item="{ headers , item}">
-            <td :colspan="headers.length">
+          <template  v-slot:expanded-item="{ headers , item}">
+            <td  style="padding: 5px" v-if="item.items" :colspan="headers.length">
               <v-data-table
+                style="padding: 2px"
+                :align="'center'"
+                justify-center
+                class="text-center"
+                dense
                 hide-default-footer
-                class="amber lighten-2"
+                id="order_items_table"
                 :items="item.items"
                 :headers="item_headers"></v-data-table>
             </td>
           </template>
           <!--      Определение количества товара -->
-          <template v-slot:item.items="{ item }">
-            {{ item.items.length }}
+          <template  v-slot:item.items="{ item }">
+            <v-flex v-if="item.items">
+              {{ item.items.length }}
+            </v-flex>
           </template>
           <!--      Определение статуса заказа -->
           <template v-slot:item.status="{ item }">
@@ -77,12 +91,14 @@
 <script>
 import BaseTemplate from "./BaseTemplate";
 import ALL_ORDERS from '@/gql/orders.graphql';
+import { DateFormat } from '@/mixins/DateFormat'
 
 export default {
   name: "Orders",
   apollo: {
     orders: ALL_ORDERS,
   },
+  mixins:[ DateFormat ],
   data() {
     return {
       expanded: [],
@@ -100,25 +116,27 @@ export default {
       ],
       order_headers: [
         {text: 'статус', value: 'status'},
-        {text: 'товары', value: 'items'},
-        {text: 'Пользователь', value: 'user.fullName'},
-        {text: 'описание', value: 'details', width: '255px'},
-        {text: 'сумма', value: 'total'},
+        {text: 'Пользователь', value: 'user.fullName',width: '150px'},
+        {text: 'описание', value: 'details', width: '200px'},
+        {text: 'сумма', value: 'total',width: '90px'},
         {text: 'дата', value: 'created'},
+        {text: 'товары', value: 'items',width: '100px'},
         {text: '', value: 'data-table-expand'},
       ],
       item_headers: [
-        {text: 'название товара', value: 'title'},
-        {text: 'сумма', value: 'price'},
-        {text: 'количество', value: 'quantity'},
+        {text: 'название товара', value: 'title',align:'center'},
+        {text: 'сумма', value: 'price', align:'center'},
+        {text: 'количество', value: 'quantity', align:'center'},
       ],
     };
   },
   components: {
     BaseTemplate
   },
-  beforeMount() {
-    this.selected_user = this.allUsers[0]
+  methods:{
+    selectFirstUser(users){
+      this.selected_user = users[0]
+    }
   },
   computed: {
     allUsers() {
@@ -133,7 +151,8 @@ export default {
           }
         }
       }
-      return all_users
+      this.selectFirstUser(all_users)
+      return all_users;
     },
     filteredOrders() {
       let user = this.selected_user
@@ -148,6 +167,8 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+#order_items_table tbody tr:nth-child(odd) {
+  background-color: lightgray;
+}
 </style>

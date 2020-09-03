@@ -26,7 +26,7 @@
               <router-link style="color: white;font-weight: bold" to="Login">Вход</router-link>
             </v-toolbar>
             <v-card-text>
-              <v-form>
+              <v-form v-model="isValid">
                 <v-text-field
                   label="* Имя"
                   name="login"
@@ -75,7 +75,7 @@
             <v-card-actions>
               <v-layout row wrap>
                 <v-spacer></v-spacer>
-                <v-btn style="color:white" color="auth_forms_button" @click="register"
+                <v-btn style="color:white" :disabled='!isValid' color="auth_forms_button" @click="register"
 
                 >Зарегистрироваться
                 </v-btn>
@@ -95,7 +95,7 @@
 
 import { mask } from 'vue-the-mask'
 import gql from "graphql-tag";
-import {mapActions} from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   name: "Register",
@@ -104,6 +104,7 @@ export default {
   },
   data() {
     return {
+      isValid:false,
       loading: false,
       user: {
         firstName: '',
@@ -125,13 +126,13 @@ export default {
         v => (v && v.length >= 8) || 'Пароль должен быть длиннее 8-ми символов',
       ],
       phoneRules: [
-        v => (v && v.length <= 1) || '*Это поле обязательно',
-        v => (v && v.length < 16) || 'Неверный формат номера',
+        v => (v && v.length >= 5) || '*Это поле обязательно',
+        v => (v && v.length === 16) || 'Неверный формат номера',
       ]
     };
   },
   methods: {
-    ...mapActions(['alert']),
+    ...mapActions(['login','alert']),
     validate() {
       this.$refs.form.validate()
     },
@@ -154,7 +155,11 @@ export default {
       }).then(data => {
         this.loading = false;
         if (data.data.saveUser) {
-          this.$store.commit('SAVE_USER', data.data.saveUser);
+          this.$router.push('/login')
+          this.alert({
+            type: 'info',
+            message: 'Вы успешно прошли регистрацию, пожалуйста войдите.',
+          });
           this.editable = false;
         }
       }).catch(error => {

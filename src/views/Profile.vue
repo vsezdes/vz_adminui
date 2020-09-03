@@ -33,7 +33,7 @@
       <v-flex offset-1 sm12 md6 lg6 align-self-center>
         <v-card>
           <v-card-text>
-            <v-form>
+            <v-form v-model="isValid" >
               <v-layout wrap justify-space-around>
                 <v-flex xs11 md5 lg5>
                   <v-text-field md5 lg5
@@ -114,7 +114,7 @@
                       <v-btn v-show="editable" :disabled="loading" color="error" @click="onCancel"> Отмена</v-btn>
                     </v-flex>
                     <v-flex lg3 md3>
-                      <v-btn v-show="editable" :disabled="loading" color="success" @click="editUser"> Сохранить</v-btn>
+                      <v-btn v-show="editable" :disabled="!isValid || loading" color="success" @click="editUser"> Сохранить</v-btn>
                     </v-flex>
                   </v-layout>
                 </v-flex>
@@ -151,12 +151,13 @@ export default {
   },
   data() {
     return {
+      isValid:false,
       form: {
         firstName: '',
         lastName: '',
         phone: '',
         email: '',
-        birthDate: '',
+        // birthDate: '',
         gender: '',
         address: '',
         avatar:'',
@@ -172,8 +173,8 @@ export default {
         v => /.+@.+\..+/.test(v) || 'Указанная вами почта имеет неверный формат',
       ],
       phoneRules: [
-        v => (v && v.length <= 1) || '*Это поле обязательно',
-        v => (v && v.length < 17) || 'Неверный формат номера',
+        v => (v && v.length >= 5) || '*Это поле обязательно',
+        v => (v && v.length === 16) || 'Неверный формат номера',
       ]
     }
   },
@@ -183,8 +184,11 @@ export default {
   methods:{
     ...mapActions(['alert']),
     getUserState() {
-      Object.keys(this.form).forEach(key => {
-        this.$set(this.form, key, this.user[key]);
+      Object.keys(this.user).forEach(key => {
+        if (typeof this.form[key] == "undefined"){
+          return
+        }
+        this.$set(this.form, key, this.user[key])
       });
     },
     onCancel(){
@@ -214,18 +218,18 @@ export default {
             ...this.form
           }
         }
-        }).then(data => {
-          this.loading = false;
-          if (data.data.saveUser) {
-            this.$store.commit('SAVE_USER', data.data.saveUser);
-            this.editable = false;
-          }
-        }).catch(error => {
-          this.loading = false;
-          this.alert({
-            type: 'error',
-            message: error,
-          });
+      }).then(data => {
+        this.loading = false;
+        if (data.data.saveUser) {
+          this.$store.commit('SAVE_USER', data.data.saveUser);
+          this.editable = false;
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.alert({
+          type: 'error',
+          message: error,
+        });
       });
     }
   },

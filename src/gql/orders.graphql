@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 export default gql`
   query allOrders {
     orders {
+      id
       created
       details
       status
@@ -15,6 +16,7 @@ export default gql`
       user {
         id
         firstName
+        lastName
       }
     }
   }

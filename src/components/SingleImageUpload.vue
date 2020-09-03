@@ -5,7 +5,7 @@
       icon
       color="white"
       class="control_buttons"
-      @click="$delete(form, 'avatar');">
+      @click="$set(form, 'avatar', null);">
       <v-icon>mdi-close</v-icon>
     </v-btn>
     <v-btn
@@ -80,7 +80,7 @@ export default {
             let response = JSON.parse(request.responseText);
             resolve(response);
           }
-          // Not successfull, let find our what happened
+          // Not successful, let find our what happened
           if (request.status !== 200) {
             formData=''
             let response = JSON.parse(request.responseText);
