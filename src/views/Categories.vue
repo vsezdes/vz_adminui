@@ -26,6 +26,10 @@
             class="ma-3"
           >
             <v-card-title class="headline root-title">
+              <v-btn small icon @click="expand(cat.id)">
+                <v-icon v-if="!expandedCatId.includes(cat.id)">mdi-arrow-right-drop-circle</v-icon>
+                <v-icon v-else>mdi-arrow-down-drop-circle</v-icon>
+              </v-btn>
               <v-icon class="my-1 mx-2">{{ `mdi-${cat.icon}` }}</v-icon>
               {{ cat.title }}
               <v-spacer />
@@ -34,13 +38,11 @@
                 <v-btn class="edit-btn" small icon @click="onEdit(cat)"><v-icon small>mdi-pencil</v-icon></v-btn>
               </div>
               <v-btn :disabled="cat.children.length > 0" small icon @click="onDelete(cat.id)"><v-icon small>mdi-close</v-icon></v-btn>
-
             </v-card-title>
-            <v-card-text>
+            <v-card-text style="max-height: 400px; overflow: auto" v-if="expandedCatId.includes(cat.id)">
               <v-treeview
                 :items="cat.children"
                 dense
-                open-all
                 item-key="id"
                 hoverable
                 shaped
@@ -98,8 +100,18 @@ export default {
     newCategoryParent: null,
     theCat: null,
     showForm: false,
+    expandedCatId:[1]
   }),
   methods: {
+    expand(cat){
+      let expanded=this.expandedCatId
+      if(expanded.includes(cat)){
+        expanded.pop(cat)
+      }
+      else{
+        expanded.push(cat)
+      }
+    },
     onFormClose() {
       this.theCat = null;
       this.newCategoryParent = null;
