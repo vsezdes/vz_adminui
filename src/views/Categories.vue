@@ -2,30 +2,34 @@
   <BaseTemplate :loading="loading || $apollo.loading">
     <v-container fluid>
       <v-btn
-        fixed
-        dark
-        fab
-        top
-        :style="{ top: '80px' }"
-        right
-        color="pink"
-        @click="showForm = true"
+          fixed
+          dark
+          fab
+          top
+          :style="{ top: '80px' }"
+          right
+          color="pink"
+          @click="showForm = true"
       >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
       <v-row>
         <v-col
-          v-for="(cat) in categories"
-          :key="cat.id"
-          cols="12"
-          sm="6"
-          md="4"
-          lg="4"
+            v-for="(cat) in categories"
+            :key="cat.id"
+            cols="12"
+            sm="6"
+            md="4"
+            lg="4"
         >
           <v-card
-            class="ma-3"
+              class="ma-3"
           >
             <v-card-title class="headline root-title">
+              <v-btn small icon @click="expand(cat.id)">
+                <v-icon v-if="!expandedCatId.includes(cat.id)">mdi-arrow-right-drop-circle</v-icon>
+                <v-icon v-else>mdi-arrow-down-drop-circle</v-icon>
+              </v-btn>
               <v-icon class="my-1 mx-2">{{ `mdi-${cat.icon}` }}</v-icon>
               {{ cat.title }}
               <v-spacer />
@@ -34,17 +38,15 @@
                 <v-btn class="edit-btn" small icon @click="onEdit(cat)"><v-icon small>mdi-pencil</v-icon></v-btn>
               </div>
               <v-btn :disabled="cat.children.length > 0" small icon @click="onDelete(cat.id)"><v-icon small>mdi-close</v-icon></v-btn>
-
             </v-card-title>
-            <v-card-text>
+            <v-card-text style="max-height: 400px; overflow: auto" v-if="expandedCatId.includes(cat.id)">
               <v-treeview
-                :items="cat.children"
-                dense
-                open-all
-                item-key="id"
-                hoverable
-                shaped
-                item-text="title"
+                  :items="cat.children"
+                  dense
+                  item-key="id"
+                  hoverable
+                  shaped
+                  item-text="title"
               >
                 <template v-slot:label="{ item }">
                   <v-tooltip top>
@@ -72,11 +74,11 @@
         </v-col>
       </v-row>
       <CategoryForm
-        :show="showForm"
-        :categories="categories"
-        :item="theCat"
-        :select-cat="newCategoryParent"
-        @close="onFormClose"
+          :show="showForm"
+          :categories="categories"
+          :item="theCat"
+          :select-cat="newCategoryParent"
+          @close="onFormClose"
       />
     </v-container>
   </BaseTemplate>
@@ -98,8 +100,18 @@ export default {
     newCategoryParent: null,
     theCat: null,
     showForm: false,
+    expandedCatId:[1]
   }),
   methods: {
+    expand(cat){
+      let expanded=this.expandedCatId
+      if(expanded.includes(cat)){
+        expanded.pop(cat)
+      }
+      else{
+        expanded.push(cat)
+      }
+    },
     onFormClose() {
       this.theCat = null;
       this.newCategoryParent = null;
