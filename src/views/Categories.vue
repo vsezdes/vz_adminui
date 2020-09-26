@@ -2,28 +2,28 @@
   <BaseTemplate :loading="loading || $apollo.loading">
     <v-container fluid>
       <v-btn
-          fixed
-          dark
-          fab
-          top
-          :style="{ top: '80px' }"
-          right
-          color="pink"
-          @click="showForm = true"
+        fixed
+        dark
+        fab
+        top
+        :style="{ top: '80px' }"
+        right
+        color="pink"
+        @click="showForm = true"
       >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
       <v-row>
         <v-col
-            v-for="(cat) in categories"
-            :key="cat.id"
-            cols="12"
-            sm="6"
-            md="4"
-            lg="4"
+          v-for="(cat) in categories"
+          :key="cat.id"
+          cols="12"
+          sm="6"
+          md="4"
+          lg="4"
         >
           <v-card
-              class="ma-3"
+            class="ma-3"
           >
             <v-card-title class="headline root-title">
               <v-btn small icon @click="expand(cat.id)">
@@ -32,21 +32,27 @@
               </v-btn>
               <v-icon class="my-1 mx-2">{{ `mdi-${cat.icon}` }}</v-icon>
               {{ cat.title }}
-              <v-spacer />
+              <v-spacer/>
               <div class="controls">
-                <v-btn class="add-btn" small icon @click="onAddChild(cat.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
-                <v-btn class="edit-btn" small icon @click="onEdit(cat)"><v-icon small>mdi-pencil</v-icon></v-btn>
+                <v-btn class="add-btn" small icon @click="onAddChild(cat.id)">
+                  <v-icon small>mdi-plus-box</v-icon>
+                </v-btn>
+                <v-btn class="edit-btn" small icon @click="onEdit(cat)">
+                  <v-icon small>mdi-pencil</v-icon>
+                </v-btn>
               </div>
-              <v-btn :disabled="cat.children.length > 0" small icon @click="onDelete(cat.id)"><v-icon small>mdi-close</v-icon></v-btn>
+              <v-btn :disabled="cat.children.length > 0" small icon @click="onDelete(cat.id)">
+                <v-icon small>mdi-close</v-icon>
+              </v-btn>
             </v-card-title>
             <v-card-text style="max-height: 400px; overflow: auto" v-if="expandedCatId.includes(cat.id)">
               <v-treeview
-                  :items="cat.children"
-                  dense
-                  item-key="id"
-                  hoverable
-                  shaped
-                  item-text="title"
+                :items="cat.children"
+                dense
+                item-key="id"
+                hoverable
+                shaped
+                item-text="title"
               >
                 <template v-slot:label="{ item }">
                   <v-tooltip top>
@@ -63,10 +69,16 @@
                 </template>
                 <template v-slot:append="{ item }">
                   <div class="controls">
-                    <v-btn class="add-btn" small icon @click="onAddChild(item.id)"><v-icon small>mdi-plus-box</v-icon></v-btn>
-                    <v-btn class="edit-btn" small icon @click="onEdit(item)"><v-icon small>mdi-pencil</v-icon></v-btn>
+                    <v-btn class="add-btn" small icon @click="onAddChild(item.id)">
+                      <v-icon small>mdi-plus-box</v-icon>
+                    </v-btn>
+                    <v-btn class="edit-btn" small icon @click="onEdit(item)">
+                      <v-icon small>mdi-pencil</v-icon>
+                    </v-btn>
                   </div>
-                  <v-btn :disabled="item.children && item.children.length > 0" small icon @click="onDelete(item.id)"><v-icon small>mdi-close</v-icon></v-btn>
+                  <v-btn :disabled="item.children && item.children.length > 0" small icon @click="onDelete(item.id)">
+                    <v-icon small>mdi-close</v-icon>
+                  </v-btn>
                 </template>
               </v-treeview>
             </v-card-text>
@@ -74,11 +86,11 @@
         </v-col>
       </v-row>
       <CategoryForm
-          :show="showForm"
-          :categories="categories"
-          :item="theCat"
-          :select-cat="newCategoryParent"
-          @close="onFormClose"
+        :show="showForm"
+        :categories="categories"
+        :item="theCat"
+        :select-cat="newCategoryParent"
+        @close="onFormClose"
       />
     </v-container>
   </BaseTemplate>
@@ -96,19 +108,19 @@ export default {
     BaseTemplate,
   },
   data: () => ({
+    categories:[],
     loading: false,
     newCategoryParent: null,
     theCat: null,
     showForm: false,
-    expandedCatId:[1]
+    expandedCatId: [1]
   }),
   methods: {
-    expand(cat){
-      let expanded=this.expandedCatId
-      if(expanded.includes(cat)){
+    expand(cat) {
+      let expanded = this.expandedCatId
+      if (expanded.includes(cat)) {
         expanded.pop(cat)
-      }
-      else{
+      } else {
         expanded.push(cat)
       }
     },
@@ -140,8 +152,8 @@ export default {
         variables: {
           id,
         },
-        update: (store, { data: { delCategory }}) => {
-          const data = store.readQuery({ query: CATEGORIES_QUERY });
+        update: (store, {data: {delCategory}}) => {
+          const data = store.readQuery({query: CATEGORIES_QUERY});
           if (!delCategory.id) return;
 
           const categories = data.categories.filter(c1 => c1.id !== delCategory.id).map(c1 => ({
@@ -155,7 +167,7 @@ export default {
             }))
           }));
           console.warn(data, categories, delCategory);
-          store.writeQuery({ query: CATEGORIES_QUERY, data: { categories } });
+          store.writeQuery({query: CATEGORIES_QUERY, data: {categories}});
         },
       }).then((data) => {
         // Result
@@ -183,11 +195,13 @@ export default {
 .headline .controls {
   display: none;
 }
+
 .v-card__title.headline.root-title {
   background: #F5F5F5;
   font-size: 16px;
   padding: 5px;
 }
+
 .v-treeview-node__content:hover .controls,
 .headline:hover .controls {
   display: block;
@@ -199,7 +213,8 @@ export default {
   padding-right: 30px;
   background: #F5F5F5;
 }
-.v-treeview-node__content:hover .controls{
+
+.v-treeview-node__content:hover .controls {
   right: 7px;
   top: 6px;
 }
