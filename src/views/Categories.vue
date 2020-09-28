@@ -134,10 +134,10 @@
 </template>
 
 <script>
-import gql from "graphql-tag";
-import CategoryForm from "@/components/CategoryForm";
-import BaseTemplate from "@/views/BaseTemplate.vue";
-import CATEGORIES_QUERY from "@/gql/categories.graphql";
+import gql from 'graphql-tag';
+import CategoryForm from '@/components/CategoryForm';
+import BaseTemplate from '@/views/BaseTemplate.vue';
+import CATEGORIES_QUERY from '@/gql/categories.graphql';
 
 export default {
   components: {
@@ -175,7 +175,7 @@ export default {
       this.showForm = true;
     },
     onDelete(id) {
-      if (!window.confirm("Удалить категорию?")) return;
+      if (!window.confirm('Удалить категорию?')) return;
       this.loading = true;
       this.$apollo
         .mutate({
