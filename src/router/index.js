@@ -75,11 +75,19 @@ const routes = [
   },
   {
     path: '/suppliers',
-        name: 'Suppliers',
-    component: () => import(/* webpackChunkName: "users" */ '../views/Suppliers.vue'),
-      meta: {
-          protected: true,
-      }
+    name: 'Suppliers',
+    component: () => import(/* webpackChunkName: "suppliers" */ '../views/Suppliers.vue'),
+    meta: {
+      protected: true,
+    }
+  },
+  {
+    path: '/my_items',
+    name: 'MyItems',
+    component: () => import(/* webpackChunkName: "myitems" */ '../views/MyItems.vue'),
+    meta: {
+      protected: true,
+    }
   },
   {
     path: '*',
