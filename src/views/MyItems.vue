@@ -18,20 +18,20 @@
           <v-col cols="auto">
             <v-card-title style="margin-top:-8px">Мои товары</v-card-title>
           </v-col>
-          <spacer></spacer>
           <v-col cols="auto">
-            <v-text-field v-model="search" append-icon="mdi-magnify" label="Поиск по всем полям" single-line hide-details></v-text-field>
+            <v-text-field v-model="search" append-icon="mdi-magnify" label="Поиск по всем полям" single-line
+                          hide-details></v-text-field>
           </v-col>
         </v-row>
       </v-card>
 
       <v-flex v-if="view_mode===0">
-        <v-card md12 sm12 xs12 class="mb-2" v-for="(item) in lastItems" :key="item.id">
-        <v-card-title style="background-color:#FFD045;">
-        <h2> {{ item.title }}</h2>
-        </v-card-title>
+        <v-card md12 sm12 xs12 class="mb-2" v-for="(item) in searchItems()" :key="item.id">
+          <v-card-title style="background-color:#ffc107;">
+            <h2>{{ item.category.title }} > {{ item.title }}</h2>
+          </v-card-title>
           <!-- tile view mode-->
-          <v-layout wrap >
+          <v-layout wrap>
             <v-flex lg4 md4 sm12 xs12 style="height:300px;width:300px">
               <v-carousel hide-delimiters height="300">
                 <v-carousel-item v-for="(image) in item.images" :key="image.id" :src="image.url">
@@ -40,14 +40,13 @@
             </v-flex>
             <v-flex lg6 md6 sm12 xs12 class="ml-5">
               <div>
-                
                 <br>
                 <p style="font-weight:600"> {{ item.price }} сом</p>
-                <p> {{ item.description}}</p>
+                <p> {{ item.description }}</p>
               </div>
             </v-flex>
           </v-layout>
-          <v-card-actions style="background-color:#A67D02"></v-card-actions>
+          <v-card-actions style="background-color:#85360f"></v-card-actions>
         </v-card>
       </v-flex>
 
@@ -55,7 +54,7 @@
       <v-flex v-else>
         <v-card md12 sm12 xs12>
           <v-flex>
-            <v-data-table :headers="headers" :items="lastItems" :search="search" >
+            <v-data-table :headers="headers" :items="lastItems" :search="search">
               <template v-slot:item.joined="{ item }">
                 <span>{{ formatDateToString(item.joined) }}</span>
               </template>
@@ -65,7 +64,6 @@
                 </v-avatar>
               </template>
             </v-data-table>
-            
           </v-flex>
         </v-card>
       </v-flex>
@@ -84,20 +82,50 @@
 
 <script>
 import BaseTemplate from '@/views/BaseTemplate.vue';
+import _ from 'lodash'
 
 export default {
   components: {
     BaseTemplate,
   },
+  methods: {
+    filteredItems() {
+      if (!this.search) return this.lastItems;
+      const searchString = this.search.toLowerCase();
+      return this.lastItems.filter(item =>
+        item.title && item.title.toLowerCase.includes(searchString)
+      );
+    },
+    searchItems() {
+      if (!this.search) return this.lastItems;
+
+      const searchKeys = ['title', 'price', 'description', 'category'];
+      const searchSubKeys=['title']
+      const searchString = this.search.toLowerCase();
+      return this.lastItems.filter(item => {
+        return  Object.keys(item).some(key => {
+          let item_prop = _.get(item, key, '')
+          if(typeof(item_prop) === 'object'){
+            return Object.keys(item_prop).some(sub_key => {
+              return searchSubKeys.indexOf(sub_key) > -1 && item_prop[sub_key].toString().toLowerCase().includes(searchString)
+            })
+          }
+          return searchKeys.indexOf(key) > -1 && item_prop.toString().toLowerCase().includes(searchString)
+        })
+      })
+
+    },
+  }
+  ,
   data() {
     return {
       view_mode: 0,
       search: '',
       headers: [{
-          text: 'фото',
-          value: 'images',
-          align: 'center'
-        },
+        text: 'фото',
+        value: 'images',
+        align: 'center'
+      },
         {
           text: 'название товара',
           value: 'title',
@@ -127,41 +155,40 @@ export default {
           text: 'продажи',
           value: 'sales',
           align: 'center',
-          
         },
       ],
       lastItems: [{
-          'id': 1,
-          'title': 'qwqwe',
-          'price': 123,
-          'images': [{
-              id: 1,
-              url: 'http://res.cloudinary.com/vsetut2020/image/upload/v1602004291/images_f3aewp.jpg'
-            },
-
-            {
-              id: 3,
-              url: 'http://res.cloudinary.com/vsetut2020/image/upload/v1602010672/images_t7rhjy.jpg'
-            },
-          ],
-          'category': {title:'игрушки'},
-          'description': 'У нас работают много людей, у которых можно многому поучиться, например ребята умеют строить PCI-DSS Compliant инфраструктуру, уделяют время документации и в целом инженерная культура на высоком уровне. От настроенных пайплайнов до нужной документации на архитектуру и код.'
+        'id': 1,
+        'title': 'qwqwe',
+        'price': 123,
+        'images': [{
+          id: 1,
+          url: 'http://res.cloudinary.com/vsetut2020/image/upload/v1602004291/images_f3aewp.jpg'
         },
+
+          {
+            id: 3,
+            url: 'http://res.cloudinary.com/vsetut2020/image/upload/v1602010672/images_t7rhjy.jpg'
+          },
+        ],
+        'category': {title: 'игрушки'},
+        'description': 'blabla'
+      },
         {
           'id': 2,
           'title': 'qwqwe',
           'price': 123,
           'images': [{
-              id: 1,
-              url: 'http://res.cloudinary.com/vsetut2020/image/upload/v1602004291/images_f3aewp.jpg'
-            },
+            id: 1,
+            url: 'http://res.cloudinary.com/vsetut2020/image/upload/v1602004291/images_f3aewp.jpg'
+          },
 
             {
               id: 3,
               url: 'http://res.cloudinary.com/vsetut2020/image/upload/v1602010672/images_t7rhjy.jpg'
             },
           ],
-          'category': {title:'продукты'},
+          'category': {title: 'продукты'},
           'description': 'У нас работают много людей, у которых можно многому поучиться, например ребята умеют строить PCI-DSS Compliant инфраструктуру, уделяют время документации и в целом инженерная культура на высоком уровне. От настроенных пайплайнов до нужной документации на архитектуру и код.'
         }
       ],
