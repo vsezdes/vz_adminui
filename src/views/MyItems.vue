@@ -99,19 +99,14 @@ export default {
     searchItems() {
       if (!this.search) return this.lastItems;
 
-      const searchKeys = ['title', 'price', 'description', 'category'];
-      const searchSubKeys=['title']
+      const searchKeys = ['title', 'price', 'description', 'category.title'];
       const searchString = this.search.toLowerCase();
+
       return this.lastItems.filter(item => {
-        return  Object.keys(item).some(key => {
+        for (let key of searchKeys) {
           let item_prop = _.get(item, key, '')
-          if(typeof(item_prop) === 'object'){
-            return Object.keys(item_prop).some(sub_key => {
-              return searchSubKeys.indexOf(sub_key) > -1 && item_prop[sub_key].toString().toLowerCase().includes(searchString)
-            })
-          }
-          return searchKeys.indexOf(key) > -1 && item_prop.toString().toLowerCase().includes(searchString)
-        })
+          if (item_prop.toString().toLowerCase().includes(searchString)) return true
+        }
       })
 
     },
