@@ -53,7 +53,7 @@
         <span>{{ title }}</span>
       </v-tooltip>
     </v-card-title>
-    <div class="item-controls">
+    <div class="item-controls" v-if="!readonly">
       <v-btn icon @click="$emit('on-edit', id)">
         <v-icon>mdi-lead-pencil</v-icon>
       </v-btn>
@@ -83,7 +83,7 @@
       >
       </v-row>
 
-      <v-chip small color="accent">{{ category }}</v-chip>
+      <v-chip small color="accent">{{ categoryName }}</v-chip>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>
@@ -105,7 +105,7 @@
 import gql from 'graphql-tag';
 import { LAST_ITEMS } from '@/gql/items.graphql';
 export default {
-  props: ['id', 'title', 'price', 'images', 'category', 'description'],
+  props: ['id', 'title', 'price', 'images', 'categoryName', 'description', 'readonly'],
   data: () => ({
     loading: false,
     selection: 1,

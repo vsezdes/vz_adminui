@@ -21,7 +21,12 @@
       </router-link>
       <v-spacer></v-spacer>
       <div class="auth-box" style="height: 100%;position: absolute;right: 20px;">
-        <v-menu style="border-radius: 0" offset-y v-model="profile_menu_open">
+        <v-menu
+          v-if="token"
+          style="border-radius: 0"
+          offset-y
+          v-model="profile_menu_open"
+        >
           <template v-slot:activator="{ on, attrs }">
             <v-container :style="isExpanded" style="display: flex; align-items: center;padding: 0 15px ;height: 100%;">
               <span v-if="token" style="top: 10px">
@@ -32,9 +37,6 @@
                 </v-avatar>
               </span>
 
-              <v-btn v-else icon to="/login">
-                <v-icon>mdi-login-variant</v-icon>
-              </v-btn>
 
               <v-btn
                 icon
@@ -78,6 +80,9 @@
             </v-list-item>
           </v-flex>
         </v-menu>
+        <v-btn v-else icon to="/login">
+          <v-icon>mdi-login-variant</v-icon>
+        </v-btn>
       </div>
     </v-app-bar>
 
@@ -160,18 +165,27 @@ export default {
       {icon: 'mdi-account', text: 'Мой профиль', href: '/profile'},
       {icon: 'mdi-logout-variant', text: 'Выход', href: '/logout'},
     ],
-    items: [
-      {heading: 'Товары'},
-      {icon: 'mdi-package-variant', text: 'Все товары', href: '/items'},
-      {icon: 'mdi-format-list-bulleted-type', text: 'Категории', href: '/categories'},
-      {heading: 'Управление'},
-      {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
-      {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders'},
-      {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/suppliers'},
-    ],
   }),
   computed: {
     ...mapState(['token', 'user']),
+    items() {
+      const group = this.user ? this.user.groupName : 'DEFAULT';
+      switch (group) {
+        case 'DEFAULT':
+        default:
+          return [];
+        case 'USER':
+          return [
+            {heading: 'Товары'},
+            {icon: 'mdi-package-variant', text: 'Все товары', href: '/items'},
+            {icon: 'mdi-format-list-bulleted-type', text: 'Категории', href: '/categories'},
+            {heading: 'Управление'},
+            {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
+            {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders'},
+            {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/suppliers'},
+          ];
+      }
+    },
     isExpanded: function () {
       return {
         background: this.profile_menu_open ? 'white' : ''

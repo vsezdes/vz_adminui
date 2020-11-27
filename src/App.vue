@@ -44,8 +44,10 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import PreLoader from "@/components/PreLoader";
 import Alert from "./components/Alert";
+import THEMES from '@/themes';
 
 export default {
   name: 'app',
@@ -58,9 +60,6 @@ export default {
       showUpdateUI: false,
     }
   },
-  beforeCreate() {
-    this.$vuetify.theme.themes.light = this.$theme
-  },
   created() {
     // simulate AJAX
 
@@ -70,8 +69,35 @@ export default {
       });
     }
   },
+  computed: {
+    ...mapGetters(['userGroup']),
+  },
+  watch: {
+    userGroup(val) {
+      this.setTheme(val);
+    },
+  },
+  mounted() {
+    this.setTheme(this.userGroup);
+  },
   methods: {
-
+    setTheme(val) {
+      const themeName = val || 'ADMIN';
+      const theme = THEMES.find(t => t.name === themeName);
+      if(!theme) return;
+      const name = theme.name;
+      const dark = theme.dark;
+      const light = theme.light;
+      // set themes
+      Object.keys(dark).forEach(i => {
+        this.$vuetify.theme.themes.dark[i] = dark[i];
+      });
+      Object.keys(light).forEach(i => {
+        this.$vuetify.theme.themes.light[i] = light[i];
+      });
+      // also save theme name to disable selection
+      this.$vuetify.theme.themes.name = name;
+    },
     async accept() {
       this.showUpdateUI = false;
       await this.$workbox.messageSW({type: "SKIP_WAITING"});

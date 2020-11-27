@@ -1,8 +1,8 @@
 <template>
   <v-app id="inspire">
+    <BaseTemplate :loading="false">
     <v-container
       class="fill-height"
-      fluid
     >
       <v-row
         align="center"
@@ -63,17 +63,23 @@
         </v-col>
       </v-row>
     </v-container>
+    </BaseTemplate>
   </v-app>
 </template>
 
 <script>
+import BaseTemplate from '@/views/BaseTemplate.vue';
 // import gql from 'graphql-tag';
 import { mapActions } from 'vuex';
 import { mask } from 'vue-the-mask'
 import gql from "graphql-tag";
+import THEMES from '@/themes';
 
 export default {
   name: "Login",
+  components: {
+    BaseTemplate,
+  },
   directives: {
     mask
   },
@@ -111,6 +117,7 @@ export default {
             address
             gender
             token
+            groupName
             avatar
           }
         }`,
@@ -121,7 +128,11 @@ export default {
       }).then(data => {
         this.loading = false;
         if (data.data.authUser)
-          this.login(data.data.authUser).then(() => this.$router.push('/'));
+          this.login(data.data.authUser).then((user) => {
+            console.error(this.$vuetify, user, THEMES); 
+            this.$vuetify.currentTheme = THEMES[user.groupName];
+            this.$router.push('/');
+          });
         else
           this.alert({
             type: 'error',
@@ -140,5 +151,7 @@ export default {
 </script>
 
 <style scoped>
-
+/deep/ .container {
+  max-width: 1200px;
+}
 </style>

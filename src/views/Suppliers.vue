@@ -38,12 +38,13 @@
                 :search="search"
                 show-expand
             >
-              <template v-slot:item.joined="{ item }">
+              <template v-slot:[`item.joined`]="{ item }">
                 <span>{{ formatDateToString(item.joined) }}</span>
               </template>
-              <template v-slot:item.avatar="{ item }">
+              <template v-slot:[`item.avatar`]="{ item }">
                 <v-avatar tile>
-                  <v-img :src="item.avatar"/>
+                  <v-img v-if="item.avatar" :src="item.avatar"/>
+                  <v-icon v-else>mdi-account</v-icon>
                 </v-avatar>
               </template>
               <template v-slot:expanded-item="{ headers }">

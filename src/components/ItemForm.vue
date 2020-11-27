@@ -340,7 +340,7 @@ export default {
             title
             price
             description
-            category
+            categoryName
             categoryId
             images {
               asset_id

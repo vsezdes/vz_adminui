@@ -10,6 +10,9 @@ export default new Vuex.Store({
     token: null,
     loader:false
   },
+  getters: {
+    userGroup: state => state.user && state.user.groupName,
+  },
   actions: {
     alert: ({ commit }, data) => {
       const timestamp = + new Date();
@@ -26,6 +29,7 @@ export default new Vuex.Store({
       localStorage.setItem('user', parsedUser);
       localStorage.setItem('token', user.token || '');
       commit('LOGIN', user);
+      return user;
     },
     logout: ({ commit }, user) => {
       localStorage.removeItem('user');
