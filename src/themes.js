@@ -50,7 +50,7 @@ const THEMES = [{
     warning: "#1565C0",
     error: "#FF7043",
     // base
-    base_header: '#FFC107',
+    base_header: '#1565C0',
     base_bg: '#F5F5F5',
     base_sidebar: '#F5F5F5',
     // preload
@@ -69,7 +69,7 @@ const THEMES = [{
     warning: "#2e8ac0",
     error: "#ff5e3c",
     // base
-    base_header: '#FFC107',
+    base_header: '#1565C0',
     base_bg: '#F5F5F5',
     base_sidebar: '#F5F5F5',
     // preload

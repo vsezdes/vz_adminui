@@ -174,6 +174,15 @@ export default {
         case 'DEFAULT':
         default:
           return [];
+        case 'SELLER':
+          return [
+            { heading: 'Товары и заказы' },
+            { icon: 'mdi-cash-register', text: 'Дашборда поставщика', href:'/seller' },
+            { icon: 'mdi-cash-register', text: 'Управление товарами', href:'/seller/items' },
+            { icon: 'mdi-cash-register', text: 'Управление заказами', href:'/seller/orders' },
+            { heading: 'Отчеты' },
+            { icon: 'mdi-cash-register', text: 'Просмотр отчетов', href:'/seller/reports' },
+          ];
         case 'USER':
           return [
             {heading: 'Товары'},
@@ -202,6 +211,7 @@ export default {
 
 .v-subheader {
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .logo {

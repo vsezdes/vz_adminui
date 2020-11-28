@@ -82,7 +82,7 @@ export default {
   },
   methods: {
     setTheme(val) {
-      const themeName = val || 'ADMIN';
+      const themeName = val || 'USER';
       const theme = THEMES.find(t => t.name === themeName);
       if(!theme) return;
       const name = theme.name;
