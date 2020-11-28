@@ -120,7 +120,7 @@ export default {
       this.loading = true;
       this.$apollo.mutate({
         // Query
-        mutation : gql`mutation saveSeller($id: Int!,$data: UserInput!) {
+        mutation : gql`mutation saveSeller($id: Int,$data: UserInput!) {
             saveSeller(id:$id, data:$data) {
               id
               firstName
