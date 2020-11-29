@@ -20,7 +20,6 @@
           <v-list>
             <v-list-item
               :class="{ 'search-category': true, active: i === selectedIndex }"
-              link
               v-for="(item, i) in results"
               :key="i"
               @mouseover="onFocus(i)"
@@ -152,6 +151,7 @@ export default {
 .search-category {
   &:hover, &.active {
     background: #F6F6F6 !important;
+    cursor: pointer;
   }
 
 }
