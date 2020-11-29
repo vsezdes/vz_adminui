@@ -5,7 +5,7 @@
       outlined
       label="Искать"
       prepend-inner-icon="mdi-magnify"
-      @input="onChange"
+      v-model="search"
       :loading="loading"
       loader-height="3"
       class="search-field mb-0"
@@ -17,12 +17,13 @@
     >
       <v-row>
         <v-col cols="5">
-          <v-list dense>
+          <v-list>
             <v-list-item
+              :class="{ 'search-category': true, active: i === selectedIndex }"
               link
               v-for="(item, i) in results"
               :key="i"
-              @focus="onFocus"
+              @mouseover="onFocus(i)"
             >
               <v-list-item-icon>
                 <v-icon v-text="`mdi-${item.icon}`" />
@@ -35,13 +36,26 @@
         </v-col>
         <v-col cols="7">
           <v-sheet
-            color="secondary"
-            class="float-right search-products"
+            color="#F6F6F6"
+            class="search-products px-3 py-3 ml-n6"
+            height="100%"
           >
-            {{ searchProducts }}
+            <div v-if="searchProducts.length > 0">
+              <SearchItem
+                v-for="item in searchProducts"
+                :item="item"
+                :key="item.id"
+              />
+            </div>
+            <div v-else>Категория пуста</div>
           </v-sheet>
         </v-col>
       </v-row>
+    </v-card>
+    <v-card
+      v-else-if="search && search.length > 2"
+      class="search-results">
+      <v-card-title>Ничего не найдено</v-card-title>
     </v-card>
   </div>
 </template>
@@ -49,31 +63,40 @@
 <script>
 import gql from 'graphql-tag';
 import { mapActions } from 'vuex';
+import SearchItem from '@/components/SearchItem';
 
 export default {
   name: 'Search',
+  components: {
+    SearchItem,
+  },
   data() {
     return {
+      search: '',
       results: [],
+      selectedIndex: 0,
       loading: false,
     };
   },
   computed: {
     searchProducts() {
-      return [];
+      if (this.results.length < 1) return [];
+      return [...this.results[this.selectedIndex].items];
     },
   },
-  methods: {
-    ...mapActions(['alert']),
-    onChange(str) {
-      if(str && str.length > 2) {
-        this.doSearch(str);
+  watch: {
+    search(val) {
+      if(val && val.length > 2) {
+        this.doSearch(val);
       } else {
         this.results = [];
       }
-    },
+    }
+  },
+  methods: {
+    ...mapActions(['alert']),
     onFocus(e) {
-      console.error(e);
+      this.selectedIndex = e;
     },
     doSearch(str) {
       this.loading = true;
@@ -86,6 +109,10 @@ export default {
             items {
               id
               title
+              price
+              images {
+                url
+              }
             }
           }
         }`),
@@ -95,7 +122,7 @@ export default {
       }).then(res => {
         this.loading = false;
         console.warn('res', res.data.search);
-        this.results = res.data.search;
+        this.results = [...res.data.search];
       }).catch(err => {
         this.loading = false;
         console.error('error', err);
@@ -121,10 +148,19 @@ export default {
     display: none;
   }
 }
+
+.search-category {
+  &:hover, &.active {
+    background: #F6F6F6 !important;
+  }
+
+}
+
 .search-results {
   max-width: 1200px !important;
   margin: 0 auto !important;
 }
+
 .search-products {
   width: 100%;
   margin-left: -40px;
