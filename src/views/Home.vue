@@ -5,12 +5,7 @@
         <v-col
           cols="12"
         >
-          <v-text-field
-            outlined
-            label="Искать"
-            append-icon="mdi-magnify"
-            :style="{ maxWidth: '1200px', margin: '0 auto' }"
-          />
+          <Search />
         </v-col>
       </v-row>
       <v-row class="title">
@@ -63,6 +58,7 @@
 import BaseTemplate from '@/views/BaseTemplate.vue';
 import { LAST_ITEMS } from '@/gql/items.graphql';
 import ItemCard from '@/components/ItemCard';
+import Search from '@/components/Search';
 import ItemPreview from '@/components/ItemPreview';
 import mixins from '@/mixins/index';
 
@@ -73,6 +69,7 @@ export default {
     BaseTemplate,
     ItemCard,
     ItemPreview,
+    Search
   },
   apollo: {
     lastItems: {
