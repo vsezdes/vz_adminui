@@ -74,9 +74,9 @@ const routes = [
     }
   },
   {
-    path: '/suppliers',
-    name: 'Suppliers',
-    component: () => import(/* webpackChunkName: "suppliers" */ '../views/Suppliers.vue'),
+    path: '/sellers',
+    name: 'Sellers',
+    component: () => import(/* webpackChunkName: "sellers" */ '../views/Sellers.vue'),
     meta: {
       protected: true,
     }

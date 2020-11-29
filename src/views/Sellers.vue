@@ -1,16 +1,16 @@
 <template>
   <BaseTemplate>
-    <AddSupplier @close="onClose" :dialog="supplierForm"></AddSupplier>
+    <AddSeller @close="onClose" :dialog="sellerForm"></AddSeller>
     <v-layout wrap style="margin-top: 50px" justify-end>
       <v-flex md1 sm1>
         <v-btn
-            top
-            right
-            fab
-            fixed
-            :style="{ top: '80px' }"
-            color="success"
-            @click="supplierForm = true"
+          top
+          right
+          fab
+          fixed
+          :style="{ top: '80px' }"
+          color="success"
+          @click="sellerForm = true"
         >
           <v-icon>
             mdi-plus
@@ -25,19 +25,21 @@
               Все поставщики
               <v-spacer></v-spacer>
               <v-text-field
-                  v-model="search"
-                  append-icon="mdi-magnify"
-                  label="Поиск по всем полям"
-                  single-line
-                  hide-details
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Поиск по всем полям"
+                single-line
+                hide-details
               ></v-text-field>
             </v-card-title>
             <v-data-table
-                :headers="headers"
-                :items="users"
-                :search="search"
-                show-expand
+              :headers="headers"
+              :items="sellers"
+              :search="search"
+              item-key="item.id"
+              show-expand
             >
+<!--              item -->
               <template v-slot:item.joined="{ item }">
                 <span>{{ formatDateToString(item.joined) }}</span>
               </template>
@@ -46,21 +48,25 @@
                   <v-img :src="item.avatar"/>
                 </v-avatar>
               </template>
-              <template v-slot:expanded-item="{ headers }">
+              <template v-slot:expanded-item="{ headers, item }">
                 <td style="padding: 5px" :colspan="headers.length">
+
                   <v-data-table
-                      style="padding: 2px"
-                      :align="'center'"
-                      justify-center
-                      class="text-center"
-                      dense
-                      hide-default-footer
-                      id="order_items_table"
-                      :items="fakeItems"
-                      :headers="item_headers"></v-data-table>
+                    style="padding: 2px"
+                    :align="'center'"
+                    justify-center
+                    class="text-center"
+                    dense
+                    id="order_items_table"
+                    item-key="item.id"
+                    :items="item.items"
+                    :headers="item_headers">
+
+                  </v-data-table>
                 </td>
               </template>
             </v-data-table>
+            {{ sellers }}
           </v-card>
         </v-col>
       </v-flex>
@@ -69,25 +75,25 @@
 </template>
 
 <script>
-import {ALL_USERS} from '@/gql/users.graphql';
+import {ALL_SELLERS} from '@/gql/sellers.graphql';
 import BaseTemplate from '@/views/BaseTemplate.vue';
 import {DateFormat} from '@/mixins/DateFormat'
 import {mask} from 'vue-the-mask'
-import AddSupplier from "@/components/AddSupplier";
+import AddSeller from "@/components/AddSeller";
 
 export default {
-  name: "Suppliers",
-  components: {AddSupplier, BaseTemplate},
+  name: "Sellers",
+  components: {AddSeller, BaseTemplate},
   mixins: [DateFormat],
   apollo: {
-    users: ALL_USERS,
+    sellers: ALL_SELLERS,
   },
   directives: {
     mask
   },
   data() {
     return {
-      supplierForm:false,
+      sellerForm: false,
       isValid: false,
       loading: false,
       user: {
@@ -95,7 +101,6 @@ export default {
         lastName: '',
         phone: '',
         email: '',
-        password: '',
       },
       nameRules: [
         v => !!v || '*Это поле обязательно',
@@ -116,26 +121,17 @@ export default {
       search: '',
       headers: [
         {text: 'ID', value: 'id', align: 'start'},
-        {
-          text: 'Фото',
-          sortable: false,
-          align: 'start',
-          value: 'avatar',
-        },
-        {
-          text: 'Имя',
-          sortable: false,
-          value: 'firstName',
-        },
+        {text: 'Фото', sortable: false, align: 'start', value: 'avatar',},
+        {text: 'Имя', sortable: false, value: 'firstName',},
         {text: 'Фамилия', value: 'lastName'},
         {text: 'E-mail', value: 'email'},
         {text: 'Телефон', value: 'phone'},
         {text: 'Добавлен', value: 'joined'},
-        {text: 'Товары', value: 'data-table-expand'},
+        {text: 'Товары', value: 'data-table-expand',},
 
       ],
-      fakeItems: [{title: 'someitem', images: [], description: 'prosto tovar', price: 123, category: ''}],
       item_headers: [
+        {text: 'id', value: 'id', align: 'center'},
         {text: 'название товара', value: 'title', align: 'center'},
         {text: 'фото', value: 'images', align: 'center'},
         {text: 'описание', value: 'description', align: 'center'},
@@ -144,9 +140,9 @@ export default {
       ],
     }
   },
-  methods:{
-    onClose(){
-      this.supplierForm = false
+  methods: {
+    onClose() {
+      this.sellerForm = false
     }
   }
 }

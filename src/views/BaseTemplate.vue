@@ -167,7 +167,7 @@ export default {
       {heading: 'Управление'},
       {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
       {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders'},
-      {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/suppliers'},
+      {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/sellers'},
       {icon: '', text: 'Мои товары', href: '/my_items'},
     ],
   }),
