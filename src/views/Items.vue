@@ -110,12 +110,16 @@ export default {
       })
     },
   },
+  mounted() {
+    // TODO: make something more clever here
+    this.showLoadMore = this.lastItems.length > 6;
+  },
   data () {
     return {
       activeItem: null,
       expandedId: null,
       showForm: false,
-      showLoadMore: true,
+      showLoadMore: false,
       page: 0,
     }
   },

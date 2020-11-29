@@ -12,7 +12,7 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      protected: true,
+      protected: false,
     }
   },
   {
@@ -94,7 +94,7 @@ const routes = [
     name: 'PageNotFound',
     component: () => import(/* webpackChunkName: "orders" */ '../views/PageNotFound.vue'),
   }
-]
+];
 
 const router = new VueRouter({
   mode: 'history',
@@ -104,6 +104,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   store.commit('LOADER', true);
+  console.warn(this, to, from);
   if (to.meta.protected && to.name !== 'Login' && !store.state.token) next({ name: 'Login' })
   else if (to.name === 'Login' && store.state.token) next({ name: 'Home' })
   else next()
