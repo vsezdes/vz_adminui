@@ -7,6 +7,12 @@ const mixins = {
         return '<strong>'+str+'</strong>'
       });
     },
+    gotoCategory(id) {
+      this.$router.push({
+        name: 'CategoryItems',
+        params: { categoryId: id },
+      })
+    }
   }
 }
 

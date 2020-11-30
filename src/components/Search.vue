@@ -40,6 +40,16 @@
             height="100%"
           >
             <div v-if="searchProducts.length > 0">
+              <v-btn
+                outlined
+                x-small
+                tile
+                block
+                @click="gotoCategory(results[selectedIndex].id)"
+              >
+                Перейти в категорию
+              </v-btn>
+              <div class="hr-sect">или</div>
               <SearchItem
                 v-for="item in searchProducts"
                 :item="item"
@@ -168,5 +178,23 @@ export default {
 .search-products {
   width: 100%;
   margin-left: -40px;
+}
+.hr-sect {
+    display: flex;
+    flex-basis: 100%;
+    align-items: center;
+    color: rgba(0, 0, 0, 0.25);
+    margin: 4px 0px;
+    font-size: 12px;
+}
+.hr-sect:before,
+.hr-sect:after {
+    content: "";
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.25);
+    height: 1px;
+    font-size: 0px;
+    line-height: 0px;
+    margin: 0px 8px;
 }
 </style>

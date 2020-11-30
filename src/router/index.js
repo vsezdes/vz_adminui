@@ -35,6 +35,14 @@ const routes = [
     }
   },
   {
+    path: '/category-items/:categoryId',
+    name: 'CategoryItems',
+    component: () => import(/* webpackChunkName: "items" */ '../views/Items.vue'),
+    meta: {
+      protected: true,
+    }
+  },
+  {
     path: '/register',
     name: 'Register',
     component: Register
