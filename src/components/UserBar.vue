@@ -1,23 +1,20 @@
 <template>
   <div class="auth-box">
-    <v-menu
+    <div
       v-if="token"
-      offset-y="3"
-      v-model="drawer"
       class="menu-wrapper"
     >
-      <template v-slot:activator="{ on }">
         <v-badge
           offset-x="15"
           offset-y="33"
           color="secondary"
-          :style="{ position: 'relative' }"
+          :style="{ position: 'relative', zIndex: '20' }"
         >
-          <v-btn slot="badge" v-on="on" icon text x-small absolute class="badge-btn">
+          <v-btn slot="badge" @click="toggle" icon text x-small absolute class="badge-btn">
             <v-icon v-text="drawer ? 'mdi-close' : 'mdi-chevron-down'" />
           </v-btn>
           <v-avatar
-            v-on="on"
+            @click="toggle"
             class="mr-1 avatar"
             color="secondary"
           >
@@ -25,11 +22,10 @@
             <v-icon v-else>mdi-emoticon-cool</v-icon>
           </v-avatar>
         </v-badge>
-      </template>
-      <div class="user-menu">
+      <span class="user-menu" v-if="!drawer">
         <v-row align="center">
-          <v-col>
-            <span class="mr-5">{{ user.firstName }} {{ user.lastName }} </span>
+          <v-col class="px-2 pt-0">
+            <span class="name">{{ user.firstName }} {{ user.lastName }} </span>
           </v-col>
         </v-row>
         <div class="menu-block">
@@ -40,23 +36,23 @@
               inset
             ></v-divider>
             <v-list-item
-              dense
               v-else
-              :key="i"
+              dense
+              class="pa-0"
               link
               :to="item.href"
             >
-              <v-list-item-content>
+              <v-list-item-content class="py-1">
                 <v-list-item-title class="grey--text">
-                  <v-icon style="padding: 0 12px">{{ item.icon }}</v-icon>
+                  <v-icon class="px-1">{{ item.icon }}</v-icon>
                   {{ item.text }}
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </span>
         </div>
-      </div>
-    </v-menu>
+      </span>
+    </div>
     <v-btn v-else icon to="/login">
       <v-icon>mdi-login-variant</v-icon>
     </v-btn>
@@ -79,6 +75,11 @@ export default {
   }),
   computed: {
     ...mapState(['token', 'user']),
+  },
+  methods: {
+    toggle() {
+      this.drawer = !this.drawer;
+    }
   }
 }
 </script>
@@ -94,7 +95,7 @@ export default {
   }
 }
 .menu-wrapper {
-  background: orange;
+  position: relative;
 }
 .avatar {
   cursor: pointer;
@@ -103,10 +104,22 @@ export default {
   }
 }
 .user-menu {
+  min-width: 170px;
   padding: 5px;
-    // background: white;
-  .menu-block {
-    background: white;
+  position: absolute;
+  right: 9px;
+  top: 4px;
+  background: white;
+  border: 1px solid #EEE;
+  border-radius: 5px 25px 5px 5px;
+  .name {
+    font-size: 12px;
+    line-height: 14px;
+    display: block;
+    padding: 5px 40px 0px 8px;
+    border-bottom: 1px dashed silver;
+    color: gray;
+    min-height: 40px;
   }
 }
 </style>
