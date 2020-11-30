@@ -66,7 +66,6 @@
                 </td>
               </template>
             </v-data-table>
-            {{ sellers }}
           </v-card>
         </v-col>
       </v-flex>
@@ -124,6 +123,7 @@ export default {
         {text: 'Фото', sortable: false, align: 'start', value: 'avatar',},
         {text: 'Имя', sortable: false, value: 'firstName',},
         {text: 'Фамилия', value: 'lastName'},
+        {text: 'Пол', value: 'gender'},
         {text: 'E-mail', value: 'email'},
         {text: 'Телефон', value: 'phone'},
         {text: 'Добавлен', value: 'joined'},

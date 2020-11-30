@@ -160,19 +160,36 @@ export default {
       {icon: 'mdi-account', text: 'Мой профиль', href: '/profile'},
       {icon: 'mdi-logout-variant', text: 'Выход', href: '/logout'},
     ],
-    items: [
-      {heading: 'Товары'},
-      {icon: 'mdi-package-variant', text: 'Все товары', href: '/items'},
-      {icon: 'mdi-format-list-bulleted-type', text: 'Категории', href: '/categories'},
-      {heading: 'Управление'},
-      {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
-      {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders'},
-      {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/sellers'},
-      {icon: '', text: 'Мои товары', href: '/my_items'},
-    ],
   }),
   computed: {
     ...mapState(['token', 'user']),
+    items() {
+      const group = this.user ? this.user.groupName : 'DEFAULT';
+      switch (group) {
+        case 'DEFAULT':
+        default:
+          return [];
+        case 'SELLER':
+          return [
+            { heading: 'Товары и заказы' },
+            { icon: 'mdi-cash-register', text: 'Дашборда поставщика', href:'/seller' },
+            { icon: 'mdi-cash-register', text: 'Управление товарами', href:'/seller/items' },
+            { icon: 'mdi-cash-register', text: 'Управление заказами', href:'/seller/orders' },
+            { heading: 'Отчеты' },
+            { icon: 'mdi-cash-register', text: 'Просмотр отчетов', href:'/seller/reports' },
+          ];
+        case 'USER':
+          return [
+            {heading: 'Товары'},
+            {icon: 'mdi-package-variant', text: 'Все товары', href: '/items'},
+            {icon: 'mdi-format-list-bulleted-type', text: 'Категории', href: '/categories'},
+            {heading: 'Управление'},
+            {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
+            {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders'},
+            {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/sellers'},
+          ];
+      }
+    },
     isExpanded: function () {
       return {
         background: this.profile_menu_open ? 'white' : ''

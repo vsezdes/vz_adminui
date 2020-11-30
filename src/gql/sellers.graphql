@@ -6,7 +6,10 @@ export const ALL_SELLERS = gql`
       id
       firstName
       lastName
+      avatar
       email
+      phone
+      gender
       items {
         id
         title
