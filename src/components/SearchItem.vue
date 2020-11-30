@@ -32,7 +32,7 @@ import mixins from '@/mixins';
 
 export default {
   name: 'SearchItem',
-  props: ['item', 'search', 'emitExpand'],
+  props: ['item', 'search'],
   mixins,
   computed: {
     thumb() {
