@@ -18,20 +18,22 @@
       </v-avatar>
       <v-card-title
         class="headline"
-      >
-        {{ item.title }}
+        v-html="highlightSearch(item.title)"
+      />
         <span class="price">
-          ({{ item.price }} сом)
-          </span>
-      </v-card-title>
+          {{ item.price }} сом
+        </span>
     </div>
   </v-card>
 </template>
 
 <script>
+import mixins from '@/mixins';
+
 export default {
   name: 'SearchItem',
-  props: ['item'],
+  props: ['item', 'search'],
+  mixins,
   computed: {
     thumb() {
       return this.item.images && this.item.images[0] && this.item.images[0].url;
@@ -47,7 +49,10 @@ export default {
   padding: 2px 8px;
   word-break: keep-all;
 }
-.search-item .headline .price {
+.search-item .price {
+  position: absolute;
+  bottom: 0;
+  right: 5px;
   color: #BBB;
   padding-left: 10px;
   font-size: 16px;

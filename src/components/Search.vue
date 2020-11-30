@@ -28,7 +28,7 @@
                 <v-icon v-text="`mdi-${item.icon}`" />
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title v-text="item.title" />
+                <v-list-item-title v-html="highlightSearch(item.title)" />
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -43,6 +43,7 @@
               <SearchItem
                 v-for="item in searchProducts"
                 :item="item"
+                :search="search"
                 :key="item.id"
               />
             </div>
@@ -63,12 +64,14 @@
 import gql from 'graphql-tag';
 import { mapActions } from 'vuex';
 import SearchItem from '@/components/SearchItem';
+import mixins from '@/mixins';
 
 export default {
   name: 'Search',
   components: {
     SearchItem,
   },
+  mixins,
   data() {
     return {
       search: '',
