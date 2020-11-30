@@ -6,6 +6,7 @@
     min-height="300"
     hover
     flat
+    @click="readonly ? $emit('on-expand', id) : () => {}"
   >
     <v-img
       v-if="!!thumb"
@@ -20,6 +21,7 @@
           {{ price || 0}} <small>сом</small>
         </v-chip>
         <v-btn
+          v-if="!readonly"
           icon
           outlined
           absolute
