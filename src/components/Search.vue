@@ -1,15 +1,24 @@
 <template>
   <div>
-    <v-text-field
-      clearable
-      outlined
-      label="Искать"
-      prepend-inner-icon="mdi-magnify"
-      v-model="search"
-      :loading="loading"
-      loader-height="3"
-      class="search-field mb-0"
-    />
+    <div class="search-form">
+      <v-text-field
+        clearable
+        outlined
+        label="Искать"
+        prepend-inner-icon="mdi-magnify"
+        v-model="search"
+        loader-height="3"
+        class="search-field mb-0"
+      />
+      <v-progress-circular
+        v-if="loading"
+        indeterminate
+        class="search-loader"
+        width="2"
+        size="28"
+        color="primary"
+      ></v-progress-circular>
+    </div>
     <v-card
       v-if="results.length > 0"
       tile
@@ -173,6 +182,15 @@ export default {
 .search-results {
   max-width: 1200px !important;
   margin: 0 auto !important;
+}
+
+.search-form {
+  position: relative;
+}
+.search-loader {
+  position: absolute !important;
+  left: 10px;
+  top: 15px;
 }
 
 .search-products {
