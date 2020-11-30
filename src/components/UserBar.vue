@@ -22,7 +22,7 @@
             <v-icon v-else>mdi-emoticon-cool</v-icon>
           </v-avatar>
         </v-badge>
-      <span class="user-menu" v-if="!drawer">
+      <span id="userbar-menu" class="user-menu" v-if="drawer" v-outside-click="onDocumentClick">
         <v-row align="center">
           <v-col class="px-2 pt-0">
             <span class="name">{{ user.firstName }} {{ user.lastName }} </span>
@@ -65,8 +65,7 @@ import { mapState } from 'vuex';
 export default {
   name: 'UserBar',
   data: () => ({
-    cartQuantity: 0,
-    drawer: true,
+    drawer: false,
     profile_menu: [
       {icon: 'mdi-account', text: 'Мой профиль', href: '/profile'},
       { divider: true },
@@ -79,6 +78,9 @@ export default {
   methods: {
     toggle() {
       this.drawer = !this.drawer;
+    },
+    onDocumentClick(e) {
+      console.warn(e);
     }
   }
 }
@@ -111,7 +113,7 @@ export default {
   top: 4px;
   background: white;
   border: 1px solid #EEE;
-  border-radius: 5px 25px 5px 5px;
+  border-radius: 5px 8px 5px 5px;
   .name {
     font-size: 12px;
     line-height: 14px;
