@@ -136,15 +136,16 @@ export default {
         variables: {
           id: this.user.id,
           data: {
-            ...this.form
+            ...this.user
           }
         }
-      }).then(data => {
+      }).then(() => {
         this.loading = false;
-        if (data.data.saveUser) {
-          this.$store.commit('SAVE_USER', data.data.saveUser);
-          this.editable = false;
-        }
+        this.editable = false;
+        this.alert({
+          type: 'info',
+          message: 'Поставщик успешно добавлен',
+        });
       }).catch(error => {
         this.loading = false;
         this.alert({
