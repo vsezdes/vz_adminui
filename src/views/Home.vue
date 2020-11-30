@@ -5,7 +5,9 @@
         <v-col
           cols="12"
         >
-          <Search />
+          <Search
+            @on-expand="expandedId = $event"
+          />
         </v-col>
       </v-row>
       <v-row class="title">
@@ -70,6 +72,11 @@ export default {
     ItemCard,
     ItemPreview,
     Search
+  },
+  data() {
+    return {
+      expandedId: null,
+    };
   },
   apollo: {
     lastItems: {

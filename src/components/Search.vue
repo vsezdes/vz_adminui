@@ -45,6 +45,7 @@
                 :item="item"
                 :search="search"
                 :key="item.id"
+                @on-expand="$emit('on-expand', $event)"
               />
             </div>
             <div v-else>Категория пуста</div>

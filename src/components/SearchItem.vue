@@ -2,7 +2,7 @@
   <v-card
     class="pa-0 mb-1 search-item"
     outlined
-    to="/"
+    @click="$emit('on-expand', item.id)"
     hover
   >
     <div class="d-flex flex-no-wrap justify-left">
@@ -32,7 +32,7 @@ import mixins from '@/mixins';
 
 export default {
   name: 'SearchItem',
-  props: ['item', 'search'],
+  props: ['item', 'search', 'emitExpand'],
   mixins,
   computed: {
     thumb() {
