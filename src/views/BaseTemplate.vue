@@ -20,65 +20,8 @@
         />
       </router-link>
       <v-spacer></v-spacer>
-      <div class="auth-box" style="height: 100%;position: absolute;right: 20px;">
-        <v-menu style="border-radius: 0" offset-y v-model="profile_menu_open">
-          <template v-slot:activator="{ on, attrs }">
-            <v-container :style="isExpanded" style="display: flex; align-items: center;padding: 0 15px ;height: 100%;">
-              <span v-if="token" style="top: 10px">
-                <span class="mr-5">{{ user.firstName }} {{ user.lastName }} </span>
-                <v-avatar class="mr-1" color="orange">
-                  <v-img v-if="user.avatar" :src="user.avatar"/>
-                  <v-icon v-else>mdi-emoticon-cool</v-icon>
-                </v-avatar>
-              </span>
-
-              <v-btn v-else icon to="/login">
-                <v-icon>mdi-login-variant</v-icon>
-              </v-btn>
-
-              <v-btn
-                icon
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon>mdi-chevron-down</v-icon>
-              </v-btn>
-            </v-container>
-          </template>
-          <v-flex v-for="(item, i) in profile_menu" :key="i" style="background: white">
-            <v-row
-              v-if="item.heading"
-              align="center"
-            >
-              <v-col cols="6">
-                <v-subheader v-if="item.heading">
-                  {{ item.heading }}
-                </v-subheader>
-              </v-col>
-            </v-row>
-            <v-divider
-              v-else-if="item.divider"
-              :key="i"
-              dark
-              class="my-4"
-            ></v-divider>
-            <v-list-item
-              style="padding: 0"
-              v-else
-              :key="i"
-              link
-              :to="item.href"
-            >
-              <v-list-item-content>
-                <v-list-item-title class="grey--text">
-                  <v-icon style="padding: 0 12px">{{ item.icon }}</v-icon>
-                  {{ item.text }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-flex>
-        </v-menu>
-      </div>
+      <Cart />
+      <UserBar />
     </v-app-bar>
 
     <v-navigation-drawer
@@ -142,27 +85,25 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
+import Cart from '@/components/Cart';
+import UserBar from '@/components/UserBar';
 
 export default {
   name: 'BaseTemplate',
+  components: {
+    Cart,
+    UserBar,
+  },
   props: {
-    source: String,
     loading: {
       type: Boolean,
       default: false,
     }
   },
   data: () => ({
-    drawer: null,
-    profile_menu_open: false,
-    profile_menu: [
-      {icon: 'mdi-account', text: 'Мой профиль', href: '/profile'},
-      {icon: 'mdi-logout-variant', text: 'Выход', href: '/logout'},
-    ],
+    drawer: false,
   }),
   computed: {
-    ...mapState(['token', 'user']),
     items() {
       const group = this.user ? this.user.groupName : 'DEFAULT';
       switch (group) {
@@ -186,26 +127,18 @@ export default {
             {heading: 'Управление'},
             {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
             {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders'},
-            {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/sellers'},
+            {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/suppliers'},
           ];
       }
     },
-    isExpanded: function () {
-      return {
-        background: this.profile_menu_open ? 'white' : ''
-      }
-    }
   },
 }
 </script>
 
 <style scoped>
-#keep .v-navigation-drawer__border {
-  display: none
-}
-
 .v-subheader {
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .logo {
@@ -226,9 +159,5 @@ export default {
 
 .logo .v-avatar .v-image {
   filter: grayscale(100%);
-}
-
-.v-menu__content {
-  border-radius: 0 !important;
 }
 </style>

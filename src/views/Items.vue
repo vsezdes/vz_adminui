@@ -16,7 +16,7 @@
       </v-btn>
       <v-row>
         <v-col
-          v-for="item in lastItems"
+          v-for="item in items"
           :key="item.id"
           cols="12"
           sm="6"
@@ -51,6 +51,7 @@ import ItemPreview from '@/components/ItemPreview';
 import ItemForm from '@/components/ItemForm';
 import { LAST_ITEMS } from '@/gql/items.graphql';
 import BaseTemplate from '@/views/BaseTemplate.vue';
+import gql from 'graphql-tag';
 
 export default {
   components: {
@@ -73,6 +74,11 @@ export default {
     },
     expandedItem() {
       return this.getItemById(this.expandedId);
+    },
+    items() {
+      const s = this.categoryItems || this.lastItems;
+      console.error(s, this.categoryItems, this.lastItems);
+      return s;
     }
   },
   methods: {
@@ -109,13 +115,52 @@ export default {
         },
       })
     },
+    fetchCategoryItems(id) {
+      if (!id) return;
+      this.loading = true;
+      this.showLoadMore = false;
+      this.$apollo.query({
+        query: gql(`query catItems($id: Int!) {
+          categoryItems(id: $id) {
+            id
+            title
+            price
+            description
+            images {
+              url
+            }
+          }
+        }`),
+        variables: {
+          id: +id
+        }
+      }).then(res => {
+        this.categoryItems = res.data.categoryItems;
+        this.loading = false;
+      }).catch(err => {
+        console.error('Error fetching cat: ', err);
+        this.loading = false;
+      })
+
+    }
+  },
+  created() {
+    if (this.$route.name === 'CategoryItems') {
+      this.$apollo.skipAll = true;
+      this.fetchCategoryItems(this.$route.params.categoryId);
+    }
+  },
+  mounted() {
+    // TODO: make something more clever here
+    this.showLoadMore = this.items && this.items.length > 6;
   },
   data () {
     return {
       activeItem: null,
       expandedId: null,
       showForm: false,
-      showLoadMore: true,
+      showLoadMore: false,
+      categoryItems: null,
       page: 0,
     }
   },
