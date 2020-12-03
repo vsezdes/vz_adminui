@@ -36,10 +36,18 @@
               :headers="headers"
               :items="sellers"
               :search="search"
-              item-key="item.id"
               show-expand
+              :items-per-page="9999"
+              :expanded="expanded"
+              :single-expand="false"
+              @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
+              :item-key="id"
+              hide-default-footer
             >
-              <template v-slot:item.joined="{ item }">
+<!--              <template v-slot:item.data-table-expand="{ item }" >-->
+<!--                <v-icon  v-if="item.items.length>0" class="v-data-table__expand-icon v-icon&#45;&#45;link mdi mdi-chevron-down"></v-icon>{{ item.items.length }}-->
+<!--              </template>-->
+              <template v-slot:item.joined="{ item }" >
                 <span>{{ formatDateToString(item.joined) }}</span>
               </template>
               <template v-slot:[`item.avatar`]="{ item }">
@@ -48,8 +56,10 @@
                   <v-icon v-else>mdi-account</v-icon>
                 </v-avatar>
               </template>
-              <template v-slot:expanded-item="{ headers, item }">
-                <td style="padding: 5px" :colspan="headers.length">
+
+              <template  v-slot:expanded-item="{ headers, item }"  >
+                <td  style="padding: 5px" :colspan="headers.length" v-show="item.items.length > 0"
+                >
 
                   <v-data-table
                     style="padding: 2px"
@@ -60,8 +70,15 @@
                     id="order_items_table"
                     item-key="item.id"
                     :items="item.items"
-                    :headers="item_headers">
-
+                    :headers="item_headers"
+                    :items-per-page="9999"
+                    hide-default-footer>
+                    <template  v-slot:item.images="{ item }">
+                      <v-avatar tile >
+                        <v-img v-if="item.images" :src="item.images[0].url"/>
+                        <v-icon v-else>mdi-account</v-icon>
+                      </v-avatar>
+                    </template>
                   </v-data-table>
                 </td>
               </template>
@@ -92,6 +109,7 @@ export default {
   },
   data() {
     return {
+      expanded: [],
       sellerForm: false,
       isValid: false,
       loading: false,
@@ -127,7 +145,8 @@ export default {
         {text: 'E-mail', value: 'email'},
         {text: 'Телефон', value: 'phone'},
         {text: 'Добавлен', value: 'joined'},
-        {text: 'Товары', value: 'data-table-expand',},
+        {text: 'Товары', value: 'data-table-expand',align: "right"},
+        {text: '', value: 'items.length',align: "left",width:'1'},
 
       ],
       item_headers: [
@@ -136,13 +155,16 @@ export default {
         {text: 'фото', value: 'images', align: 'center'},
         {text: 'описание', value: 'description', align: 'center'},
         {text: 'цена', value: 'price', align: 'center'},
-        {text: 'категория', value: 'category', align: 'center'},
+        // {text: 'категория', value: 'category.id', align: 'center'},
       ],
     }
   },
   methods: {
     onClose() {
       this.sellerForm = false
+    },
+    onExpand(){
+
     }
   }
 }

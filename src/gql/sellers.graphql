@@ -10,9 +10,14 @@ export const ALL_SELLERS = gql`
       email
       phone
       gender
+      joined
       items {
         id
         title
+        description
+        images{
+          url
+        }
         price
       }
     }
