@@ -50,8 +50,13 @@ export default new Vuex.Store({
       localStorage.removeItem('token');
       commit('LOGOUT', user);
     },
-    addToCart({ commit }, item) {
+    addToCart({ commit, dispatch }, item) {
       commit('ADD_TO_CART', item);
+      dispatch('alert', {
+        type: 'success',
+        message: 'Товар добавлен в корзину',
+        expire: 1000
+      })
     },
     deleteFromCart({ commit }, item) {
       commit('DELETE_FROM_CART', item);
@@ -91,10 +96,11 @@ export default new Vuex.Store({
     },
     ADD_TO_CART(state, item) {
       const existingItem = state.cart.find(i => i.id === item.id);
+      console.error(existingItem)
       if (existingItem) {
         existingItem.quantity += item.quantity;
         state.cart = [
-          ...state.cart,
+          ...state.cart.filter(i => i.id !== existingItem.id),
           existingItem
         ];
       } else {

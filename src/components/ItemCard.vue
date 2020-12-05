@@ -43,6 +43,7 @@
     >
       {{ price || 0 }} <small>сом</small>
     </v-chip>
+    <v-divider />
 
     <v-card-title>
       <v-tooltip top>
@@ -63,6 +64,22 @@
         <v-icon>mdi-delete-forever-outline</v-icon>
       </v-btn>
     </div>
+    <v-tooltip v-else top>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          class="buy-btn"
+          color="primary"
+          v-on="on"
+          v-bind="attrs"
+          @click.stop="addToCart({ id, title, price, quantity: 1 })"
+          fab
+          large
+        >
+          <v-icon>mdi-cart-arrow-down</v-icon>
+        </v-btn>
+      </template>
+      <span>Добавить в корзину</span>
+    </v-tooltip>
     <v-card-text>
       <!-- <v-row
         align="center"
@@ -85,7 +102,7 @@
       >
       </v-row>
 
-      <v-chip small color="accent">{{ categoryName }}</v-chip>
+      <v-chip small outlined color="secondary">{{ categoryName }}</v-chip>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>
@@ -105,6 +122,7 @@
 
 <script>
 import gql from 'graphql-tag';
+import { mapActions } from 'vuex';
 import { LAST_ITEMS } from '@/gql/items.graphql';
 export default {
   props: ['id', 'title', 'price', 'images', 'categoryName', 'description', 'readonly'],
@@ -118,6 +136,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions(['addToCart']),
     onDelete () {
       if (!window.confirm('Удалить товар?')) return;
       this.loading = true;
@@ -229,6 +248,11 @@ export default {
     height: 1em;
     margin-top: 0.2em;
     background: white;
+  }
+  .buy-btn {
+    position: absolute;
+    right: 10px;
+    bottom: 25px;
   }
 }
 

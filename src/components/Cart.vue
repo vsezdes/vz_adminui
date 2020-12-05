@@ -69,6 +69,7 @@
         <v-btn
           :disabled="cart.length === 0"
           text x-small color="error" class="mt-3"
+          @click="onEmptyCart"
         >
           Очистить корзину
         </v-btn>
@@ -125,7 +126,12 @@ export default {
   },
   methods: {
     ...mapActions(['deleteFromCart', 'emptyCart']),
-    deleteItem(item) {
+    onEmptyCart() {
+      if (window.confirm(`Удалить все товары из корзины?`)) {
+        this.emptyCart();
+      }
+    },
+    onDeleteItem(item) {
       if (window.confirm(`Удалить товар ${item.title} из корзины?`)) {
         this.deleteFromCart(item);
       }
