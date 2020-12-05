@@ -39,6 +39,7 @@
           disable-sort
           disable-pagination
           disable-filtering
+          :hide-default-header="cart.length === 0"
           hide-default-footer
           dense
           :headers="headers"
@@ -60,10 +61,17 @@
             </div>
           </template>
         </v-data-table>
-        <v-divider />
-        <div class="text-right total"> Итого: {{ cartTotal }} </div>
-        <v-divider />
-        <v-btn text x-small color="error" class="mt-3" >Очистить корзину</v-btn>
+        <template v-if="cartTotal > 0">
+          <v-divider />
+          <div class="text-right total"> Итого: {{ cartTotal }} </div>
+          <v-divider />
+        </template>
+        <v-btn
+          :disabled="cart.length === 0"
+          text x-small color="error" class="mt-3"
+        >
+          Очистить корзину
+        </v-btn>
         <v-btn
           :disabled="cart.length === 0"
           color="primary"
@@ -85,24 +93,11 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
 export default {
   name: 'Cart',
   data: () => ({
-    drawer: true,
-    cart: [
-      {
-        id: 1,
-        title: 'Test',
-        price: 1000,
-        quantity: 5,
-      },
-      {
-        id: 2,
-        title: 'Test',
-        price: 1000,
-        quantity: 5,
-      }
-    ],
+    drawer: false,
     headers: [
       {
         text: 'Товар',
@@ -116,6 +111,7 @@ export default {
     ],
   }),
   computed: {
+    ...mapState(['cart']),
     cartQuantity() {
       return this.cart.length;
     },
@@ -128,9 +124,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['deleteFromCart', 'emptyCart']),
     deleteItem(item) {
       if (window.confirm(`Удалить товар ${item.title} из корзины?`)) {
-        console.warn('Write delete logic here')
+        this.deleteFromCart(item);
       }
     }
   }

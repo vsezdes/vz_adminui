@@ -8,7 +8,21 @@ export default new Vuex.Store({
     alerts: [],
     user: null,
     token: null,
-    loader:false
+    loader: false,
+    cart: [
+      {
+        id: 1,
+        title: 'Test',
+        price: 1000,
+        quantity: 5,
+      },
+      {
+        id: 2,
+        title: 'Test',
+        price: 1000,
+        quantity: 5,
+      }
+    ],
   },
   getters: {
     userGroup: state => state.user && state.user.groupName,
@@ -36,6 +50,15 @@ export default new Vuex.Store({
       localStorage.removeItem('token');
       commit('LOGOUT', user);
     },
+    addToCart({ commit }, item) {
+      commit('ADD_TO_CART', item);
+    },
+    deleteFromCart({ commit }, item) {
+      commit('DELETE_FROM_CART', item);
+    },
+    emptyCart({ commit }) {
+      commit('RESET_CART');
+    }
   },
   mutations: {
     LOADER(state,payload){
@@ -65,6 +88,24 @@ export default new Vuex.Store({
     LOGOUT(state) {
       state.user = null;
       state.token = null;
+    },
+    ADD_TO_CART(state, item) {
+      const existingItem = state.cart.find(i => i.id === item.id);
+      if (existingItem) {
+        existingItem.quantity += item.quantity;
+        state.cart = [
+          ...state.cart,
+          existingItem
+        ];
+      } else {
+        state.cart.push(item)
+      }
+    },
+    DELETE_FROM_CART(state, item) {
+      state.cart = state.cart.filter(i => i.id !== item.id);
+    },
+    RESET_CART(state) {
+      state.cart = [];
     }
   },
   modules: {
