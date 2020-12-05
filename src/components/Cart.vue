@@ -4,6 +4,7 @@
       offset-x="10"
       offset-y="33"
       :color="cartQuantity > 0 ? 'primary' : 'grey'"
+      :style="{ position: 'relative', zIndex: '20' }"
     >
       <v-btn slot="badge" icon text x-small absolute class="badge-btn">
         {{ cartQuantity }}
@@ -17,34 +18,45 @@
         <v-icon>mdi-cart</v-icon>
       </v-btn>
     </v-badge>
-    <span class="user-menu" v-if="drawer">
+    <span class="user-cart" v-if="drawer">
       <v-row align="center">
         <v-col class="px-2 pt-0">
           <span class="name">Ваша корзина</span>
         </v-col>
       </v-row>
-      <div class="menu-block" v-if="drawer">
-        <span v-for="(item, i) in profile_menu" :key="i">
-          <v-divider
-            v-if="item.divider"
-            class="my-1 mx-auto"
-            inset
-          ></v-divider>
-          <v-list-item
-            v-else
-            dense
-            class="pa-0"
-            link
-            :to="item.href"
+      <div class="cart-items" v-if="drawer">
+        <v-data-table
+          disable-sort
+          disable-pagination
+          disable-filtering
+          hide-default-header
+          hide-default-footer
+          dense
+          :headers="headers"
+          :items="cart"
+          item-key="name"
+          class="elevation-0"
+        >
+          <template slot="no-data">
+            <div>
+              Добавьте товары в корзину
+            </div>
+          </template>
+        </v-data-table>
+        <v-btn
+          :disabled="cart.length === 0"
+          color="primary"
+          small
+          class="mt-3 float-right"
+        >
+          Оформить заказ
+          <v-icon
+            right
+            dark
           >
-            <v-list-item-content class="py-1">
-              <v-list-item-title class="grey--text">
-                <v-icon class="px-1">{{ item.icon }}</v-icon>
-                {{ item.text }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </span>
+            mdi-cart
+          </v-icon>
+        </v-btn>
       </div>
     </span>
   </div>
@@ -54,8 +66,32 @@
 export default {
   name: 'Cart',
   data: () => ({
-    drawer: false,
-    cartQuantity: 999,
+    drawer: true,
+    cartQuantity: 0,
+    cart: [
+      // {
+      //   id: 1,
+      //   title: 'Test',
+      //   price: 1000,
+      //   quantity: 5,
+      // },
+      // {
+      //   id: 2,
+      //   title: 'Test',
+      //   price: 1000,
+      //   quantity: 5,
+      // }
+    ],
+    headers: [
+      {
+        text: 'Товар',
+        align: 'start',
+        sortable: false,
+        value: 'title',
+      },
+      { text: 'Цена', value: 'price' },
+      { text: 'Кол-во', value: 'quantity' },
+    ],
   })
 }
 </script>
@@ -76,23 +112,24 @@ export default {
 .cart {
   padding: 0px 15px 0px 5px;
   position: relative;
-  .user-menu {
-    min-width: 170px;
+  .user-cart {
+    min-width: 300px;
     padding: 5px;
     position: absolute;
-    right: 19px;
-    top: 4px;
+    right: 5px;
+    top: -1px;
     background: white;
     border: 1px solid #EEE;
     border-radius: 5px 8px 5px 5px;
+    z-index: 10;
     .name {
-      font-size: 12px;
+      font-size: 16px;
       line-height: 14px;
       display: block;
       padding: 5px 40px 0px 8px;
       border-bottom: 1px dashed silver;
       color: gray;
-      min-height: 40px;
+      min-height: 45px;
     }
   }
 }

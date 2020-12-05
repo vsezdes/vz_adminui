@@ -8,7 +8,7 @@
           offset-x="15"
           offset-y="33"
           color="secondary"
-          :style="{ position: 'relative', zIndex: '20' }"
+          :style="{ position: 'relative', zIndex: '21' }"
         >
           <v-btn slot="badge" @click="toggle" icon text x-small absolute class="badge-btn">
             <v-icon v-text="drawer ? 'mdi-close' : 'mdi-chevron-down'" />
@@ -106,22 +106,23 @@ export default {
   }
 }
 .user-menu {
-  min-width: 170px;
+  min-width: 200px;
   padding: 5px;
   position: absolute;
-  right: 9px;
-  top: 4px;
+  right: 1px;
+  top: -1px;
   background: white;
   border: 1px solid #EEE;
   border-radius: 5px 8px 5px 5px;
+  z-index: 20;
   .name {
     font-size: 12px;
-    line-height: 14px;
+    line-height: 18px;
     display: block;
     padding: 5px 40px 0px 8px;
     border-bottom: 1px dashed silver;
     color: gray;
-    min-height: 40px;
+    min-height: 45px;
   }
 }
 </style>
