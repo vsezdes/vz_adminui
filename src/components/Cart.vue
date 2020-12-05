@@ -6,14 +6,21 @@
       :color="cartQuantity > 0 ? 'primary' : 'grey'"
       :style="{ position: 'relative', zIndex: '20' }"
     >
-      <v-btn slot="badge" icon text x-small absolute class="badge-btn">
-        {{ cartQuantity }}
+      <v-btn
+        slot="badge" icon text
+        @click="drawer = !drawer"
+        x-small absolute class="badge-btn"
+      >
+        <v-icon v-if="drawer">mdi-close</v-icon>
+        <span v-else> {{cartQuantity }} </span>
+
       </v-btn>
       <v-btn
         icon
         color="primary"
         :style="{ background: 'white' }"
         outlined
+        @click="drawer = !drawer"
       >
         <v-icon>mdi-cart</v-icon>
       </v-btn>
@@ -21,7 +28,10 @@
     <span class="user-cart" v-if="drawer">
       <v-row align="center">
         <v-col class="px-2 pt-0">
-          <span class="name">Ваша корзина</span>
+          <span class="name">
+            Ваша корзина<br/>
+            <div class="pt-1"><small>{{ cartQuantity }} товаров/а</small></div>
+          </span>
         </v-col>
       </v-row>
       <div class="cart-items" v-if="drawer">
@@ -29,7 +39,6 @@
           disable-sort
           disable-pagination
           disable-filtering
-          hide-default-header
           hide-default-footer
           dense
           :headers="headers"
@@ -37,21 +46,34 @@
           item-key="name"
           class="elevation-0"
         >
+        <template v-slot:[`item.actions`]="{ item }">
+          <v-icon
+            small
+            @click="deleteItem(item)"
+          >
+            mdi-close
+          </v-icon>
+        </template>
           <template slot="no-data">
             <div>
               Добавьте товары в корзину
             </div>
           </template>
         </v-data-table>
+        <v-divider />
+        <div class="text-right total"> Итого: {{ cartTotal }} </div>
+        <v-divider />
+        <v-btn text x-small color="error" class="mt-3" >Очистить корзину</v-btn>
         <v-btn
           :disabled="cart.length === 0"
           color="primary"
-          small
+          x-small
           class="mt-3 float-right"
         >
           Оформить заказ
           <v-icon
             right
+            size="16"
             dark
           >
             mdi-cart
@@ -67,20 +89,19 @@ export default {
   name: 'Cart',
   data: () => ({
     drawer: true,
-    cartQuantity: 0,
     cart: [
-      // {
-      //   id: 1,
-      //   title: 'Test',
-      //   price: 1000,
-      //   quantity: 5,
-      // },
-      // {
-      //   id: 2,
-      //   title: 'Test',
-      //   price: 1000,
-      //   quantity: 5,
-      // }
+      {
+        id: 1,
+        title: 'Test',
+        price: 1000,
+        quantity: 5,
+      },
+      {
+        id: 2,
+        title: 'Test',
+        price: 1000,
+        quantity: 5,
+      }
     ],
     headers: [
       {
@@ -90,9 +111,29 @@ export default {
         value: 'title',
       },
       { text: 'Цена', value: 'price' },
-      { text: 'Кол-во', value: 'quantity' },
+      { text: 'Кол-во', value: 'quantity', align: 'center' },
+      { text: '', value: 'actions', align: 'right', sortable: false },
     ],
-  })
+  }),
+  computed: {
+    cartQuantity() {
+      return this.cart.length;
+    },
+    cartTotal() {
+      let total = 0;
+      this.cart.forEach(i => {
+        total = total + i.price * i.quantity;
+      })
+      return total;
+    }
+  },
+  methods: {
+    deleteItem(item) {
+      if (window.confirm(`Удалить товар ${item.title} из корзины?`)) {
+        console.warn('Write delete logic here')
+      }
+    }
+  }
 }
 </script>
 
@@ -104,9 +145,8 @@ export default {
   letter-spacing: 0px;
   font-weight: bold;
   color: #fafafa !important;
-  &.v-btn--text.v-size--x-small {
-    .v-btn__content {
-    }
+  .v-icon {
+    font-size: 14px !important;
   }
 }
 .cart {
@@ -131,6 +171,12 @@ export default {
       color: gray;
       min-height: 45px;
     }
+  }
+  .total {
+    padding: 2px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
   }
 }
 </style>
