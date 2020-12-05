@@ -1,10 +1,10 @@
 <template>
-  <FormWrapper :show="dialog" @close="Close" title="Добавить поставщика" icon="mdi-truck-delivery">
+  <FormWrapper :show="dialog" @close="$emit('close')" title="Добавить поставщика" icon="mdi-truck-delivery">
       <v-card-text style="height: 90%;">
-        <v-form v-model="isValid">
+        <v-form v-model="isValid" aria-autocomplete="off">
           <v-text-field
               label="* Имя"
-              name="login"
+              name="name"
               prepend-icon="mdi-account"
               type="text"
               v-model="user.firstName"
@@ -33,6 +33,7 @@
               name="email"
               prepend-icon="mdi-mail"
               v-model="user.email"
+              autocomplete="new-email"
               type="text"
               :rules='emailRules'
           ></v-text-field>
@@ -57,7 +58,7 @@
               right
               outlined
               :disabled="!isValid"
-              @click="Close"
+              @click="onSave"
               :loading="loading"
           >
             <v-icon>mdi-content-save-outline</v-icon>
@@ -68,10 +69,12 @@
 </template>
 
 <script>
-import { mask } from 'vue-the-mask'
+import { mask } from 'vue-the-mask';
+import gql from "graphql-tag";
+import { mapActions } from 'vuex';
 import FormWrapper from "@/components/FormWrapper";
 export default {
-name: "AddSupplier",
+  name: "AddSupplier",
   components: {FormWrapper},
   directives:{
     mask
@@ -111,8 +114,45 @@ name: "AddSupplier",
     }
   }
   ,
-  methods:{
-    Close(){
+  methods: {
+    ...mapActions(['alert']),
+    onSave(){
+      this.loading = true;
+      this.$apollo.mutate({
+        // Query
+        mutation : gql`mutation saveSeller($id: Int,$data: UserInput!) {
+            saveSeller(id:$id, data:$data) {
+              id
+              firstName
+              lastName
+              email
+              phone
+              address
+              gender
+              token
+              avatar
+            }
+          }`,
+        variables: {
+          id: this.user.id,
+          data: {
+            ...this.user
+          }
+        }
+      }).then(() => {
+        this.loading = false;
+        this.editable = false;
+        this.alert({
+          type: 'info',
+          message: 'Поставщик успешно добавлен',
+        });
+      }).catch(error => {
+        this.loading = false;
+        this.alert({
+          type: 'error',
+          message: error,
+        });
+      });
       this.$emit('close');
     }
   },

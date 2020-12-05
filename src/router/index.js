@@ -12,7 +12,7 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      protected: true,
+      protected: false,
     }
   },
   {
@@ -29,6 +29,14 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "items" */ '../views/Items.vue'),
+    meta: {
+      protected: true,
+    }
+  },
+  {
+    path: '/category-items/:categoryId',
+    name: 'CategoryItems',
     component: () => import(/* webpackChunkName: "items" */ '../views/Items.vue'),
     meta: {
       protected: true,
@@ -75,26 +83,18 @@ const routes = [
   },
   {
     path: '/suppliers',
-    name: 'Suppliers',
-    component: () => import(/* webpackChunkName: "suppliers" */ '../views/Suppliers.vue'),
-    meta: {
-      protected: true,
-    }
-  },
-  {
-    path: '/my_items',
-    name: 'MyItems',
-    component: () => import(/* webpackChunkName: "myitems" */ '../views/MyItems.vue'),
-    meta: {
-      protected: true,
-    }
+        name: 'Suppliers',
+    component: () => import(/* webpackChunkName: "users" */ '../views/Suppliers.vue'),
+      meta: {
+          protected: true,
+      }
   },
   {
     path: '*',
     name: 'PageNotFound',
     component: () => import(/* webpackChunkName: "orders" */ '../views/PageNotFound.vue'),
   }
-]
+];
 
 const router = new VueRouter({
   mode: 'history',
@@ -104,6 +104,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   store.commit('LOADER', true);
+  console.warn(this, to, from);
   if (to.meta.protected && to.name !== 'Login' && !store.state.token) next({ name: 'Login' })
   else if (to.name === 'Login' && store.state.token) next({ name: 'Home' })
   else next()

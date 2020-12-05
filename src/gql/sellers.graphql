@@ -1,0 +1,25 @@
+import gql from 'graphql-tag'
+
+export const ALL_SELLERS = gql`
+  query allSellers {
+    sellers {
+      id
+      firstName
+      lastName
+      avatar
+      email
+      phone
+      gender
+      joined
+      items {
+        id
+        title
+        description
+        images{
+          url
+        }
+        price
+      }
+    }
+  }
+`
