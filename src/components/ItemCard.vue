@@ -64,22 +64,6 @@
         <v-icon>mdi-delete-forever-outline</v-icon>
       </v-btn>
     </div>
-    <v-tooltip v-else top>
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          class="buy-btn"
-          color="primary"
-          v-on="on"
-          v-bind="attrs"
-          @click.stop="addToCart({ id, title, price, quantity: 1 })"
-          fab
-          large
-        >
-          <v-icon>mdi-cart-arrow-down</v-icon>
-        </v-btn>
-      </template>
-      <span>Добавить в корзину</span>
-    </v-tooltip>
     <v-card-text>
       <!-- <v-row
         align="center"
@@ -100,12 +84,30 @@
         align="center"
         class="mx-0"
       >
+        <v-tooltip v-if="readonly">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              class="buy-btn mb-4"
+              color="primary"
+              v-on="on"
+              v-bind="attrs"
+              @click.stop="addToCart({ id, title, price, quantity: 1 })"
+              fab
+              right
+              absolute
+              large
+            >
+              <v-icon>mdi-cart-arrow-down</v-icon>
+            </v-btn>
+          </template>
+          <span>Добавить в корзину</span>
+        </v-tooltip>
       </v-row>
 
-      <v-chip small outlined color="secondary">{{ categoryName }}</v-chip>
+      <v-chip x-small outlined color="secondary">{{ categoryName }}</v-chip>
     </v-card-text>
 
-    <v-divider class="mx-4"></v-divider>
+    <!-- <v-divider class="mx-4"></v-divider> -->
 
 
     <!-- <v-card-actions>
@@ -191,8 +193,12 @@ export default {
     padding: 0px 6px;
     box-shadow: 1px 1px 1px #CCC;
   }
+  .buy-btn {
+    display: none;
+
+  }
   &:hover {
-    .item-controls {
+    .item-controls, .buy-btn {
       display: block;
     }
   }
@@ -248,11 +254,6 @@ export default {
     height: 1em;
     margin-top: 0.2em;
     background: white;
-  }
-  .buy-btn {
-    position: absolute;
-    right: 10px;
-    bottom: 25px;
   }
 }
 

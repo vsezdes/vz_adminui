@@ -125,7 +125,10 @@ export default {
   computed: {
     ...mapState(['cart']),
     cartQuantity() {
-      return this.cart.length;
+      if (this.cart.length > 0) {
+        return this.cart.reduce((total, item) => total + item.quantity, 0);
+      }
+      return 0;
     },
     cartTotal() {
       let total = 0;
@@ -140,6 +143,7 @@ export default {
     onEmptyCart() {
       if (window.confirm(`Удалить все товары из корзины?`)) {
         this.emptyCart();
+        this.drawer = false;
       }
     },
     onDeleteItem(item) {

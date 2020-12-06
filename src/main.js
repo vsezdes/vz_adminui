@@ -7,6 +7,7 @@ import { ApolloClient } from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory'
+import OutsideClick from './directives/OutsideClick'
 import VueApollo from 'vue-apollo'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
@@ -56,6 +57,7 @@ const apolloProvider = new VueApollo({
 })
 
 Vue.config.productionTip = false;
+Vue.directive('outside-click', OutsideClick)
 
 new Vue({
   router,

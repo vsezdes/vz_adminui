@@ -41,7 +41,7 @@ export default new Vuex.Store({
       commit('ADD_TO_CART', item);
       dispatch('alert', {
         type: 'success',
-        message: 'Товар добавлен в корзину',
+        message: item.quantity === 1 ? 'Товар добавлен в корзину' : `${item.quantity} товаров добавлено в корзину`,
         expire: 1000
       })
     },
