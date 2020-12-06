@@ -50,7 +50,7 @@
         <template v-slot:[`item.actions`]="{ item }">
           <v-icon
             small
-            @click="deleteItem(item)"
+            @click="onDeleteItem(item)"
           >
             mdi-close
           </v-icon>
@@ -78,6 +78,7 @@
           color="primary"
           x-small
           class="mt-3 float-right"
+          :to="{ name: 'Checkout' }"
         >
           Оформить заказ
           <v-icon

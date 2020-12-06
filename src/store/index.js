@@ -96,7 +96,6 @@ export default new Vuex.Store({
     },
     ADD_TO_CART(state, item) {
       const existingItem = state.cart.find(i => i.id === item.id);
-      console.error(existingItem)
       if (existingItem) {
         existingItem.quantity += item.quantity;
         state.cart = [
