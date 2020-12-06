@@ -35,6 +35,7 @@ export default new Vuex.Store({
     logout: ({ commit }, user) => {
       localStorage.removeItem('user');
       localStorage.removeItem('token');
+      commit('RESET_CART');
       commit('LOGOUT', user);
     },
     addToCart({ commit, dispatch }, item) {
@@ -42,14 +43,19 @@ export default new Vuex.Store({
       dispatch('alert', {
         type: 'success',
         message: item.quantity === 1 ? 'Товар добавлен в корзину' : `${item.quantity} товаров добавлено в корзину`,
-        expire: 1000
+        expire: 3000,
       })
     },
     deleteFromCart({ commit }, item) {
       commit('DELETE_FROM_CART', item);
     },
-    emptyCart({ commit }) {
+    emptyCart({ commit, dispatch }) {
       commit('RESET_CART');
+      dispatch('alert', {
+        type: 'info',
+        message: 'Корзина очищена',
+        expire: 3000,
+      })
     }
   },
   mutations: {

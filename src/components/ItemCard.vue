@@ -1,9 +1,9 @@
 <template>
   <v-card
     :loading="loading"
-    class="item-card mx-auto my-12"
-    max-width="374"
-    min-height="300"
+    class="item-card mx-auto my-4"
+    max-width="300"
+    min-height="250"
     hover
     flat
     @click="readonly ? $emit('on-expand', id) : () => {}"
@@ -26,7 +26,6 @@
           outlined
           absolute
           right
-          bottom
           class="expand"
           @click="$emit('on-expand', id)"
         >
@@ -87,7 +86,7 @@
         <v-tooltip v-if="readonly">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              class="buy-btn mb-4"
+              class="buy-btn mb-10"
               color="primary"
               v-on="on"
               v-bind="attrs"
@@ -195,7 +194,7 @@ export default {
   }
   .buy-btn {
     display: none;
-
+    bottom: 50px;
   }
   &:hover {
     .item-controls, .buy-btn {
@@ -227,8 +226,13 @@ export default {
     }
   }
   .v-card__title {
+    padding: 3px 10px;
+    padding-top: 2px;
     padding-bottom: 0px;
     min-height: 56px;
+  }
+  .v-card__text {
+    padding: 3px 10px;
   }
   .v-card__title h2{
     overflow: hidden;
