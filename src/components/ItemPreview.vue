@@ -161,7 +161,6 @@ export default {
   padding-bottom: 56px !important;
 }
 .preview-toolbar {
-  display: none;
   position: fixed;
   width: 100%;
   left: 0;

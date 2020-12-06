@@ -113,7 +113,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   store.commit('LOADER', true);
   console.warn(this, to, from);
-  if (to.meta.protected && to.name !== 'Login' && !store.state.token) next({ name: 'Login' })
+  if (to.meta.protected && to.name !== 'Login' && !store.state.token) next({ name: 'Login', params: { returnTo: to.name } })
   else if (to.name === 'Login' && store.state.token) next({ name: 'Home' })
   else next()
 })
