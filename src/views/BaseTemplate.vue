@@ -87,6 +87,7 @@
 <script>
 import Cart from '@/components/Cart';
 import UserBar from '@/components/UserBar';
+import { mapState } from 'vuex';
 
 export default {
   name: 'BaseTemplate',
@@ -104,6 +105,7 @@ export default {
     drawer: false,
   }),
   computed: {
+    ...mapState(['user']),
     items() {
       const group = this.user ? this.user.groupName : 'DEFAULT';
       switch (group) {
