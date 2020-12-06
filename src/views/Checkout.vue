@@ -126,6 +126,12 @@ export default {
       ],
     }
   },
+  mounted() {
+    if (this.user) {
+      this.$set(this.deliveryForm, 'phone', this.user.phone);
+      this.$set(this.deliveryForm, 'address', this.user.address);
+    }
+  },
   methods: {
     ...mapActions(['deleteFromCart']),
     setDeliveryFormData(key, val) {
@@ -141,7 +147,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['cart']),
+    ...mapState(['cart', 'user']),
     cartTotal() {
       let total = 0;
       this.cart.forEach(i => {

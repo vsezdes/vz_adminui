@@ -5,7 +5,7 @@
     hide-overlay
     class="lighten-3"
     transition="dialog-top-transition">
-    <div v-if="item">
+    <perfect-scrollbar v-if="item" ref="previewScrollbar">
       <v-toolbar fixed color="base_header">
         <v-icon class="mr-2">mdi-arrow-right-drop-circle</v-icon>
         <v-toolbar-title>{{ item.title }}</v-toolbar-title>
@@ -22,7 +22,7 @@
             <v-col :cols="12" :lg="9">
                 <v-carousel
                   continuous
-                  height="calc(100vh - 65px)"
+                  height="calc(100vh - 115px)"
                   width="calc(100vw * 3/4)"
                   show-arrows-on-hover
                   :show-arrows="item.images.length > 1"
@@ -55,18 +55,35 @@
             </v-col>
             <v-col :cols="12" :lg="3">
               <v-card flat tile class="item-details px-5 py-2">
-                <v-chip
-                  x-large
-                  label
-                  class="ma-2 price"
-                  color="base_header"
-                  text-color="primary"
+                <v-chip color="accent" outlined class="my-2 pa-3" small>{{ item.categoryName}} </v-chip>
+                <v-btn
+                  class="mt-0 mx-2"
+                  color="info"
+                  small
+                  @click="showDetails"
                 >
-                  <v-icon size="48" class="mr-5">mdi-cash-multiple</v-icon>
-                  {{ item.price || 0 }} &nbsp;<small class="ml-2"> сом</small>
+                  <v-icon size="18" class="mr-0">mdi-script-text</v-icon>
+                  <v-icon size="18" class="mr-2 ml-0">mdi-arrow-down</v-icon>
+                  Подробнее
+                </v-btn>
+                <v-btn
+                  class="float-right mt-2 mx-2"
+                  color="primary"
+                  small
+                  @click="addToCart(item)"
+                >
+                  <v-icon size="18" class="mr-1">mdi-cart-arrow-down</v-icon>
+                  Купить
+                </v-btn>
+                <v-chip
+                  outlined
+                  class="float-right my-1 mr-2 pa-4 price"
+                  small
+                  color="base_header"
+                >
+                  <v-icon size="22" class="mr-2 mb-1">mdi-cash-multiple</v-icon>
+                  {{ item.price || 0 }} &nbsp;<small class="mt-1 ml-1"> сом</small>
                 </v-chip>
-                <v-divider light/>
-                <v-chip color="accent" class="my-3">{{ item.category}} </v-chip>
                 <v-divider light/>
                 <v-card-subtitle>
                   <strong>
@@ -81,15 +98,22 @@
           </v-row>
         </v-layout>
       </v-sheet>
-    </div>
+    </perfect-scrollbar>
   </v-dialog>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 export default {
   data: () => ({
     dialog: false,
   }),
+  methods: {
+    ...mapActions(['addToCart']),
+    showDetails() {
+      this.$refs.previewScrollbar.$el.scrollTop = this.$refs.previewScrollbar.$el.scrollHeight;
+    }
+  },
   computed: {
     thumb() {
       if (this.item && this.item.images && this.item.images[0]) {
@@ -117,11 +141,22 @@ export default {
 }
 .item-details {
   .price {
-    font-size: 40px;
+    font-size: 18px !important;
+    font-weight: bold;
   }
   .description {
     white-space: pre-line;
   }
 }
 
+</style>
+<style scoped>
+.ps-container > .ps-scrollbar-x-rail > .ps-scrollbar-x {
+  transition: .2s linear left;
+  /* maybe other vendor-prefixed transitions */
+}
+.ps-container > .ps-scrollbar-y-rail > .ps-scrollbar-y {
+  transition: .2s linear top;
+  /* maybe other vendor-prefixed transitions */
+}
 </style>

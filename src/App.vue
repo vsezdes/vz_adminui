@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <PreLoader v-if="$store.state.loader"/>
-    <router-view/>
+    <perfect-scrollbar ref="scroll">
+      <router-view/>
+    </perfect-scrollbar>
     <Alert/>
     <v-dialog
       :value="showUpdateUI"
@@ -76,6 +78,9 @@ export default {
     userGroup(val) {
       this.setTheme(val);
     },
+    $route() {
+      this.$refs.scroll.$el.scrollTop = 0;
+    }
   },
   mounted() {
     this.setTheme(this.userGroup);
@@ -105,3 +110,16 @@ export default {
   }
 }
 </script>
+
+<style>
+body {
+  overflow: hidden;
+}
+::-webkit-scrollbar {
+    display: none;
+}
+.ps {
+  max-height: 100vh;
+  padding-right: 8px;
+}
+</style>

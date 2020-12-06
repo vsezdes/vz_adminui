@@ -3,6 +3,7 @@
     <v-app-bar
       app
       clipped-left
+      class="mr-2"
       color="base_header"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
