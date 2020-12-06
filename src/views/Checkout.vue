@@ -36,8 +36,10 @@
               <div class="text-right total"> Итого: {{ cartTotal }} </div>
             </template>
           </v-data-table>
-          <v-btn @click="step = 2" class="float-right mt-5" :disabled="cartTotal === 0">Далее</v-btn>
-          <v-divider class="mt-3 mb-5"/>
+          <v-btn @click="step = 2" small class="float-right mt-6 mb-1 mr-1" :disabled="cartTotal === 0">
+            Далее <v-icon>mdi-arrow-right</v-icon>
+          </v-btn>
+          <v-divider class="mt-3 mb-6"/>
         </v-stepper-content>
 
         <v-stepper-step :complete="step > 2" step="2">
@@ -48,19 +50,34 @@
             <v-text-field
               label="Адрес доставки"
               :value="deliveryForm.address"
+              :rules="[rules.required]"
               @change="setDeliveryFormData('address', $event)"
             />
             <v-text-field
               label="Контактный телефон"
               :value="deliveryForm.phone"
+              v-mask="'+996(###)###-###'"
+              :rules="[rules.required, rules.phone]"
               @change="setDeliveryFormData('phone', $event)"
             />
           </v-form>
-          {{ deliveryForm }}
+          <v-divider class="mt-5 mb-1"/>
+          <v-btn @click="step = 1" class="my-5 mr-1" small><v-icon size="16">mdi-arrow-left</v-icon>Назад</v-btn>
+          <v-btn @click="step = 3" class="float-right my-5 mr-1" small :disabled="!deliveryFormValid">
+            Далее <v-icon size="16">mdi-arrow-right</v-icon>
+          </v-btn>
         </v-stepper-content>
         <v-stepper-step :complete="step > 3" step="3">
           Выберите способ оплаты
         </v-stepper-step>
+        <v-stepper-content step="3">
+          Тут будет выбор опций оплаты
+          <v-divider class="mt-5 mb-1"/>
+          <v-btn @click="step = 2" class="my-5 mr-1" small><v-icon size="16">mdi-arrow-left</v-icon>Назад</v-btn>
+          <v-btn color="primary" @click="setOrder" class="float-right my-5 mr-1" small :disabled="!deliveryFormValid">
+            Завершить заказ <v-icon size="16">mdi-check</v-icon>
+          </v-btn>
+        </v-stepper-content>
       </v-stepper>
     </v-col>
   </BaseTemplate>
@@ -68,11 +85,15 @@
 
 <script>
 import BaseTemplate from './BaseTemplate';
+import { mask } from 'vue-the-mask'
 import { mapState, mapActions } from 'vuex';
 export default {
   name: 'Checkout',
   components: {
     BaseTemplate
+  },
+  directives: {
+    mask
   },
   data() {
     return {
@@ -82,6 +103,15 @@ export default {
         name: '',
         address: '',
         phone: '',
+      },
+      rules: {
+        required: value => !!value || 'Обязательное поле.',
+        counter: value => value.length <= 20 || 'Max 20 characters',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        },
+        phone: v => (v && v.length === 16) || 'Неверный формат номера',
       },
       headers: [
         {
@@ -100,6 +130,9 @@ export default {
     ...mapActions(['deleteFromCart']),
     setDeliveryFormData(key, val) {
       this.$set(this.deliveryForm, key, val);
+    },
+    setOrder() {
+
     },
     onDeleteItem(item) {
       if (window.confirm(`Удалить товар ${item.title} из корзины?`)) {

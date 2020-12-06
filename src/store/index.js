@@ -9,20 +9,7 @@ export default new Vuex.Store({
     user: null,
     token: null,
     loader: false,
-    cart: [
-      {
-        id: 1,
-        title: 'Test',
-        price: 1000,
-        quantity: 5,
-      },
-      {
-        id: 2,
-        title: 'Test',
-        price: 1000,
-        quantity: 5,
-      }
-    ],
+    cart: [],
   },
   getters: {
     userGroup: state => state.user && state.user.groupName,

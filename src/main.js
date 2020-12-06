@@ -15,6 +15,11 @@ import wb from "./registerServiceWorker";
 
 Vue.prototype.$workbox = wb;
 
+import PerfectScrollbar from 'vue2-perfect-scrollbar'
+import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
+
+Vue.use(PerfectScrollbar)
+
 // HTTP connection to the API
 const httpLink = createHttpLink({
   // You should use an absolute URL here
