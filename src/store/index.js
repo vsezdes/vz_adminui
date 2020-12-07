@@ -9,6 +9,7 @@ export default new Vuex.Store({
     user: null,
     token: null,
     loader: false,
+    enableMini: false,
     cart: [],
   },
   getters: {
@@ -56,7 +57,11 @@ export default new Vuex.Store({
         message: 'Корзина очищена',
         expire: 3000,
       })
-    }
+    },
+    async toggleMini({ commit }) {
+      commit('TOGGLE_MINI');
+      await setTimeout(() => ({}), 0);
+    },
   },
   mutations: {
     LOADER(state,payload){
@@ -105,6 +110,9 @@ export default new Vuex.Store({
     },
     RESET_CART(state) {
       state.cart = [];
+    },
+    TOGGLE_MINI(state) {
+      state.enableMini = !state.enableMini;
     }
   },
   modules: {

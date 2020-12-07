@@ -45,7 +45,7 @@
     <v-divider />
 
     <v-card-title>
-      <v-tooltip top>
+      <v-tooltip top attach :open-delay="500">
         <template v-slot:activator="{ on, attrs }">
           <h2
             v-bind="attrs"
@@ -83,7 +83,7 @@
         align="center"
         class="mx-0"
       >
-        <v-tooltip v-if="readonly">
+        <v-tooltip v-if="readonly" bottom :min-width="100" :open-delay="500" attach>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               class="buy-btn mb-10"
@@ -99,7 +99,7 @@
               <v-icon>mdi-cart-arrow-down</v-icon>
             </v-btn>
           </template>
-          <span>Добавить в корзину</span>
+          <span>В&nbsp;корзину</span>
         </v-tooltip>
       </v-row>
 
