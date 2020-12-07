@@ -58,9 +58,8 @@ export default new Vuex.Store({
         expire: 3000,
       })
     },
-    async toggleMini({ commit }) {
+    toggleMini({ commit }) {
       commit('TOGGLE_MINI');
-      await setTimeout(() => ({}), 0);
     },
   },
   mutations: {

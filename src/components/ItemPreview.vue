@@ -203,9 +203,6 @@ export default {
 
 </style>
 <style scoped>
-.ps {
-  /* padding-top: 56px; */
-}
 .ps-container > .ps-scrollbar-x-rail > .ps-scrollbar-x {
   transition: .2s linear left;
   /* maybe other vendor-prefixed transitions */

@@ -99,7 +99,7 @@
               <v-icon>mdi-cart-arrow-down</v-icon>
             </v-btn>
           </template>
-          <span>В&nbsp;корзину</span>
+          <span>В корзину</span>
         </v-tooltip>
       </v-row>
 
