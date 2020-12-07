@@ -20,10 +20,10 @@
               :items="users"
               :search="search"
             >
-              <template v-slot:item.joined="{ item }">
+              <template v-slot:[`item.joined`]="{ item }">
                 <span>{{ formatDateToString(item.joined) }}</span>
               </template>
-              <template v-slot:item.avatar="{ item }">
+              <template v-slot:[`item.avatar`]="{ item }">
                 <v-avatar tile>
                   <v-img :src="item.avatar" />
                 </v-avatar>

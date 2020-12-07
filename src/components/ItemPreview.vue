@@ -5,7 +5,7 @@
     hide-overlay
     class="lighten-3"
     transition="dialog-top-transition">
-    <perfect-scrollbar v-if="item" ref="previewScrollbar">
+    <div v-if="item">
       <v-toolbar class="preview-toolbar" color="base_header">
         <v-icon class="mr-2">mdi-arrow-right-drop-circle</v-icon>
         <v-toolbar-title>{{ item.title }}</v-toolbar-title>
@@ -16,99 +16,101 @@
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-sheet color="white" class="no-radius">
-        <v-layout fluid>
-          <v-row no-gutters>
-            <v-col :cols="12" :xl="9">
-                <v-carousel
-                  continuous
-                  height="calc(100vh - 120px)"
-                  width="calc(100vw * 3/4)"
-                  show-arrows-on-hover
-                  :show-arrows="item.images.length > 1"
-                >
-                  <v-carousel-item
-                    v-for="(slide, i) in item.images"
-                    :key="i"
+      <perfect-scrollbar v-if="item" ref="previewScrollbar">
+        <v-sheet color="white" class="no-radius">
+          <v-layout fluid>
+            <v-row no-gutters>
+              <v-col :cols="12" :xl="9">
+                  <v-carousel
+                    continuous
+                    height="calc(100vh - 140px)"
+                    width="calc(100vw * 3/4)"
+                    show-arrows-on-hover
+                    :show-arrows="item.images.length > 1"
                   >
-                    <v-sheet
-                      color="#F5F5F5"
-                      height="100%"
-                      class="no-radius"
+                    <v-carousel-item
+                      v-for="(slide, i) in item.images"
+                      :key="i"
                     >
-                      <v-row
-                        class="fill-height"
-                        align="center"
-                        justify="center"
+                      <v-sheet
+                        color="#F5F5F5"
+                        height="100%"
+                        class="no-radius"
                       >
-                        <div class="display-3">
-                          <v-img
-                            :style="{ border: '1px solid #EEE' }"
-                            max-width="calc(100vw)"
-                            :src="slide.url"
-                          ></v-img>
-                        </div>
-                      </v-row>
-                    </v-sheet>
-                  </v-carousel-item>
-                </v-carousel>
-            </v-col>
-            <v-col :cols="12" :xl="3">
-              <v-card flat tile class="item-details px-5 py-3">
-                <v-chip
-                  outlined
-                  class="mt-n2 mb-0 mr-1 py-5 price"
-                  color="base_header"
-                >
-                  <v-icon size="22" class="mr-2 mb-1">mdi-cash-multiple</v-icon>
-                  {{ item.price || 0 }} &nbsp;<small class="mt-1 ml-1"> сом</small>
-                </v-chip>
-                <v-btn
-                  class="mt-1 mx-2 mb-3"
-                  color="info"
-                  @click="showDetails"
-                >
-                  <v-icon size="18" class="mr-0">mdi-script-text</v-icon>
-                  <v-icon size="18" class="mr-2 ml-0">mdi-arrow-down</v-icon>
-                  Описание
-                </v-btn>
-                <div class="quantity-buy float-right">
-                  <div class="btn-holder">
-                    <v-btn x-small icon outlined @click="quantity++">
-                      <v-icon>mdi-plus</v-icon>
-                    </v-btn>
-                    <v-btn x-small icon outlined :disabled="quantity < 2" @click="quantity--">
-                      <v-icon>mdi-minus</v-icon>
+                        <v-row
+                          class="fill-height"
+                          align="center"
+                          justify="center"
+                        >
+                          <div class="display-3">
+                            <v-img
+                              :style="{ border: '1px solid #EEE' }"
+                              max-width="calc(100vw)"
+                              :src="slide.url"
+                            ></v-img>
+                          </div>
+                        </v-row>
+                      </v-sheet>
+                    </v-carousel-item>
+                  </v-carousel>
+              </v-col>
+              <v-col :cols="12" :xl="3">
+                <v-card flat tile class="item-details px-5 py-3">
+                  <v-chip
+                    outlined
+                    class="mt-n2 mb-0 mr-1 py-5 price"
+                    color="base_header"
+                  >
+                    <v-icon size="22" class="mr-2 mb-1">mdi-cash-multiple</v-icon>
+                    {{ item.price || 0 }} &nbsp;<small class="mt-1 ml-1"> сом</small>
+                  </v-chip>
+                  <v-btn
+                    class="mt-1 mx-2 mb-3"
+                    color="info"
+                    @click="showDetails"
+                  >
+                    <v-icon size="18" class="mr-0">mdi-script-text</v-icon>
+                    <v-icon size="18" class="mr-2 ml-0">mdi-arrow-down</v-icon>
+                    Описание
+                  </v-btn>
+                  <div class="quantity-buy float-right">
+                    <div class="btn-holder">
+                      <v-btn x-small icon outlined @click="quantity++">
+                        <v-icon>mdi-plus</v-icon>
+                      </v-btn>
+                      <v-btn x-small icon outlined :disabled="quantity < 2" @click="quantity--">
+                        <v-icon>mdi-minus</v-icon>
+                      </v-btn>
+                    </div>
+                    <v-btn
+                      class="buy"
+                      color="primary"
+                      large
+                      fab
+                      @click="onBuy"
+                    >
+                      <span v-if="quantity > 1">+ {{ quantity }}</span>
+                      <v-icon :size="quantity > 1 ? 22 : 28">mdi-cart-arrow-down</v-icon>
                     </v-btn>
                   </div>
-                  <v-btn
-                    class="buy"
-                    color="primary"
-                    large
-                    fab
-                    @click="onBuy"
-                  >
-                    <span v-if="quantity > 1">+ {{ quantity }}</span>
-                    <v-icon :size="quantity > 1 ? 22 : 28">mdi-cart-arrow-down</v-icon>
-                  </v-btn>
-                </div>
-                <v-divider light/>
-                <v-card-subtitle>
-                  <v-chip color="accent" outlined class="my-2 pa-2" x-small>{{ item.categoryName}} </v-chip>
-                  <br/>
-                  <strong>
-                    {{ item.title }}
-                  </strong>
-                </v-card-subtitle>
-                <v-card-text class="description">
-                  {{ item.description }}
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-layout>
-      </v-sheet>
-    </perfect-scrollbar>
+                  <v-divider light/>
+                  <v-card-subtitle>
+                    <v-chip color="accent" outlined class="my-2 pa-2" x-small>{{ item.categoryName}} </v-chip>
+                    <br/>
+                    <strong>
+                      {{ item.title }}
+                    </strong>
+                  </v-card-subtitle>
+                  <v-card-text class="description">
+                    {{ item.description }}
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-layout>
+        </v-sheet>
+      </perfect-scrollbar>
+    </div>
   </v-dialog>
 </template>
 
@@ -202,7 +204,7 @@ export default {
 </style>
 <style scoped>
 .ps {
-  padding-top: 56px;
+  /* padding-top: 56px; */
 }
 .ps-container > .ps-scrollbar-x-rail > .ps-scrollbar-x {
   transition: .2s linear left;
