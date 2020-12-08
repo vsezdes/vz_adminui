@@ -156,13 +156,15 @@ export default {
           ];
         case 'USER':
           return [
+            {heading: 'Меню'},
+            {icon: 'mdi-home', text: 'Главная', href: "/" },
             {heading: 'Товары'},
             {icon: 'mdi-package-variant', text: 'Все товары', href: '/items'},
             {icon: 'mdi-format-list-bulleted-type', text: 'Категории', href: '/categories'},
             {heading: 'Управление'},
             {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
-            {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders'},
-            {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/suppliers'},
+            {icon: 'mdi-cash-register', text: 'Заказы', href: '/orders'},
+            {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/sellers'},
           ];
       }
     },

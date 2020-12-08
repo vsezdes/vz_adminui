@@ -1,5 +1,41 @@
 import gql from 'graphql-tag'
 
+export const GET_LATEST_INFO = gql`
+  query getLatestInfo {
+    getLatestInfo {
+      recommended {
+        id
+        title
+        price
+        description
+        categoryName
+        categoryId
+        images {
+          asset_id
+          url
+        }
+      }
+      latest {
+        id
+        title
+        price
+        description
+        categoryName
+        categoryId
+        images {
+          asset_id
+          url
+        }
+      }
+      hotcats {
+        id
+        title
+        icon
+      }
+    }
+  }
+`
+
 export const LAST_ITEMS = gql`
   query lastItems($page: Int) {
     lastItems(page: $page) {

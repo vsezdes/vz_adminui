@@ -60,7 +60,7 @@
 
 <script>
 import BaseTemplate from '@/views/BaseTemplate.vue';
-import { LAST_ITEMS } from '@/gql/items.graphql';
+import { LAST_ITEMS, GET_LATEST_INFO } from '@/gql/items.graphql';
 import ItemCard from '@/components/ItemCard';
 import Search from '@/components/Search';
 import ItemPreview from '@/components/ItemPreview';
@@ -86,6 +86,9 @@ export default {
       variables: {
         page: 0,
       },
+    },
+    getLatestInfo: {
+      query: GET_LATEST_INFO,
     },
   },
   computed: {
