@@ -58,6 +58,9 @@ export default new Vuex.Store({
         expire: 3000,
       })
     },
+    setCartItemQuantity({ commit }, payload) {
+      commit('SET_CART_ITEM_QTY', payload)
+    },
     toggleMini({ commit }) {
       commit('TOGGLE_MINI');
     },
@@ -109,6 +112,17 @@ export default new Vuex.Store({
     },
     RESET_CART(state) {
       state.cart = [];
+    },
+    SET_CART_ITEM_QTY(state, { id, quantity }) {
+      state.cart = state.cart.map(item => {
+        if (item.id === id) {
+          return {
+            ...item,
+            quantity
+          }
+        }
+        return item;
+      })
     },
     TOGGLE_MINI(state) {
       state.enableMini = !state.enableMini;

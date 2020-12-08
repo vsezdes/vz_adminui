@@ -26,6 +26,15 @@
                 mdi-close
               </v-icon>
             </template>
+            <template v-slot:[`item.quantity`]="{ item }">
+              <v-btn x-small icon :disabled="item.quantity < 2" @click="quantityDecrease(item)">
+                <v-icon size="12">mdi-minus</v-icon>
+              </v-btn>
+              <span>{{ item.quantity }}</span>
+              <v-btn x-small icon :disabled="item.quantity > 49" @click="quantityIncrease(item)">
+                <v-icon size="12">mdi-plus</v-icon>
+              </v-btn>
+            </template>
             <template slot="no-data">
               <div>
                 Добавьте товары в корзину
@@ -62,7 +71,7 @@
             />
           </v-form>
           <v-divider class="mt-5 mb-1"/>
-          <v-btn @click="step = 1" class="my-5 mr-1" small><v-icon size="16">mdi-arrow-left</v-icon>Назад</v-btn>
+          <v-btn @click="step = 1" class="float-right my-5 mr-1" small><v-icon size="16">mdi-arrow-left</v-icon>Назад</v-btn>
           <v-btn @click="step = 3" class="float-right my-5 mr-1" small :disabled="!deliveryFormValid">
             Далее <v-icon size="16">mdi-arrow-right</v-icon>
           </v-btn>
@@ -87,6 +96,7 @@
 import BaseTemplate from './BaseTemplate';
 import { mask } from 'vue-the-mask'
 import { mapState, mapActions } from 'vuex';
+import gql from 'graphql-tag';
 export default {
   name: 'Checkout',
   components: {
@@ -97,6 +107,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       step: 1,
       deliveryFormValid: false,
       deliveryForm: {
@@ -133,12 +144,60 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['deleteFromCart']),
+    ...mapActions(['deleteFromCart', 'setCartItemQuantity']),
     setDeliveryFormData(key, val) {
       this.$set(this.deliveryForm, key, val);
     },
+    quantityIncrease({ id, quantity }) {
+      const newQty = quantity + 1;
+      this.setCartItemQuantity({
+        id, quantity: newQty,
+      })
+    },
+    quantityDecrease({ id, quantity }) {
+      const newQty = quantity - 1;
+      if (newQty === 0) return;
+      this.setCartItemQuantity({
+        id, quantity: newQty,
+      })
+    },
     setOrder() {
 
+      this.$apollo.mutate({
+        // Query
+        mutation : gql`mutation setOrder($data: [OrderItem]!) {
+          setOrder(data: $data) {
+            id
+            created
+            details
+            status
+            total
+            items {
+              id
+              title
+              price
+            }
+          }
+        }`,
+        variables: {
+          data: {
+            ...this.user
+          }
+        }
+      }).then(() => {
+        this.loading = false;
+        this.editable = false;
+        this.alert({
+          type: 'info',
+          message: 'Поставщик успешно добавлен',
+        });
+      }).catch(error => {
+        this.loading = false;
+        this.alert({
+          type: 'error',
+          message: error,
+        });
+      });
     },
     onDeleteItem(item) {
       if (window.confirm(`Удалить товар ${item.title} из корзины?`)) {
