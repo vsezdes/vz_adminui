@@ -1,7 +1,34 @@
 <template>
   <BaseTemplate>
     <v-col>
-      <v-stepper v-model="step" vertical>
+      <v-alert
+        v-if="orderSuccess"
+        prominent
+        type="success"
+      >
+        <v-row align="center">
+          <v-col class="grow">
+            Ваш заказ успешно создан, ожидайте звонка.
+            Детали заказа:
+            <v-sheet tile>
+              <small>{{ orderSuccess }}</small>
+            </v-sheet>
+          </v-col>
+          <v-col class="shrink">
+            <v-btn to="/">Купить еще</v-btn>
+          </v-col>
+        </v-row>
+      </v-alert>
+      <v-stepper v-model="step" vertical v-else>
+        <v-btn
+          color="warning"
+          text
+          x-small
+          :to="{ name: 'Home' }"
+          class="ma-1 float-right"
+        >
+          <v-icon size="16">mdi-close</v-icon> Вернуться к товарам
+        </v-btn>
         <v-stepper-step :complete="step > 1" step="1">
           Проверьте ваш заказ
         </v-stepper-step>
@@ -45,7 +72,7 @@
               <div class="text-right total"> Итого: {{ cartTotal }} </div>
             </template>
           </v-data-table>
-          <v-btn @click="step = 2" small class="float-right mt-6 mb-1 mr-1" :disabled="cartTotal === 0">
+          <v-btn @click="step = 2" small color="primary" class="float-right mt-6 mb-1 mr-1" :disabled="cartTotal === 0">
             Далее <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
           <v-divider class="mt-3 mb-6"/>
@@ -71,21 +98,27 @@
             />
           </v-form>
           <v-divider class="mt-5 mb-1"/>
-          <v-btn @click="step = 1" class="float-right my-5 mr-1" small><v-icon size="16">mdi-arrow-left</v-icon>Назад</v-btn>
-          <v-btn @click="step = 3" class="float-right my-5 mr-1" small :disabled="!deliveryFormValid">
+          <v-btn @click="step = 3" color="primary" class="float-right my-5 mr-1" small :disabled="!deliveryFormValid">
             Далее <v-icon size="16">mdi-arrow-right</v-icon>
           </v-btn>
+          <v-btn @click="step = 1" class="float-right my-5 mr-5" small><v-icon size="16">mdi-arrow-left</v-icon>Назад</v-btn>
         </v-stepper-content>
         <v-stepper-step :complete="step > 3" step="3">
-          Выберите способ оплаты
+          Подтвердите заказ
         </v-stepper-step>
         <v-stepper-content step="3">
-          Тут будет выбор опций оплаты
+          <p>
+            Ваш заказ на сумму {{ cartTotal }} будет доставлен по адресу {{ deliveryForm.address }}
+          </p>
+          <p>
+            Контактный телефон заказа: {{ deliveryForm.phone }}
+          </p>
           <v-divider class="mt-5 mb-1"/>
-          <v-btn @click="step = 2" class="my-5 mr-1" small><v-icon size="16">mdi-arrow-left</v-icon>Назад</v-btn>
-          <v-btn color="primary" @click="setOrder" class="float-right my-5 mr-1" small :disabled="!deliveryFormValid">
+          <v-progress-linear indeterminate v-if="loading" />
+          <v-btn color="primary" @click="setOrder" class="float-right my-5 mr-1" small :disabled="loading">
             Завершить заказ <v-icon size="16">mdi-check</v-icon>
           </v-btn>
+          <v-btn @click="step = 2" class="float-right my-5 mr-5" small><v-icon size="16">mdi-arrow-left</v-icon>Назад</v-btn>
         </v-stepper-content>
       </v-stepper>
     </v-col>
@@ -109,9 +142,9 @@ export default {
     return {
       loading: false,
       step: 1,
+      orderSuccess: null,
       deliveryFormValid: false,
       deliveryForm: {
-        name: '',
         address: '',
         phone: '',
       },
@@ -132,7 +165,7 @@ export default {
           value: 'title',
         },
         { text: 'Цена', value: 'price' },
-        { text: 'Кол-во', value: 'quantity', align: 'center' },
+        { text: 'Кол-во', value: 'quantity', width: '85px', align: 'center' },
         { text: '', value: 'actions', align: 'right', sortable: false },
       ],
     }
@@ -144,7 +177,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['deleteFromCart', 'setCartItemQuantity']),
+    ...mapActions(['emptyCart', 'deleteFromCart', 'setCartItemQuantity', 'alert']),
     setDeliveryFormData(key, val) {
       this.$set(this.deliveryForm, key, val);
     },
@@ -162,6 +195,7 @@ export default {
       })
     },
     setOrder() {
+      this.loading = true;
 
       this.$apollo.mutate({
         // Query
@@ -180,17 +214,12 @@ export default {
           }
         }`,
         variables: {
-          data: {
-            ...this.user
-          }
+          data: this.orderData,
         }
-      }).then(() => {
+      }).then(({ data: { setOrder }}) => {
         this.loading = false;
-        this.editable = false;
-        this.alert({
-          type: 'info',
-          message: 'Поставщик успешно добавлен',
-        });
+        this.orderSuccess = setOrder;
+        this.emptyCart();
       }).catch(error => {
         this.loading = false;
         this.alert({
@@ -207,6 +236,11 @@ export default {
   },
   computed: {
     ...mapState(['cart', 'user']),
+    orderData() {
+      return this.cart.map(({ id, quantity }) => ({
+        itemId: id, quantity
+      }))
+    },
     cartTotal() {
       let total = 0;
       this.cart.forEach(i => {

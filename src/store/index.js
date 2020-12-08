@@ -10,6 +10,7 @@ export default new Vuex.Store({
     token: null,
     loader: false,
     enableMini: false,
+    orders: [],
     cart: [],
   },
   getters: {
