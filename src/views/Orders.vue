@@ -40,7 +40,6 @@
           :items-per-page="999999"
           item-key="id"
           hide-default-footer
-          hide-actions
           :single-expand="expand"
           :expanded.sync="expanded"
           class="elevation-1"
@@ -48,7 +47,7 @@
           :calculate-widths='true'
         >
 <!--          Преобразование формата created -->
-          <template v-slot:item.created="{ item }">
+          <template v-slot:[`item.created`]="{ item }">
             <span>{{ formatDateToString(item.created) }}</span>
           </template>
           <!--      Вставка таблицы в таблицу -->
@@ -67,13 +66,13 @@
             </td>
           </template>
           <!--      Определение количества товара -->
-          <template  v-slot:item.items="{ item }">
+          <template  v-slot:[`item.items`]="{ item }">
             <v-flex v-if="item.items">
               {{ item.items.length }}
             </v-flex>
           </template>
           <!--      Определение статуса заказа -->
-          <template v-slot:item.status="{ item }">
+          <template v-slot:[`item.status`]="{ item }">
             <v-chip :color="status_titles.find(obj => {return( obj.number === item.status)}).color">
               {{
                 status_titles.find(obj => {

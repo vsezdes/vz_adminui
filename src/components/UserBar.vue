@@ -7,10 +7,9 @@
         <v-badge
           offset-x="15"
           offset-y="33"
-          color="secondary"
           :style="{ position: 'relative', zIndex: '21' }"
         >
-          <v-btn slot="badge" @click="toggle" icon text x-small absolute class="badge-btn">
+          <v-btn slot="badge" @click="toggle" icon text outlined x-small absolute class="badge-btn">
             <v-icon v-text="drawer ? 'mdi-close' : 'mdi-chevron-down'" />
           </v-btn>
           <v-avatar
@@ -116,7 +115,7 @@ export default {
   border-radius: 5px 8px 5px 5px;
   z-index: 20;
   .name {
-    font-size: 12px;
+    font-size: 16px;
     line-height: 18px;
     display: block;
     padding: 5px 40px 0px 8px;

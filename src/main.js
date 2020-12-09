@@ -7,6 +7,7 @@ import { ApolloClient } from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory'
+// import OutsideClick from './directives/OutsideClick'
 import VueApollo from 'vue-apollo'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
@@ -15,25 +16,11 @@ import wb from "./registerServiceWorker";
 
 Vue.prototype.$workbox = wb;
 
-Vue.prototype.$theme = {
-  primary: '#755803',
-  secondary: '#424242',
-  accent: '#82B1FF',
-  error: '#FF5252',
-  info: '#2196F3',
-  success: '#4CAF50',
-  warning: '#FFC107',
-  // base
-  base_header: '#FFC107',
-  base_bg: '#F5F5F5',
-  base_sidebar: '#F5F5F5',
-  // preload
-  preloader_bg: '#FFC107',
-  preloader_circle: '#FFC107',
-  // login & register
-  auth_forms_header: '#FFC107',
-  auth_forms_button: '#FFC107'
-}
+
+import PerfectScrollbar from 'vue2-perfect-scrollbar'
+import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
+
+Vue.use(PerfectScrollbar)
 
 // HTTP connection to the API
 const httpLink = createHttpLink({
@@ -71,6 +58,7 @@ const apolloProvider = new VueApollo({
 })
 
 Vue.config.productionTip = false;
+// Vue.directive('outside-click', OutsideClick) // TODO: Fix me
 
 new Vue({
   router,

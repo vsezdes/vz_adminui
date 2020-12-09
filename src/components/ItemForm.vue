@@ -126,7 +126,6 @@ import { mapActions } from 'vuex';
 import gql from 'graphql-tag';
 import CATEGORIES_QUERY from '@/gql/categories.graphql';
 import { LAST_ITEMS } from '@/gql/items.graphql';
-import VImageInput from 'vuetify-image-input';
 import ImageUploader from '@/components/ImageUploader.vue';
 import FormWrapper from '@/components/FormWrapper.vue';
 
@@ -135,7 +134,6 @@ export default {
   components: {
     ImageUploader,
     FormWrapper,
-    [VImageInput.name]: VImageInput,
   },
   apollo: {
     categories: CATEGORIES_QUERY,

@@ -1,9 +1,9 @@
 <template>
   <v-card
     :loading="loading"
-    class="item-card mx-auto my-12"
-    max-width="374"
-    min-height="300"
+    class="item-card mx-auto my-4"
+    max-width="300"
+    min-height="250"
     hover
     flat
   >
@@ -24,7 +24,6 @@
           outlined
           absolute
           right
-          bottom
           class="expand"
           @click="$emit('on-expand', id)"
         >
@@ -41,9 +40,10 @@
     >
       {{ price || 0 }} <small>сом</small>
     </v-chip>
+    <v-divider />
 
     <v-card-title>
-      <v-tooltip top>
+      <v-tooltip top attach :open-delay="500">
         <template v-slot:activator="{ on, attrs }">
           <h2
             v-bind="attrs"
@@ -81,12 +81,30 @@
         align="center"
         class="mx-0"
       >
+        <v-tooltip v-if="readonly" bottom :min-width="100" :open-delay="500" attach>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              class="buy-btn mb-10"
+              color="primary"
+              v-on="on"
+              v-bind="attrs"
+              @click.stop="addToCart({ id, title, price, quantity: 1 })"
+              fab
+              right
+              absolute
+              large
+            >
+              <v-icon>mdi-cart-arrow-down</v-icon>
+            </v-btn>
+          </template>
+          <span>В корзину</span>
+        </v-tooltip>
       </v-row>
 
-      <v-chip small color="accent">{{ category }}</v-chip>
+      <v-chip x-small outlined color="secondary">{{ categoryName }}</v-chip>
     </v-card-text>
 
-    <v-divider class="mx-4"></v-divider>
+    <!-- <v-divider class="mx-4"></v-divider> -->
 
 
     <!-- <v-card-actions>
@@ -103,6 +121,7 @@
 
 <script>
 import gql from 'graphql-tag';
+import { mapActions } from 'vuex';
 import { LAST_ITEMS } from '@/gql/items.graphql';
 export default {
   props: ['id', 'title', 'price', 'images', 'category', 'description'],
@@ -116,6 +135,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions(['addToCart']),
     onDelete () {
       if (!window.confirm('Удалить товар?')) return;
       this.loading = true;
@@ -170,8 +190,12 @@ export default {
     padding: 0px 6px;
     box-shadow: 1px 1px 1px #CCC;
   }
+  .buy-btn {
+    display: none;
+    bottom: 50px;
+  }
   &:hover {
-    .item-controls {
+    .item-controls, .buy-btn {
       display: block;
     }
   }
@@ -200,8 +224,13 @@ export default {
     }
   }
   .v-card__title {
+    padding: 3px 10px;
+    padding-top: 2px;
     padding-bottom: 0px;
     min-height: 56px;
+  }
+  .v-card__text {
+    padding: 3px 10px;
   }
   .v-card__title h2{
     overflow: hidden;

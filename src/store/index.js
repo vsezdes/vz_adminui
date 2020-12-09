@@ -9,20 +9,9 @@ export default new Vuex.Store({
     user: null,
     token: null,
     loader: false,
-    cart: [
-      {
-        id: 1,
-        title: 'Test',
-        price: 1000,
-        quantity: 5,
-      },
-      {
-        id: 2,
-        title: 'Test',
-        price: 1000,
-        quantity: 5,
-      }
-    ],
+    enableMini: false,
+    orders: [],
+    cart: [],
   },
   actions: {
     alert: ({ commit }, data) => {
@@ -44,17 +33,34 @@ export default new Vuex.Store({
     logout: ({ commit }, user) => {
       localStorage.removeItem('user');
       localStorage.removeItem('token');
+      commit('RESET_CART');
       commit('LOGOUT', user);
     },
-    addToCart({ commit }, item) {
+    addToCart({ commit, dispatch }, item) {
       commit('ADD_TO_CART', item);
+      dispatch('alert', {
+        type: 'success',
+        message: item.quantity === 1 ? 'Товар добавлен в корзину' : `${item.quantity} товаров добавлено в корзину`,
+        expire: 3000,
+      })
     },
     deleteFromCart({ commit }, item) {
       commit('DELETE_FROM_CART', item);
     },
-    emptyCart({ commit }) {
+    emptyCart({ commit, dispatch }) {
       commit('RESET_CART');
-    }
+      dispatch('alert', {
+        type: 'info',
+        message: 'Корзина очищена',
+        expire: 3000,
+      })
+    },
+    setCartItemQuantity({ commit }, payload) {
+      commit('SET_CART_ITEM_QTY', payload)
+    },
+    toggleMini({ commit }) {
+      commit('TOGGLE_MINI');
+    },
   },
   mutations: {
     LOADER(state,payload){
@@ -86,11 +92,12 @@ export default new Vuex.Store({
       state.token = null;
     },
     ADD_TO_CART(state, item) {
+      if (!item.quantity) item.quantity = 1;
       const existingItem = state.cart.find(i => i.id === item.id);
       if (existingItem) {
         existingItem.quantity += item.quantity;
         state.cart = [
-          ...state.cart,
+          ...state.cart.filter(i => i.id !== existingItem.id),
           existingItem
         ];
       } else {
@@ -102,6 +109,20 @@ export default new Vuex.Store({
     },
     RESET_CART(state) {
       state.cart = [];
+    },
+    SET_CART_ITEM_QTY(state, { id, quantity }) {
+      state.cart = state.cart.map(item => {
+        if (item.id === id) {
+          return {
+            ...item,
+            quantity
+          }
+        }
+        return item;
+      })
+    },
+    TOGGLE_MINI(state) {
+      state.enableMini = !state.enableMini;
     }
   },
   modules: {

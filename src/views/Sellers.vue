@@ -47,7 +47,7 @@
 <!--              <template v-slot:item.data-table-expand="{ item }" >-->
 <!--                <v-icon  v-if="item.items.length>0" class="v-data-table__expand-icon v-icon&#45;&#45;link mdi mdi-chevron-down"></v-icon>{{ item.items.length }}-->
 <!--              </template>-->
-              <template v-slot:item.joined="{ item }" >
+              <template v-slot:[`item.joined`]="{ item }" >
                 <span>{{ formatDateToString(item.joined) }}</span>
               </template>
               <template v-slot:[`item.avatar`]="{ item }">
@@ -73,7 +73,7 @@
                     :headers="item_headers"
                     :items-per-page="9999"
                     hide-default-footer>
-                    <template  v-slot:item.images="{ item }">
+                    <template  v-slot:[`item.images`]="{ item }">
                       <v-avatar tile >
                         <v-img v-if="item.images" :src="item.images[0].url"/>
                         <v-icon v-else>mdi-account</v-icon>
