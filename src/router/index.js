@@ -82,12 +82,20 @@ const routes = [
     }
   },
   {
-    path: '/suppliers',
-        name: 'Suppliers',
-    component: () => import(/* webpackChunkName: "users" */ '../views/Suppliers.vue'),
-      meta: {
-          protected: true,
-      }
+    path: '/checkout',
+    name: 'Checkout',
+    component: () => import(/* webpackChunkName: "checkout" */ '../views/Checkout.vue'),
+    meta: {
+      protected: true,
+    }
+  },
+  {
+    path: '/sellers',
+    name: 'Sellers',
+    component: () => import(/* webpackChunkName: "users" */ '../views/Sellers.vue'),
+    meta: {
+      protected: true,
+    }
   },
   {
     path: '*',
@@ -104,8 +112,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   store.commit('LOADER', true);
-  console.warn(this, to, from);
-  if (to.meta.protected && to.name !== 'Login' && !store.state.token) next({ name: 'Login' })
+  if (to.meta.protected && to.name !== 'Login' && !store.state.token) next({ name: 'Login', params: { returnTo: to.name } })
   else if (to.name === 'Login' && store.state.token) next({ name: 'Home' })
   else next()
 })

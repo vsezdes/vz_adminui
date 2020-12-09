@@ -121,7 +121,15 @@ export default {
       }).then(data => {
         this.loading = false;
         if (data.data.authUser)
-          this.login(data.data.authUser).then(() => this.$router.push('/'));
+          this.login(data.data.authUser).then((user) => {
+            console.error(this.$vuetify, user, THEMES);
+            this.$vuetify.currentTheme = THEMES[user.groupName];
+            let pushToRoute = 'Home';
+            if (this.$route.params.returnTo) {
+              pushToRoute = this.$route.params.returnTo;
+            }
+            this.$router.push({ name: pushToRoute });
+          });
         else
           this.alert({
             type: 'error',

@@ -1,11 +1,12 @@
-<template xmlns:color>
-  <v-app id="keep">
+<template>
+  <v-app>
     <v-app-bar
       app
       clipped-left
+      class="mr-2"
       color="base_header"
     >
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon v-if="isMobile" @click="drawer = !drawer"></v-app-bar-nav-icon>
       <router-link to="/" class="logo">
         <v-avatar>
           <v-img height="40" src="../assets/logo.svg"/>
@@ -82,11 +83,30 @@
     </v-app-bar>
 
     <v-navigation-drawer
-      v-model="drawer"
       app
       clipped
+      v-model="drawer"
       color="base_sidebar"
+      :key="enableMini ? 'mini' : 'normal'"
+      :permanent="!isMobile"
+      :mini-variant.sync="mini"
+      :expand-on-hover="enableMini"
+      width="220"
+      :value="isMobile ? drawer : true"
     >
+      <v-btn
+        v-if="!isMobile"
+        outlined
+        :title="!enableMini ? 'Свернуть меню' : 'Развернуть меню'"
+        x-small
+        absolute
+        right icon
+        :color="enableMini ? 'black' : '#BBB'"
+        class="mini-btn mt-7"
+        @click.stop="toggleMini"
+      >
+        <v-icon :size="14">{{ !enableMini ? 'mdi-arrow-left' : 'mdi-arrow-right' }}</v-icon>
+      </v-btn>
       <v-list
         dense
         color="base_sidebar"
@@ -128,21 +148,18 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-content>
-      <v-layout
-          color: base_bg
-          class="fill-height align-start pa-5"
-      >
-        <v-row>
-          <slot></slot>
-        </v-row>
-      </v-layout>
-    </v-content>
+    <v-main>
+      <v-container fluid>
+        <slot />
+      </v-container>
+    </v-main>
   </v-app>
 </template>
 
 <script>
-import {mapState} from 'vuex';
+import Cart from '@/components/Cart';
+import UserBar from '@/components/UserBar';
+import { mapActions, mapState } from 'vuex';
 
 export default {
   name: 'BaseTemplate',
@@ -155,27 +172,55 @@ export default {
   },
   data: () => ({
     drawer: null,
-    profile_menu_open: false,
-    profile_menu: [
-      {icon: 'mdi-account', text: 'Мой профиль', href: '/profile'},
-      {icon: 'mdi-logout-variant', text: 'Выход', href: '/logout'},
-    ],
-    items: [
-      {heading: 'Товары'},
-      {icon: 'mdi-package-variant', text: 'Все товары', href: '/items'},
-      {icon: 'mdi-format-list-bulleted-type', text: 'Категории', href: '/categories'},
-      {heading: 'Управление'},
-      {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
-      {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/orders'},
-      {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/suppliers'},
-      {icon: '', text: 'Мои товары', href: '/my_items'},
-    ],
+
+    mini: false,
   }),
+  watch: {
+    isMobile(val) {
+      if (val && this.enableMini) {
+        this.toggleMini();
+      }
+    }
+  },
+  methods: {
+    ...mapActions(['toggleMini']),
+  },
   computed: {
-    ...mapState(['token', 'user']),
-    isExpanded: function () {
-      return {
-        background: this.profile_menu_open ? 'white' : ''
+    ...mapState(['user', 'enableMini']),
+    isMobile() {
+      return !this.$vuetify.breakpoint.mdAndUp;
+    },
+    items() {
+      const group = this.user ? this.user.groupName : 'DEFAULT';
+      switch (group) {
+        case 'DEFAULT':
+        default:
+          return [
+            { heading: 'Авторизация' },
+            { icon: 'mdi-login-variant', text: 'Войти', href:'/login' },
+            { icon: 'mdi-account-plus', text: 'Зарегистрироваться', href:'/register' },
+          ];
+        case 'SELLER':
+          return [
+            { heading: 'Товары и заказы' },
+            { icon: 'mdi-cash-register', text: 'Дашборда поставщика', href:'/seller' },
+            { icon: 'mdi-cash-register', text: 'Управление товарами', href:'/seller/items' },
+            { icon: 'mdi-cash-register', text: 'Управление заказами', href:'/seller/orders' },
+            { heading: 'Отчеты' },
+            { icon: 'mdi-cash-register', text: 'Просмотр отчетов', href:'/seller/reports' },
+          ];
+        case 'USER':
+          return [
+            {heading: 'Меню'},
+            {icon: 'mdi-home', text: 'Главная', href: "/" },
+            {heading: 'Товары'},
+            {icon: 'mdi-package-variant', text: 'Все товары', href: '/items'},
+            {icon: 'mdi-format-list-bulleted-type', text: 'Категории', href: '/categories'},
+            {heading: 'Управление'},
+            {icon: 'mdi-account-multiple', text: 'Пользователи', href: '/users'},
+            {icon: 'mdi-cash-register', text: 'Заказы', href: '/orders'},
+            {icon: 'mdi-truck-delivery', text: 'Поставщики', href: '/sellers'},
+          ];
       }
     }
   },
@@ -183,10 +228,9 @@ export default {
 </script>
 
 <style scoped>
-#keep .v-navigation-drawer__border {
-  display: none
+.v-navigation-drawer--mini-variant .mini-btn {
+  display: none;
 }
-
 .v-subheader {
   text-transform: uppercase;
 }

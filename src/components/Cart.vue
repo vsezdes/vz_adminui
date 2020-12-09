@@ -25,7 +25,7 @@
         <v-icon>mdi-cart</v-icon>
       </v-btn>
     </v-badge>
-    <span class="user-cart" v-if="drawer">
+    <span class="user-cart elevation-1" v-if="drawer">
       <v-row align="center">
         <v-col class="px-2 pt-0">
           <span class="name">
@@ -35,32 +35,36 @@
         </v-col>
       </v-row>
       <div class="cart-items" v-if="drawer">
-        <v-data-table
-          disable-sort
-          disable-pagination
-          disable-filtering
-          :hide-default-header="cart.length === 0"
-          hide-default-footer
-          dense
-          :headers="headers"
-          :items="cart"
-          item-key="name"
-          class="elevation-0"
-        >
-        <template v-slot:[`item.actions`]="{ item }">
-          <v-icon
-            small
-            @click="deleteItem(item)"
+        <perfect-scrollbar>
+          <v-data-table
+            disable-sort
+            disable-pagination
+            disable-filtering
+            :hide-default-header="cart.length === 0"
+            hide-default-footer
+            dense
+            :headers="headers"
+            :items="cart"
+            item-key="name"
+            class="elevation-0"
           >
-            mdi-close
-          </v-icon>
-        </template>
-          <template slot="no-data">
-            <div>
-              Добавьте товары в корзину
-            </div>
+          <template v-slot:[`item.actions`]="{ item }">
+            <v-icon
+              small
+              @click="onDeleteItem(item)"
+            >
+              mdi-close
+            </v-icon>
           </template>
-        </v-data-table>
+            <template slot="no-data">
+              <div>
+                Добавьте товары в корзину
+              </div>
+            </template>
+          </v-data-table>
+        </perfect-scrollbar>
+      </div>
+      <div class="cart-footer">
         <template v-if="cartTotal > 0">
           <v-divider />
           <div class="text-right total"> Итого: {{ cartTotal }} </div>
@@ -68,24 +72,31 @@
         </template>
         <v-btn
           :disabled="cart.length === 0"
-          text x-small color="error" class="mt-3"
+          text small color="error" class="mt-3 ml-2 mb-1 pa-1 py-4"
+          @click="onEmptyCart"
         >
-          Очистить корзину
+          <v-icon
+            size="18"
+            class="mx-1 mb-0"
+          >
+            mdi-cart-remove
+          </v-icon>
+          Очистить
         </v-btn>
         <v-btn
           :disabled="cart.length === 0"
           color="primary"
-          x-small
-          class="mt-3 float-right"
+          small
+          class="py-4 mt-3 mr-3 mb-2 float-right"
+          :to="{ name: 'Checkout' }"
         >
-          Оформить заказ
           <v-icon
-            right
-            size="16"
-            dark
+            size="18"
+            class="mr-1 mb-1"
           >
-            mdi-cart
+            mdi-cart-check
           </v-icon>
+          Заказать
         </v-btn>
       </div>
     </span>
@@ -103,17 +114,21 @@ export default {
         text: 'Товар',
         align: 'start',
         sortable: false,
+        class: 'cart-item-title',
         value: 'title',
       },
       { text: 'Цена', value: 'price' },
-      { text: 'Кол-во', value: 'quantity', align: 'center' },
-      { text: '', value: 'actions', align: 'right', sortable: false },
+      { text: 'Кол-во', value: 'quantity', width: '75px', align: 'center' },
+      { text: '', value: 'actions', align: 'right', width: '30px', sortable: false },
     ],
   }),
   computed: {
     ...mapState(['cart']),
     cartQuantity() {
-      return this.cart.length;
+      if (this.cart.length > 0) {
+        return this.cart.reduce((total, item) => total + item.quantity, 0);
+      }
+      return 0;
     },
     cartTotal() {
       let total = 0;
@@ -125,7 +140,13 @@ export default {
   },
   methods: {
     ...mapActions(['deleteFromCart', 'emptyCart']),
-    deleteItem(item) {
+    onEmptyCart() {
+      if (window.confirm(`Удалить все товары из корзины?`)) {
+        this.emptyCart();
+        this.drawer = false;
+      }
+    },
+    onDeleteItem(item) {
       if (window.confirm(`Удалить товар ${item.title} из корзины?`)) {
         this.deleteFromCart(item);
       }
@@ -134,7 +155,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .badge-btn {
   left: 0px;
   top: 0px;
@@ -150,8 +171,7 @@ export default {
   padding: 0px 15px 0px 5px;
   position: relative;
   .user-cart {
-    min-width: 300px;
-    padding: 5px;
+    min-width: 320px;
     position: absolute;
     right: 5px;
     top: -1px;
@@ -159,19 +179,42 @@ export default {
     border: 1px solid #EEE;
     border-radius: 5px 8px 5px 5px;
     z-index: 10;
+    .v-data-table {
+      .text-start {
+        padding: 4px;
+        font-size: 12px !important;
+        max-height: 50px !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .text-right {
+        padding: 4px !important;
+        button.v-icon:hover {
+          color: crimson !important;
+        }
+      }
+    }
+    .ps {
+      max-height: calc(100vh - 180px);
+      padding: 0px 10px;
+    }
     .name {
       font-size: 16px;
       line-height: 14px;
       display: block;
-      padding: 5px 40px 0px 8px;
+      padding: 10px 40px 0px 14px;
       border-bottom: 1px dashed silver;
       color: gray;
-      min-height: 45px;
+      min-height: 50px;
+      small {
+        font-size: 11px;
+      }
     }
   }
   .total {
-    padding: 2px 10px;
-    font-size: 14px;
+    padding: 7px 15px 5px;
+    font-size: 16px;
+    background: #FAFAFA;
     font-weight: bold;
     color: #333;
   }
