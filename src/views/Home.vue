@@ -40,7 +40,7 @@
           xl="2"
         >
           <v-card
-            :to="`/categories/${item.slug}`"
+            :to="`/category/${item.id}`"
             ripple
             hover
             color="#EEE"

@@ -35,11 +35,11 @@ const routes = [
     }
   },
   {
-    path: '/category-items/:categoryId',
+    path: '/category/:categoryId',
     name: 'CategoryItems',
-    component: () => import(/* webpackChunkName: "items" */ '../views/Items.vue'),
+    component: () => import(/* webpackChunkName: "categoryitems" */ '../views/CategoryItems.vue'),
     meta: {
-      protected: true,
+      protected: false,
     }
   },
   {
