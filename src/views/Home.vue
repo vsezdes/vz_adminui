@@ -84,6 +84,7 @@
               <ItemCard
                 v-bind="item"
                 :readonly="true"
+                :recommended="true"
                 @on-expand="expandedId = $event"
               />
             </v-tab>

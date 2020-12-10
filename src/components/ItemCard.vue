@@ -12,6 +12,9 @@
       :src="thumb"
       height="200"
     >
+        <v-chip v-if="recommended" color="success" class="float-right ma-2">
+          <v-icon size="24">mdi-thumb-up</v-icon>
+        </v-chip>
         <v-chip
           class="ma-2 price float-left"
           color="orange"
@@ -125,7 +128,7 @@ import gql from 'graphql-tag';
 import { mapActions } from 'vuex';
 import { LAST_ITEMS } from '@/gql/items.graphql';
 export default {
-  props: ['id', 'title', 'price', 'images', 'categoryName', 'description', 'readonly'],
+  props: ['id', 'title', 'price', 'images', 'categoryName', 'description', 'readonly', 'recommended'],
   data: () => ({
     loading: false,
     selection: 1,
