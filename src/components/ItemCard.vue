@@ -1,11 +1,10 @@
 <template>
   <v-card
     :loading="loading"
-    class="item-card mx-auto my-4"
-    max-width="300"
-    min-height="250"
-    hover
-    flat
+    class="item-card mx-auto my-4 elevation-1"
+    width="300"
+    height="290"
+    outlined
     @click="readonly ? $emit('on-expand', id) : () => {}"
   >
     <v-img
@@ -14,7 +13,7 @@
       height="200"
     >
         <v-chip
-          class="ma-2 price"
+          class="ma-2 price float-left"
           color="orange"
           text-color="white"
         >
@@ -103,7 +102,7 @@
         </v-tooltip>
       </v-row>
 
-      <v-chip x-small outlined color="secondary">{{ categoryName }}</v-chip>
+      <v-chip x-small outlined color="secondary float-left">{{ categoryName }}</v-chip>
     </v-card-text>
 
     <!-- <v-divider class="mx-4"></v-divider> -->

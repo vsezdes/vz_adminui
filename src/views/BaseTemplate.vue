@@ -96,6 +96,11 @@
         <slot />
       </v-container>
     </v-main>
+    <v-footer>
+      <small class="text-right flex">
+        &copy; 2020
+      </small>
+    </v-footer>
   </v-app>
 </template>
 

@@ -31,6 +31,7 @@ export const GET_LATEST_INFO = gql`
         id
         title
         icon
+        slug
       }
     }
   }
