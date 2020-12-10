@@ -14,7 +14,7 @@
         <v-col><h1>Последние добавленные</h1></v-col>
       </v-row>
       <v-row>
-        <v-col>
+        <v-col v-if="getLatestInfo">
           <v-tabs grow centered height="300" show-arrows hide-slider class="grey lighten-4">
             <v-tab v-for="item in getLatestInfo.latest" :key="item.id">
               <ItemCard
@@ -25,11 +25,12 @@
             </v-tab>
           </v-tabs>
         </v-col>
+        <v-col v-else>Загрузка...</v-col>
       </v-row>
       <v-row class="title">
         <v-col><h1>Популярные категории</h1></v-col>
       </v-row>
-      <v-row>
+      <v-row v-if="getLatestInfo">
         <v-col
           v-for="item in getLatestInfo.hotcats"
           :key="item.id"
@@ -72,11 +73,12 @@
           </v-card>
         </v-col>
       </v-row>
+      <v-row v-else><v-col>Загрузка...</v-col></v-row>
       <v-row class="title">
         <v-col><h1>Рекомендуемые товары</h1></v-col>
       </v-row>
       <v-row>
-        <v-col>
+        <v-col v-if="getLatestInfo">
           <v-tabs grow centered height="300" show-arrows hide-slider class="grey lighten-4">
             <v-tab v-for="item in getLatestInfo.recommended" :key="item.id">
               <ItemCard
@@ -86,6 +88,9 @@
               />
             </v-tab>
           </v-tabs>
+        </v-col>
+        <v-col v-else>
+          Загрузка...
         </v-col>
       </v-row>
     </v-col>
