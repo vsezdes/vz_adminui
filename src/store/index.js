@@ -1,5 +1,7 @@
+import gql from 'graphql-tag';
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { Apollo } from '@/apollo';
 
 Vue.use(Vuex)
 
@@ -10,7 +12,7 @@ export default new Vuex.Store({
     token: null,
     loader: false,
     enableMini: false,
-    orders: [],
+    userOrders: [],
     cart: [],
   },
   getters: {
@@ -65,6 +67,35 @@ export default new Vuex.Store({
     toggleMini({ commit }) {
       commit('TOGGLE_MINI');
     },
+    getUserOrders({ commit, dispatch }) {
+      Apollo.query({
+        query: gql(`query myOrders {
+          myOrders {
+            id
+            created
+            details
+            status
+            total
+            items {
+              id
+              title
+              price
+              quantity
+              description
+            }
+          }
+        }`),
+      }).then(res => {
+        console.warn('res', res.data.myOrders);
+        commit('PUT_USER_ORDERS', res.data.myOrders);
+      }).catch(err => {
+        console.error('error', err);
+        dispatch('alert', {
+          type: 'error',
+          message: err,
+        });
+      })
+    }
   },
   mutations: {
     LOADER(state,payload){
@@ -127,6 +158,9 @@ export default new Vuex.Store({
     },
     TOGGLE_MINI(state) {
       state.enableMini = !state.enableMini;
+    },
+    PUT_USER_ORDERS(state, orders) {
+      state.userOrders = orders;
     }
   },
   modules: {
