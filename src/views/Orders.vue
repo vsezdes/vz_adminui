@@ -73,13 +73,7 @@
           </template>
           <!--      Определение статуса заказа -->
           <template v-slot:[`item.status`]="{ item }">
-            <v-chip :color="status_titles.find(obj => {return( obj.number === item.status)}).color">
-              {{
-                status_titles.find(obj => {
-                  return (obj.number === item.status)
-                }).title
-              }}
-            </v-chip>
+            <OrderStatus :status="item.status" />
           </template>
         </v-data-table>
       </v-flex>
@@ -89,6 +83,7 @@
 
 <script>
 import BaseTemplate from "./BaseTemplate";
+import OrderStatus from '@/components/OrderStatus';
 import ALL_ORDERS from '@/gql/orders.graphql';
 import { DateFormat } from '@/mixins/DateFormat'
 
@@ -104,15 +99,6 @@ export default {
       expand: false,
       selected_user: null,
       selected_status: 'all',
-      status_titles: [
-        {title: 'все', number: 'all', color: null},
-        {title: 'новый', number: 1, color: 'blue darken-1'},
-        {title: 'готовится', number: 2, color: 'lime darken-2'},
-        {title: 'доставляется', number: 3, color: 'amber darken-4'},
-        {title: 'завершен', number: 0, color: 'light-green accent-4'},
-        {title: 'отмена', number: -1, color: 'red'},
-        {title: 'возврат', number: -2, color: 'orange accent-4'},
-      ],
       order_headers: [
         {text: 'статус', value: 'status'},
         {text: 'Пользователь', value: 'user.fullName',width: '150px'},
@@ -130,7 +116,8 @@ export default {
     };
   },
   components: {
-    BaseTemplate
+    BaseTemplate,
+    OrderStatus,
   },
   methods:{
     selectFirstUser(users){

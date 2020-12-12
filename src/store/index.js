@@ -76,6 +76,10 @@ export default new Vuex.Store({
             details
             status
             total
+            itemQuantity {
+              itemId
+              quantity
+            }
             items {
               id
               title

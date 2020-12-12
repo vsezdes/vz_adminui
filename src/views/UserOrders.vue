@@ -3,8 +3,30 @@
   <v-sheet max-width="1400">
     <div class="text-h2 my-3">Мои заказы</div>
     <v-divider class="mb-10"/>
+    <v-tabs
+      v-model="tab"
+      background-color="gray accent-1"
+      icons-and-text
+    >
+      <v-tabs-slider></v-tabs-slider>
+
+      <v-tab href="#tab-1">
+        Все
+        <v-icon>mdi-order-bool-ascending-variant</v-icon>
+      </v-tab>
+
+      <v-tab href="#tab-2">
+        Открытые
+        <v-icon>mdi-progress-clock</v-icon>
+      </v-tab>
+
+      <v-tab href="#tab-3">
+        Завершенные
+        <v-icon>mdi-check</v-icon>
+      </v-tab>
+    </v-tabs>
     <v-data-table
-      :items="userOrders"
+      :items="filteredOrders"
       :headers="headers"
       no-data-text="Заказов еще нет"
       sort-by="created"
@@ -12,6 +34,10 @@
     >
       <template v-slot:[`item.created`]="{ item }">
         <span>{{ formatDateToString(item.created) }}</span>
+      </template>
+      <template v-slot:[`item.status`]="{ item }">
+        <span class="float-left mt-3">#{{ item.id }}: </span>
+        <OrderStatus :status="item.status" class="ml-10" />
       </template>
       <template v-slot:[`item.items`]="{ item }">
         <v-btn small @click="showDetails = item" title="Посмотреть детали заказа">
@@ -29,12 +55,13 @@
             v-if="showDetails"
             :items="showDetails.items"
             :disable-pagination="true"
+            item-key="id"
             hide-default-footer
           >
             <template v-slot:item="{ item }">
               <v-card class="pa-0 mt-1" outlined elevation="1">
                 <v-card-title>{{ item.title }}</v-card-title>
-                <v-card-subtitle>{{ item.quantity }} штук по {{ item.price }} на сумму {{ item.quantity*item.price }}</v-card-subtitle>
+                <v-card-subtitle>{{ getQuantity(item.id) }} штук по {{ item.price }} на сумму {{ getQuantity(item.id)*item.price }}</v-card-subtitle>
               </v-card>
             </template>
           </v-data-iterator>
@@ -65,21 +92,23 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 import BaseTemplate from './BaseTemplate';
+import OrderStatus from '@/components/OrderStatus';
 import {DateFormat} from '@/mixins/DateFormat'
 
 export default {
   name: 'UserOrders',
   mixins:[ DateFormat ],
   components: {
-    BaseTemplate
+    BaseTemplate,
+    OrderStatus,
   },
   data: () => ({
     loading: false,
     showDetails: null,
+    tab: null,
     headers: [
-      { text: 'ID', value: 'id', align: 'start' },
+      { text: 'Статус', value: 'status', align: 'start', width: '220px' },
       { text: 'Добавлен', value: 'created' },
-      { text: 'Статус', value: 'status' },
       { text: 'Детали', value: 'details' },
       { text: 'Товары', value: 'items' },
     ],
@@ -88,10 +117,26 @@ export default {
     this.getUserOrders().then(() => this.loading = false);
   },
   computed: {
-    ...mapState(['userOrders'])
+    ...mapState(['userOrders']),
+    filteredOrders() {
+      if (this.tab === 'tab-1') {
+        return this.userOrders;
+      } else if (this.tab === 'tab-2') {
+        return this.userOrders.filter(o => o.status > 0);
+      } else if (this.tab === 'tab-3') {
+        return this.userOrders.filter(o => o.status <= 0);
+      }
+      return [];
+    },
   },
   methods: {
     ...mapActions(['getUserOrders']),
+    getQuantity(id) {
+      if (id && this.showDetails) {
+        return this.showDetails.itemQuantity.find(i => i.itemId === id).quantity;
+      }
+      return 0;
+    }
   }
 }
 </script>
