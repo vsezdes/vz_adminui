@@ -1,0 +1,18 @@
+import gql from 'graphql-tag'
+
+export default gql`
+  query myItems($page: Int) {
+    myItems(page: $page) {
+      id
+      title
+      price
+      description
+      categoryName
+      categoryId
+      images {
+        asset_id
+        url
+      }
+    }
+  }
+`
