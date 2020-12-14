@@ -5,7 +5,7 @@
     max-width="150"
     outlined
     min-width="150"
-    class="pa-1 mt-1 mb-1"
+    class="pa-0 mt-1 mb-1"
   >
     <v-icon
       v-if="theStatus.icon"
