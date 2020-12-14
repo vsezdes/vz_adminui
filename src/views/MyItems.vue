@@ -2,7 +2,16 @@
   <BaseTemplate>
     <v-flex style="margin-top:50px;">
       <!-- fixed view_mode buttons -->
-      <v-layout column class="fab-container">
+      <v-layout class="fab-container">
+        <v-btn
+          dark
+          fab
+          color="pink"
+          @click="showForm = !showForm"
+          style="margin: 0 10px"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
         <v-btn-toggle right v-model="view_mode">
           <v-btn :value="'tab'" dark fab color="pink">
             <v-icon>mdi-card-bulleted-outline</v-icon>
@@ -11,6 +20,7 @@
             <v-icon>mdi-table-large</v-icon>
           </v-btn>
         </v-btn-toggle>
+
       </v-layout>
 
       <v-card>
@@ -26,48 +36,25 @@
       </v-card>
 
       <v-flex v-if="view_mode==='tab'">
-        <v-card md12 sm12 xs12 class="mb-2" v-for="(item) in searchItems()" :key="item.id">
-          <v-card-title style="background-color:#ffc107;">
-            <h2>{{ item.categoryName }} > {{ item.title }}</h2>
-          </v-card-title>
-          <!-- tile view mode-->
-          <v-layout wrap>
-            <v-flex lg4 md4 sm12 xs12 style="width:300px;padding: 10px">
-              <v-carousel hide-delimiters height="300">
-                <v-carousel-item v-for="(image) in item.images" :key="image.id" :src="image.url">
-                </v-carousel-item>
-              </v-carousel>
-              <p >цена: {{ item.price }} сом</p>
-              <v-layout wrap>
-                <v-flex lg6 md6 sm6 xs6>
-                  <p>создан: {{ formatDateToString(item.createdAt) }} </p>
-                </v-flex>
-                <v-flex v-if="item.updatedAt" lg6 md6 sm6 xs6>
-                  <p >изменен: {{ formatDateToString(item.updatedAt) }}  </p>
-                </v-flex>
-              </v-layout>
-              <v-layout wrap>
-                <v-flex lg6 md6 sm6 xs6>
-                  <p>просмотры: {{ item.views }}  </p>
-                </v-flex>
-                <v-flex lg6 md6 sm6 xs6>
-                  <p>продажи: {{ item.sales }}  </p>
-                </v-flex>
-              </v-layout>
-
-
-            </v-flex>
-            <v-flex lg6 md6 sm12 xs12 class="ml-5">
-              <div>
-                <p>описание: <br> {{ item.description }}
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse, expedita incidunt necessitatibus nulla perspiciatis qui totam ullam unde veritatis voluptatibus. Alias aspernatur eum ipsam libero, minima odio quae? Aliquid assumenda corporis culpa, ex explicabo facere facilis inventore iusto necessitatibus, officia praesentium quibusdam. Delectus, dignissimos dolorem eaque harum hic ipsa ipsam iusto labore laborum minus molestiae nisi odit quaerat quis reiciendis saepe suscipit temporibus, voluptatum! Accusantium adipisci corporis, cumque dicta dignissimos dolores ducimus eligendi et fuga ipsa numquam omnis, quaerat quis quo rerum temporibus vitae! Ab adipisci animi aperiam commodi culpa debitis enim est expedita explicabo id iusto laudantium minima molestias nam neque nostrum obcaecati pariatur placeat quae quidem, sapiente sint ullam! Accusamus architecto ea illum, ipsam iusto magnam nobis qui!
-                </p>
-
-              </div>
-            </v-flex>
-          </v-layout>
-          <v-card-actions style="background-color:#85360f"></v-card-actions>
-        </v-card>
+        <v-row>
+          <v-col
+            v-for="item in searchItems()"
+            :key="item.id"
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+            xl="2"
+          >
+            <ItemCard
+              v-bind="item"
+              @on-edit="onEditItem"
+              @on-expand="expandedId = $event"
+            />
+          </v-col>
+        </v-row>
+        <ItemPreview :item="expandedItem" @close="expandedId = null" />
+        <ItemForm :show="showForm" :item="activeItem" @close="onClose" />
       </v-flex>
 
       <!-- table view mode-->
@@ -93,9 +80,13 @@
 
 <script>
 import BaseTemplate from '@/views/BaseTemplate.vue';
+import ItemCard from '@/components/ItemCard.vue';
+import ItemPreview from '@/components/ItemPreview';
+import ItemForm from '@/components/ItemForm.vue';
 import _ from 'lodash'
 import MY_ITEMS from '@/gql/myItems.graphql';
 import {DateFormat} from '@/mixins/DateFormat'
+import gql from "graphql-tag";
 
 export default {
   name: "MyItems",
@@ -110,6 +101,10 @@ export default {
   },
   components: {
     BaseTemplate,
+    ItemCard,
+    ItemPreview,
+    ItemForm,
+
   },
   methods: {
     searchItems() {
@@ -123,9 +118,80 @@ export default {
         }
       })
     },
+
+    getItemById(id) {
+      return this.myItems && this.myItems.find(i => i.id === id)
+    },
+    loadMore() {
+      console.warn(this);
+      this.page++
+      this.$apollo.queries.myItems.fetchMore({
+        // New variables
+        variables: {
+          page: this.page,
+        },
+        // Transform the previous result with new data
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          const newItems = fetchMoreResult.lastItems;
+          this.showLoadMore = (previousResult.lastItems.length / this.page) === newItems.length;
+          return {
+            lastItems: [
+              // Merging the tag list
+              ...previousResult.lastItems, ...newItems,
+            ],
+          }
+        },
+      })
+    },
+    onEditItem(itemId) {
+      this.activeItem = this.getItemById(itemId);
+      this.showForm = true;
+    },
+    onClose() {
+      this.activeItem = null;
+      this.showForm = false;
+    },
+    fetchCategoryItems(id) {
+      if (!id) return;
+      this.loading = true;
+      this.showLoadMore = false;
+      this.$apollo.query({
+        query: gql(`query catItems($id: Int!) {
+          categoryItems(id: $id) {
+            id
+            title
+            price
+            description
+            images {
+              url
+            }
+          }
+        }`),
+        variables: {
+          id: +id
+        }
+      }).then(res => {
+        this.categoryItems = res.data.categoryItems;
+        this.loading = false;
+      }).catch(err => {
+        console.error('Error fetching cat: ', err);
+        this.loading = false;
+      })
+    }
+  },
+  computed:{
+    loading() {
+      return this.$apolloData.queries.lastItems.loading;
+    },
+    expandedItem() {
+      return this.getItemById(this.expandedId);
+    }
   },
   data() {
     return {
+      showForm: false,
+      activeItem:null,
+      expandedId: null,
       view_mode: 'tab',
       search: '',
       headers: [
@@ -177,7 +243,6 @@ export default {
       ],
     }
   },
-
 };
 </script>
 
@@ -186,6 +251,6 @@ export default {
   position: fixed;
   top: 80px;
   right: 12px;
-  z-index: 7;
+  z-index: 1;
 }
 </style>

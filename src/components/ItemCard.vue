@@ -26,6 +26,7 @@
           outlined
           absolute
           right
+          bottom
           class="expand"
           @click="$emit('on-expand', id)"
         >
