@@ -40,14 +40,14 @@
         <OrderStatus :status="item.status" class="ml-10" />
       </template>
       <template v-slot:[`item.items`]="{ item }">
-        <v-btn small @click="showDetails = item" title="Посмотреть детали заказа">
+        <v-btn small @click="showDetails = item.id" title="Посмотреть детали заказа">
           {{item.items ? item.items.length : 0}} товаров
           <v-icon size="20" right>mdi-open-in-app</v-icon>
         </v-btn>
       </template>
     </v-data-table>
     <v-dialog scrollable persistent max-width="600" attach :value="!!showDetails">
-      <OrderDetails :order="showDetails" @close="showDetails = null"/>
+      <OrderDetails :order="selectedOrder" @close="showDetails = null"/>
     </v-dialog>
   </v-sheet>
   </BaseTemplate>
@@ -94,6 +94,9 @@ export default {
       }
       return [];
     },
+    selectedOrder() {
+      return this.$store.getters.getOrderById(this.showDetails);
+    }
   },
   methods: {
     ...mapActions(['getUserOrders']),

@@ -31,7 +31,7 @@
         </v-col>
         <v-col cols="4" class="pt-0">
           <span :style="{ position: 'relative', top: '2px' }">
-            <OrderStatus :status="order.status" />
+            <OrderStatus v-if="order.status !== undefined" :status="order.status" />
           </span>
         </v-col>
         <v-col class="pt-0">
