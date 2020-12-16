@@ -149,9 +149,8 @@ export default {
           return [
             { heading: 'Товары и заказы' },
             { icon: 'mdi-cash-register', text: 'Дашборда поставщика', href:'/seller' },
-            { icon: 'mdi-cash-register', text: 'Управление товарами', href:'/seller/items' },
+            { icon: 'mdi-cash-register', text: 'Управление товарами', href:'/seller/my_items' },
             { icon: 'mdi-cash-register', text: 'Управление заказами', href:'/seller/orders' },
-            {icon: 'mdi-package', text: 'Мои товары', href: '/my_items'},
             { heading: 'Отчеты' },
             { icon: 'mdi-cash-register', text: 'Просмотр отчетов', href:'/seller/reports' },
           ];

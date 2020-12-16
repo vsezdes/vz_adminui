@@ -23,7 +23,7 @@
 
       </v-layout>
 
-      <v-card>
+      <v-card style="margin-top: 80px ">
         <v-row justify="space-around">
           <v-col cols="auto">
             <v-card-title style="margin-top:-8px">Мои товары</v-card-title>
@@ -34,6 +34,8 @@
           </v-col>
         </v-row>
       </v-card>
+      <ItemPreview :item="expandedItem" @close="expandedId = null" />
+      <ItemForm :show="showForm" :item="activeItem" @close="onClose" />
 
       <v-flex v-if="view_mode==='tab'">
         <v-row>
@@ -53,8 +55,6 @@
             />
           </v-col>
         </v-row>
-        <ItemPreview :item="expandedItem" @close="expandedId = null" />
-        <ItemForm :show="showForm" :item="activeItem" @close="onClose" />
       </v-flex>
 
       <!-- table view mode-->
@@ -69,6 +69,16 @@
                 <v-avatar tile>
                   <v-img :src="item.images[0].url"/>
                 </v-avatar>
+              </template>
+              <template v-slot:[`item.actions`]="{ item }">
+                <div class="item-controls">
+                  <v-btn icon @click="onEditItem(item.id)">
+                    <v-icon>mdi-lead-pencil</v-icon>
+                  </v-btn>
+                  <v-btn icon @click="onDelete(item.id)">
+                    <v-icon>mdi-delete-forever-outline</v-icon>
+                  </v-btn>
+                </div>
               </template>
             </v-data-table>
           </v-flex>
@@ -106,6 +116,20 @@ export default {
     ItemForm,
 
   },
+  computed: {
+    loading() {
+      return this.$apolloData.queries.myItems.loading;
+    },
+    expandedItem() {
+      return this.getItemById(this.expandedId);
+    },
+    items() {
+      const s = this.categoryItems || this.myItems;
+      console.error(s, this.categoryItems, this.myItems);
+      return s;
+    }
+
+  },
   methods: {
     searchItems() {
       if (!this.search) return this.myItems;
@@ -118,13 +142,57 @@ export default {
         }
       })
     },
-
+    onClose() {
+      this.activeItem = null;
+      this.showForm = false;
+    },
     getItemById(id) {
       return this.myItems && this.myItems.find(i => i.id === id)
+    },
+    update(id){
+      let store = this.$store
+      const data = MY_ITEMS ;
+      if (!id) return;
+
+      const myItems = data.values().filter(i => i.id !== id);
+      store.writeQuery({ query: MY_ITEMS, data: { myItems } });
+    },
+    onDelete (id) {
+      if (!window.confirm('Удалить товар?')) return;
+      this.loading = false
+      this.$apollo.mutate({
+        // Query
+        mutation: gql`mutation delItem($id: Int!) {
+          delItem(id: $id) {
+            id
+            title
+          }
+        }`,
+        // Parameters
+        variables: {
+          id: id,
+        },
+      }).then((data) => {
+        // Result
+        console.log(data)
+        this.loading=false;
+        this.myItems.pop(this.myItems.find(i => i.id === id))
+
+      }).catch((error) => {
+        // Error
+        console.error(error)
+        this.loading = false;
+      })
+      // this.update(id)
+    },
+    onEditItem(itemId) {
+      this.activeItem = this.getItemById(itemId);
+      this.showForm = true;
     },
     loadMore() {
       console.warn(this);
       this.page++
+      // Fetch more data and transform the original result
       this.$apollo.queries.myItems.fetchMore({
         // New variables
         variables: {
@@ -132,24 +200,16 @@ export default {
         },
         // Transform the previous result with new data
         updateQuery: (previousResult, { fetchMoreResult }) => {
-          const newItems = fetchMoreResult.lastItems;
-          this.showLoadMore = (previousResult.lastItems.length / this.page) === newItems.length;
+          const newItems = fetchMoreResult.myItems;
+          this.showLoadMore = (previousResult.myItems.length / this.page) === newItems.length;
           return {
-            lastItems: [
+            myItems: [
               // Merging the tag list
-              ...previousResult.lastItems, ...newItems,
+              ...previousResult.myItems, ...newItems,
             ],
           }
         },
       })
-    },
-    onEditItem(itemId) {
-      this.activeItem = this.getItemById(itemId);
-      this.showForm = true;
-    },
-    onClose() {
-      this.activeItem = null;
-      this.showForm = false;
     },
     fetchCategoryItems(id) {
       if (!id) return;
@@ -177,15 +237,18 @@ export default {
         console.error('Error fetching cat: ', err);
         this.loading = false;
       })
+
     }
   },
-  computed:{
-    loading() {
-      return this.$apolloData.queries.lastItems.loading;
-    },
-    expandedItem() {
-      return this.getItemById(this.expandedId);
+  created() {
+    if (this.$route.name === 'CategoryItems') {
+      this.$apollo.skipAll = true;
+      this.fetchCategoryItems(this.$route.params.categoryId);
     }
+  },
+  mounted() {
+    // TODO: make something more clever here
+    this.showLoadMore = this.items && this.items.length > 6;
   },
   data() {
     return {
@@ -220,25 +283,30 @@ export default {
           value: 'categoryName',
           align: 'center'
         },
+        // {
+        //   text: 'дата добавления',
+        //   value: 'createdAt',
+        //   align: 'center'
+        // },
+        // {
+        //   text: 'дата обновления',
+        //   value: 'updatedAt',
+        //   align: 'center'
+        // },
+        // {
+        //   text: 'просмотры',
+        //   value: 'views',
+        //   align: 'center'
+        // },
+        // {
+        //   text: 'продажи',
+        //   value: 'sales',
+        //   align: 'center',
+        // },
         {
-          text: 'дата добавления',
-          value: 'createdAt',
+          text: 'действия',
+          value: 'actions',
           align: 'center'
-        },
-        {
-          text: 'дата обновления',
-          value: 'updatedAt',
-          align: 'center'
-        },
-        {
-          text: 'просмотры',
-          value: 'views',
-          align: 'center'
-        },
-        {
-          text: 'продажи',
-          value: 'sales',
-          align: 'center',
         },
       ],
     }

@@ -26,7 +26,9 @@
           <ItemCard
             v-bind="item"
             @on-edit="onEditItem"
+            @on-delete="onDelete"
             @on-expand="expandedId = $event"
+            :loading="loading"
           />
         </v-col>
       </v-row>
@@ -80,6 +82,7 @@ export default {
       console.error(s, this.categoryItems, this.lastItems);
       return s;
     }
+
   },
   methods: {
     onClose() {
@@ -88,6 +91,42 @@ export default {
     },
     getItemById(id) {
       return this.lastItems && this.lastItems.find(i => i.id === id)
+    },
+    update(id){
+      let store = this.$store
+      const data = LAST_ITEMS ;
+      if (!id) return;
+
+      const lastItems = data.values().filter(i => i.id !== id);
+      store.writeQuery({ query: LAST_ITEMS, data: { lastItems } });
+    },
+    onDelete (id) {
+      if (!window.confirm('Удалить товар?')) return;
+      this.loading = false
+      this.$apollo.mutate({
+        // Query
+        mutation: gql`mutation delItem($id: Int!) {
+          delItem(id: $id) {
+            id
+            title
+          }
+        }`,
+        // Parameters
+        variables: {
+          id: id,
+        },
+      }).then((data) => {
+        // Result
+        console.log(data)
+        this.loading=false;
+        this.lastItems.pop(this.lastItems.find(i => i.id === id))
+
+      }).catch((error) => {
+        // Error
+        console.error(error)
+        this.loading = false;
+      })
+      // this.update(id)
     },
     onEditItem(itemId) {
       this.activeItem = this.getItemById(itemId);
