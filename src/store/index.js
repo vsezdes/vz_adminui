@@ -1,5 +1,7 @@
+import gql from 'graphql-tag';
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { Apollo } from '@/apollo';
 
 Vue.use(Vuex)
 
@@ -10,11 +12,12 @@ export default new Vuex.Store({
     token: null,
     loader: false,
     enableMini: false,
-    orders: [],
+    userOrders: [],
     cart: [],
   },
   getters: {
     userGroup: state => state.user && state.user.groupName,
+    getOrderById: state => id => state.userOrders.find(order => order.id === id),
   },
   actions: {
     alert: ({ commit }, data) => {
@@ -65,6 +68,63 @@ export default new Vuex.Store({
     toggleMini({ commit }) {
       commit('TOGGLE_MINI');
     },
+    getUserOrders({ commit, dispatch }) {
+      Apollo.query({
+        query: gql(`query myOrders {
+          myOrders {
+            id
+            created
+            details
+            status
+            total
+            itemQuantity {
+              itemId
+              quantity
+            }
+            items {
+              id
+              title
+              price
+              quantity
+              description
+            }
+          }
+        }`),
+      }).then(res => {
+        console.warn('res', res.data.myOrders);
+        commit('PUT_USER_ORDERS', res.data.myOrders);
+      }).catch(err => {
+        console.error('error', err);
+        dispatch('alert', {
+          type: 'error',
+          message: err,
+        });
+      })
+    },
+    setOrderStatus({ commit, dispatch }, { order, status, comment }) {
+      Apollo.mutate({
+        mutation: gql(`mutation setOrderStatus($order: Int!, $status: Int!, $comment: String) {
+          setOrderStatus(order: $order, status: $status, comment: $comment) {
+            id
+            status
+          }
+        }`),
+          variables: {
+            order,
+            status,
+            comment,
+        },
+      }).then(res => {
+        console.warn('res', res.data.setOrderStatus);
+        commit('SET_ORDER_STATUS', res.data.setOrderStatus);
+      }).catch(err => {
+        console.error('error', err);
+        dispatch('alert', {
+          type: 'error',
+          message: err,
+        });
+      })
+    }
   },
   mutations: {
     LOADER(state,payload){
@@ -127,6 +187,21 @@ export default new Vuex.Store({
     },
     TOGGLE_MINI(state) {
       state.enableMini = !state.enableMini;
+    },
+    PUT_USER_ORDERS(state, orders) {
+      state.userOrders = orders;
+    },
+    SET_ORDER_STATUS(state, { id, status }) {
+      const newOrders = state.userOrders.map(o => {
+        if (o.id === id) {
+          return {
+            ...o,
+            status
+          }
+        }
+        return o;
+      })
+      Vue.set(state, 'userOrders', newOrders);
     }
   },
   modules: {

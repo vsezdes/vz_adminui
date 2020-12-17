@@ -199,7 +199,7 @@ export default {
 
       this.$apollo.mutate({
         // Query
-        mutation : gql`mutation setOrder($data: [OrderItem]!) {
+        mutation : gql`mutation setOrder($data: [OrderItemInput]!) {
           setOrder(data: $data) {
             id
             created

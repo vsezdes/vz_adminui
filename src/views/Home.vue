@@ -14,8 +14,25 @@
         <v-col><h1>Последние добавленные</h1></v-col>
       </v-row>
       <v-row>
+        <v-col v-if="getLatestInfo">
+          <v-tabs grow centered height="300" show-arrows hide-slider class="grey lighten-4">
+            <v-tab v-for="item in getLatestInfo.latest" :key="item.id">
+              <ItemCard
+                v-bind="item"
+                :readonly="true"
+                @on-expand="expandedId = $event"
+              />
+            </v-tab>
+          </v-tabs>
+        </v-col>
+        <v-col v-else>Загрузка...</v-col>
+      </v-row>
+      <v-row class="title">
+        <v-col><h1>Популярные категории</h1></v-col>
+      </v-row>
+      <v-row v-if="getLatestInfo">
         <v-col
-          v-for="item in lastItems"
+          v-for="item in getLatestInfo.hotcats"
           :key="item.id"
           cols="12"
           sm="6"
@@ -23,35 +40,59 @@
           lg="3"
           xl="2"
         >
-          <ItemCard
-            v-bind="item"
-            :readonly="true"
-            @on-expand="expandedId = $event"
-          />
+          <v-card
+            :to="`/category/${item.id}`"
+            ripple
+            hover
+            color="#EEE"
+          >
+            <div class="d-flex flex-no-wrap">
+              <v-avatar
+                class="ml-2 my-auto"
+                size="64"
+                color="#FFF"
+              >
+                <v-icon size="48">
+                  {{ `mdi-${item.icon}` }}
+                </v-icon>
+              </v-avatar>
+              <div class="my-auto pt-3">
+                <v-card-title
+                  class="headline my-auto"
+                  :style="{
+                    fontSize: '16px !important' }"
+                  v-text="item.title"
+                ></v-card-title>
+
+                <v-card-subtitle v-text="item.artist"></v-card-subtitle>
+
+                <v-card-actions></v-card-actions>
+              </div>
+
+            </div>
+          </v-card>
         </v-col>
       </v-row>
+      <v-row v-else><v-col>Загрузка...</v-col></v-row>
       <v-row class="title">
         <v-col><h1>Рекомендуемые товары</h1></v-col>
       </v-row>
       <v-row>
-        <v-col
-          v-for="item in lastItems"
-          :key="item.id"
-          cols="12"
-          sm="6"
-          md="4"
-          lg="3"
-          xl="2"
-        >
-          <ItemCard
-            v-bind="item"
-            :readonly="true"
-            @on-expand="expandedId = $event"
-          />
+        <v-col v-if="getLatestInfo">
+          <v-tabs grow centered height="300" show-arrows hide-slider class="grey lighten-4">
+            <v-tab v-for="item in getLatestInfo.recommended" :key="item.id">
+              <ItemCard
+                v-bind="item"
+                :readonly="true"
+                :recommended="true"
+                @on-expand="expandedId = $event"
+              />
+            </v-tab>
+          </v-tabs>
         </v-col>
-      </v-row>
-      <v-row class="title">
-        <v-col><h1>Популярные категории</h1></v-col>
+        <v-col v-else>
+          Загрузка...
+        </v-col>
       </v-row>
     </v-col>
     <ItemPreview :item="expandedItem" @close="expandedId = null"/>
@@ -93,7 +134,7 @@ export default {
   },
   computed: {
     loading() {
-      return this.$apolloData.queries.lastItems.loading;
+      return this.$apolloData.queries.lastItems.loading || this.$$apolloData.queries.getLatestInfo.loading;
     },
     expandedItem() {
       return this.getItemById(this.expandedId);

@@ -35,11 +35,11 @@ const routes = [
     }
   },
   {
-    path: '/category-items/:categoryId',
+    path: '/category/:categoryId',
     name: 'CategoryItems',
-    component: () => import(/* webpackChunkName: "items" */ '../views/Items.vue'),
+    component: () => import(/* webpackChunkName: "categoryitems" */ '../views/CategoryItems.vue'),
     meta: {
-      protected: true,
+      protected: false,
     }
   },
   {
@@ -58,6 +58,22 @@ const routes = [
     beforeEnter: (to, from, next) => {
       store.dispatch('logout');
       next({ name: 'Login' })
+    }
+  },
+  {
+    path: '/seller/orders',
+    name: 'SellerOrders',
+    component: () => import(/* webpackChunkName: "sellerorders" */ '../views/SellerOrders.vue'),
+    meta: {
+      protected: true,
+    }
+  },
+  {
+    path: '/user/orders',
+    name: 'UserOrders',
+    component: () => import(/* webpackChunkName: "userorders" */ '../views/UserOrders.vue'),
+    meta: {
+      protected: true,
     }
   },
   {

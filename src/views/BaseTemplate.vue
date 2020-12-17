@@ -96,6 +96,11 @@
         <slot />
       </v-container>
     </v-main>
+    <v-footer>
+      <small class="text-right flex">
+        &copy; 2020
+      </small>
+    </v-footer>
   </v-app>
 </template>
 
@@ -158,6 +163,10 @@ export default {
           return [
             {heading: 'Меню'},
             {icon: 'mdi-home', text: 'Главная', href: "/" },
+            {heading: 'Мой ЛК'},
+            {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/user/orders'},
+            {heading: 'ЛК Продавца'},
+            {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/seller/orders'},
             {heading: 'Товары'},
             {icon: 'mdi-package-variant', text: 'Все товары', href: '/items'},
             {icon: 'mdi-format-list-bulleted-type', text: 'Категории', href: '/categories'},
