@@ -1,89 +1,94 @@
 <template>
   <BaseTemplate>
-    <v-flex style="margin-top:50px;">
-      <!-- fixed view_mode buttons -->
-      <v-layout class="fab-container">
-        <v-btn
-          dark
-          fab
-          color="pink"
-          @click="showForm = !showForm"
-          style="margin: 0 10px"
+   <div class="text-h2 mt-2 mb-3">Мои товары</div>
+   <v-divider class="mb-5"/>
+
+    <!-- fixed viewMode buttons -->
+      <v-btn
+        dark
+        fixed
+        top
+        right
+        fab
+        class="mt-16"
+        color="primary"
+        @click="showForm = !showForm"
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+
+    <v-sheet>
+      <v-row justify="space-between">
+        <v-col cols="auto">
+          <v-btn-toggle v-model="viewMode">
+            <v-btn value="tab" title="Вид карточками" height="35">
+              <v-icon size=20>mdi-card-bulleted-outline</v-icon>
+            </v-btn>
+            <v-btn value="table" title="Табличный вид" height="35">
+              <v-icon size="20">mdi-table-large</v-icon>
+            </v-btn>
+          </v-btn-toggle>
+        </v-col>
+        <v-col cols="auto">
+          <v-text-field
+            class="mt-0 pt-0"
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Поиск по всем полям" single-line
+            hide-details
+          />
+        </v-col>
+      </v-row>
+    </v-sheet>
+    <ItemPreview :item="expandedItem" @close="expandedId = null" />
+    <ItemForm :show="showForm" :item="activeItem" @close="onClose" />
+
+    <v-flex v-if="viewMode==='tab'">
+      <v-row>
+        <v-col
+          v-for="item in searchItems()"
+          :key="item.id"
+          cols="12"
+          sm="6"
+          md="4"
+          lg="3"
+          xl="2"
         >
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-        <v-btn-toggle right v-model="view_mode">
-          <v-btn :value="'tab'" dark fab color="pink">
-            <v-icon>mdi-card-bulleted-outline</v-icon>
-          </v-btn>
-          <v-btn :value="'table'" dark fab color="pink">
-            <v-icon>mdi-table-large</v-icon>
-          </v-btn>
-        </v-btn-toggle>
+          <ItemCard
+            v-bind="item"
+            @on-edit="onEditItem"
+            @on-expand="expandedId = $event"
+          />
+        </v-col>
+      </v-row>
+    </v-flex>
 
-      </v-layout>
-
-      <v-card style="margin-top: 80px ">
-        <v-row justify="space-around">
-          <v-col cols="auto">
-            <v-card-title style="margin-top:-8px">Мои товары</v-card-title>
-          </v-col>
-          <v-col cols="auto">
-            <v-text-field v-model="search" append-icon="mdi-magnify" label="Поиск по всем полям" single-line
-                          hide-details></v-text-field>
-          </v-col>
-        </v-row>
+    <!-- table view mode-->
+    <v-flex v-else>
+      <v-card md12 sm12 xs12>
+        <v-flex>
+          <v-data-table :headers="headers" :items="myItems" :search="search">
+            <template v-slot:[`item.createdAt`]="{ item }">
+              <span>{{ formatDateToString(item.createdAt) }} {{ item.createdAt }}</span>
+            </template>
+            <template v-slot:[`item.images`]="{ item }">
+              <v-avatar tile>
+                <v-img :src="item.images[0].url"/>
+              </v-avatar>
+            </template>
+            <template v-slot:[`item.actions`]="{ item }">
+              <div class="item-controls">
+                <v-btn icon @click="onEditItem(item.id)">
+                  <v-icon>mdi-lead-pencil</v-icon>
+                </v-btn>
+                <v-btn icon @click="onDelete(item.id)">
+                  <v-icon>mdi-delete-forever-outline</v-icon>
+                </v-btn>
+              </div>
+            </template>
+          </v-data-table>
+        </v-flex>
       </v-card>
-      <ItemPreview :item="expandedItem" @close="expandedId = null" />
-      <ItemForm :show="showForm" :item="activeItem" @close="onClose" />
-
-      <v-flex v-if="view_mode==='tab'">
-        <v-row>
-          <v-col
-            v-for="item in searchItems()"
-            :key="item.id"
-            cols="12"
-            sm="6"
-            md="4"
-            lg="3"
-            xl="2"
-          >
-            <ItemCard
-              v-bind="item"
-              @on-edit="onEditItem"
-              @on-expand="expandedId = $event"
-            />
-          </v-col>
-        </v-row>
-      </v-flex>
-
-      <!-- table view mode-->
-      <v-flex v-else>
-        <v-card md12 sm12 xs12>
-          <v-flex>
-            <v-data-table :headers="headers" :items="myItems" :search="search">
-              <template v-slot:[`item.createdAt`]="{ item }">
-                <span>{{ formatDateToString(item.createdAt) }} {{ item.createdAt }}</span>
-              </template>
-              <template v-slot:[`item.images`]="{ item }">
-                <v-avatar tile>
-                  <v-img :src="item.images[0].url"/>
-                </v-avatar>
-              </template>
-              <template v-slot:[`item.actions`]="{ item }">
-                <div class="item-controls">
-                  <v-btn icon @click="onEditItem(item.id)">
-                    <v-icon>mdi-lead-pencil</v-icon>
-                  </v-btn>
-                  <v-btn icon @click="onDelete(item.id)">
-                    <v-icon>mdi-delete-forever-outline</v-icon>
-                  </v-btn>
-                </div>
-              </template>
-            </v-data-table>
-          </v-flex>
-        </v-card>
-      </v-flex>
     </v-flex>
   </BaseTemplate>
 </template>
@@ -255,7 +260,7 @@ export default {
       showForm: false,
       activeItem:null,
       expandedId: null,
-      view_mode: 'tab',
+      viewMode: 'tab',
       search: '',
       headers: [
         {
@@ -313,12 +318,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.fab-container {
-  position: fixed;
-  top: 80px;
-  right: 12px;
-  z-index: 1;
-}
-</style>

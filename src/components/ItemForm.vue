@@ -350,7 +350,7 @@ export default {
           id: this.id,
           data: {
             title: this.itemName,
-            price: this.itemPrice,
+            price: parseFloat(this.itemPrice),
             description: this.itemDescription.substring(0, this.maxChars),
             categoryId: this.itemCategory,
             images: this.images.map(i => ({

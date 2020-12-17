@@ -9,7 +9,7 @@
         top
         :style="{ top: '80px' }"
         right
-        color="pink"
+        color="primary"
         @click="showForm = !showForm"
       >
         <v-icon>mdi-plus</v-icon>
