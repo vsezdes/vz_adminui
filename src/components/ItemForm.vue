@@ -125,7 +125,6 @@
 import { mapActions } from 'vuex';
 import gql from 'graphql-tag';
 import CATEGORIES_QUERY from '@/gql/categories.graphql';
-import { LAST_ITEMS } from '@/gql/items.graphql';
 import ImageUploader from '@/components/ImageUploader.vue';
 import FormWrapper from '@/components/FormWrapper.vue';
 
@@ -361,25 +360,27 @@ export default {
             })),
           },
         },
+
         // Update the cache with the result
         // The query will be updated with the optimistic response
         // and then with the real result of the mutation
-        update: (store, { data: { saveItem }}) => {
-          const data = store.readQuery({ query: LAST_ITEMS });
-          console.warn(data, saveItem);
-          const item = data.lastItems.find(i => i.id === this.id);
-          let lastItems = null;
-          if (item) {
-            lastItems = [...data.lastItems.map(i => {
-              if (i.id === this.id) return saveItem;
-              return i;
-            })];
-          } else {
-            lastItems = [...data.lastItems];
-            lastItems.unshift(saveItem);
-          }
-          store.writeQuery({ query: LAST_ITEMS, data: { lastItems } })
-        },
+        // update: (store, { data: { saveItem }}) => {
+        //   const data = store.readQuery({ query: LAST_ITEMS });
+        //   const item = data.lastItems.find(i => i.id === this.id);
+        //   let lastItems = null;
+        //   if (item) {
+        //     lastItems = [...data.lastItems.map(i => {
+        //       if (i.id === this.id) return saveItem;
+        //       return i;
+        //     })];
+        //   } else {
+        //     lastItems = [...data.lastItems];
+        //     lastItems.unshift(saveItem);
+        //   }
+        //   console.warn(lastItems);
+        //
+        //   store.writeQuery({ query: LAST_ITEMS, data: { lastItems } })
+        // },
         // Optimistic UI
         // Will be treated as a 'fake' result as soon as the request is made
         // so that the UI can react quickly and the user be happy

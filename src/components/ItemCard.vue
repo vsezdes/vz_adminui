@@ -28,6 +28,7 @@
           outlined
           absolute
           right
+          bottom
           class="expand"
           @click="$emit('on-expand', id)"
         >
@@ -61,7 +62,7 @@
       <v-btn icon @click="$emit('on-edit', id)">
         <v-icon>mdi-lead-pencil</v-icon>
       </v-btn>
-      <v-btn icon @click="onDelete">
+      <v-btn icon @click="$emit('on-delete', id)">
         <v-icon>mdi-delete-forever-outline</v-icon>
       </v-btn>
     </div>
@@ -124,13 +125,10 @@
 </template>
 
 <script>
-import gql from 'graphql-tag';
 import { mapActions } from 'vuex';
-import { LAST_ITEMS } from '@/gql/items.graphql';
 export default {
-  props: ['id', 'title', 'price', 'images', 'categoryName', 'description', 'readonly', 'recommended'],
+  props: ['id', 'title', 'price', 'images', 'categoryName', 'description', 'readonly','loading', 'recommended'],
   data: () => ({
-    loading: false,
     selection: 1,
   }),
   computed: {
@@ -140,40 +138,6 @@ export default {
   },
   methods: {
     ...mapActions(['addToCart']),
-    onDelete () {
-      if (!window.confirm('Удалить товар?')) return;
-      this.loading = true;
-
-      this.$apollo.mutate({
-        // Query
-        mutation: gql`mutation delItem($id: Int!) {
-          delItem(id: $id) {
-            id
-            title
-          }
-        }`,
-        // Parameters
-        variables: {
-          id: this.id,
-        },
-        update: (store, { data: { delItem }}) => {
-          const data = store.readQuery({ query: LAST_ITEMS });
-          if (!delItem.id) return;
-
-          const lastItems = data.lastItems.filter(i => i.id !== delItem.id);
-          store.writeQuery({ query: LAST_ITEMS, data: { lastItems } });
-        },
-      }).then((data) => {
-        // Result
-        console.log(data)
-        this.loading = false;
-      }).catch((error) => {
-        // Error
-        console.error(error)
-        this.loading = false;
-      })
-      console.warn('delete: ', this.id);
-    },
   },
 }
 </script>
