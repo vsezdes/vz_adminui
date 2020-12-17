@@ -1,21 +1,21 @@
 <template>
   <BaseTemplate>
-   <div class="text-h2 mt-2 mb-3">Мои товары</div>
-   <v-divider class="mb-5"/>
+    <div class="text-h2 mt-2 mb-3">Мои товары</div>
+    <v-divider class="mb-5"/>
 
+    <v-btn
+      dark
+      fixed
+      top
+      right
+      fab
+      class="mt-16"
+      color="primary"
+      @click="showForm = !showForm"
+    >
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
     <!-- fixed viewMode buttons -->
-      <v-btn
-        dark
-        fixed
-        top
-        right
-        fab
-        class="mt-16"
-        color="primary"
-        @click="showForm = !showForm"
-      >
-        <v-icon>mdi-plus</v-icon>
-      </v-btn>
 
     <v-sheet>
       <v-row justify="space-between">
@@ -40,8 +40,8 @@
         </v-col>
       </v-row>
     </v-sheet>
-    <ItemPreview :item="expandedItem" @close="expandedId = null" />
-    <ItemForm :show="showForm" :item="activeItem" @close="onClose" />
+    <ItemPreview :item="expandedItem" @close="expandedId = null"/>
+    <ItemForm :show="showForm" :item="activeItem" @close="onClose"/>
 
     <v-flex v-if="viewMode==='tab'">
       <v-row>
@@ -57,6 +57,7 @@
           <ItemCard
             v-bind="item"
             @on-edit="onEditItem"
+            @on-delete="onDelete"
             @on-expand="expandedId = $event"
           />
         </v-col>
