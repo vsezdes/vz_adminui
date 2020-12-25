@@ -1,6 +1,7 @@
 <template>
   <BaseTemplate>
   <v-sheet max-width="1400">
+    <v-btn x-large right absolute icon @click="refresh" :loading="loading"><v-icon>mdi-refresh</v-icon></v-btn>
     <div class="text-h2 my-3">Мои заказы</div>
     <v-divider class="mb-10"/>
     <v-tabs
@@ -80,26 +81,31 @@ export default {
     ],
   }),
   mounted() {
-    this.getUserOrders().then(() => this.loading = false);
+    this.loading = true;
+    this.getSellerOrders().then(() => this.loading = false);
   },
   computed: {
-    ...mapState(['userOrders']),
+    ...mapState(['sellerOrders']),
     filteredOrders() {
       if (this.tab === 'tab-1') {
-        return this.userOrders;
+        return this.sellerOrders;
       } else if (this.tab === 'tab-2') {
-        return this.userOrders.filter(o => o.status > 0);
+        return this.sellerOrders.filter(o => o.status > 0);
       } else if (this.tab === 'tab-3') {
-        return this.userOrders.filter(o => o.status <= 0);
+        return this.sellerOrders.filter(o => o.status <= 0);
       }
       return [];
     },
     selectedOrder() {
-      return this.$store.getters.getOrderById(this.showDetails);
+      return this.$store.getters.getSellerOrderById(this.showDetails);
     }
   },
   methods: {
-    ...mapActions(['getUserOrders']),
+    ...mapActions(['getSellerOrders']),
+    refresh() {
+      this.loading = true;
+      this.getSellerOrders().then(() => this.loading = false);
+    }
   }
 }
 </script>

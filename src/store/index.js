@@ -13,11 +13,13 @@ export default new Vuex.Store({
     loader: false,
     enableMini: false,
     userOrders: [],
+    sellerOrders: [],
     cart: [],
   },
   getters: {
     userGroup: state => state.user && state.user.groupName,
     getOrderById: state => id => state.userOrders.find(order => order.id === id),
+    getSellerOrderById: state => id => state.sellerOrders.find(order => order.id === id),
   },
   actions: {
     alert: ({ commit }, data) => {
@@ -93,6 +95,41 @@ export default new Vuex.Store({
       }).then(res => {
         console.warn('res', res.data.myOrders);
         commit('PUT_USER_ORDERS', res.data.myOrders);
+      }).catch(err => {
+        console.error('error', err);
+        dispatch('alert', {
+          type: 'error',
+          message: err,
+        });
+      })
+    },
+    getSellerOrders({ commit, dispatch }) {
+      Apollo.query({
+        query: gql(`query mySellerOrders {
+          mySellerOrders {
+            id
+            created
+            details
+            status
+            total
+            itemQuantity {
+              itemId
+              quantity
+            }
+            items {
+              id
+              title
+              price
+              quantity
+              description
+            }
+          }
+        }`),
+        options: {
+          fetchPolicy: 'network-only',
+        },
+      }).then(res => {
+        commit('PUT_SELLER_ORDERS', res.data.mySellerOrders);
       }).catch(err => {
         console.error('error', err);
         dispatch('alert', {
@@ -190,6 +227,9 @@ export default new Vuex.Store({
     },
     PUT_USER_ORDERS(state, orders) {
       state.userOrders = orders;
+    },
+    PUT_SELLER_ORDERS(state, orders) {
+      state.sellerOrders = orders;
     },
     SET_ORDER_STATUS(state, { id, status }) {
       const newOrders = state.userOrders.map(o => {
