@@ -1,44 +1,33 @@
 <template>
-  <BaseTemplate>
-  <v-sheet max-width="1400">
-    <div class="text-h2 my-3">Мой кабинет</div>
-    <v-divider class="mb-10"/>
+  <BaseTemplate title="Мой кабинет">
     <v-row>
       <v-col>
-        <Box title="Мои данные" small-title>
-          <p>
-            Привет, {{ user.firstName }}!
+        <Box title="Мои данные">
+          <small>
+          Привет, {{ user.firstName }}!
+          <p class="my-1">
+            Ваши контактные данные:
           </p>
-          <p class="my-3">
-            Вы указали следующие контактные данные:
-          </p>
-          <v-sheet color="grey">
+          </small>
+          <v-sheet color="grey lighten-3" class="pa-2" rounded outlined>
             <small>
-            <v-list dense>
-              <v-list-item dense>
-              Телефон: {{ user.phone }}
-              </v-list-item>
-              <v-list-item dense>
-              Почта: {{ user.email }}
-              </v-list-item>
-              <v-list-item dense>
-              Адрес: {{ user.address }}
-              </v-list-item>
-            </v-list>
+              Телефон: <strong> {{ user.phone }} </strong> <br />
+              Почта: <strong> {{ user.email }} </strong> <br />
+              Адрес: <strong> {{ user.address }} </strong> <br />
             </small>
           </v-sheet>
-          <template name="buttons">
-            <v-btn to="/profile">Изменить профиль</v-btn>
+          <template v-slot:buttons>
+            <v-btn small color="primary" outlined to="/profile">Изменить профиль</v-btn>
           </template>
         </Box>
       </v-col>
       <v-col>
-        <Box title="Моя корзина" small-title>
+        <Box title="Моя корзина">
           <v-data-table
             disable-sort
             disable-pagination
             disable-filtering
-            :hide-default-header="cart.length === 0"
+            :hide-default-header="true"
             hide-default-footer
             dense
             :headers="cartHeaders"
@@ -52,39 +41,39 @@
               </div>
             </template>
           </v-data-table>
-          <template name="buttons">
-            <v-btn to="/checkout" v-if="cart.length > 0">Оформить заказ</v-btn>
-            <v-btn to="/" v-else>Купить что нибудь</v-btn>
+          <template v-slot:buttons>
+            <v-btn small color="primary" to="/checkout" v-if="cart.length > 0">Оформить заказ</v-btn>
+            <v-btn small outlined to="/" v-else>Купить что нибудь</v-btn>
           </template>
         </Box>
       </v-col>
       <v-col>
-        <Box title="Последние заказы" small-title>
+        <Box title="Последние заказы">
           <v-data-table
             :items="pendingOrders"
             :headers="orderHeaders"
             no-data-text="Заказов еще нет"
-            sort-by="created"
-            sort-desc
             dense
             disable-pagination
+            disable-sort
             hide-default-footer
+            hide-default-header
           >
             <template v-slot:[`item.created`]="{ item }">
-              <span>{{ formatDateToString(item.created) }}</span>
+              <small :style="{ whiteSpace: 'nowrap' }">{{ formatDateToString(item.created) }}</small>
             </template>
             <template v-slot:[`item.status`]="{ item }">
-              <OrderStatus :status="item.status" />
+              <OrderStatus :status="item.status" :small="true"/>
             </template>
             <template v-slot:[`item.items`]="{ item }">
-              <v-btn small @click="showDetails = item" title="Посмотреть детали заказа">
+              <v-btn x-small outlined color="green" @click="showDetails = item" title="Посмотреть детали заказа">
                 {{item.items ? item.items.length : 0}} товаров
                 <v-icon size="20" right>mdi-open-in-app</v-icon>
               </v-btn>
             </template>
           </v-data-table>
-          <template name="buttons">
-            <v-btn to="/user/orders" :disabled="userOrders.length < 1">Перейти к заказам</v-btn>
+          <template v-slot:buttons>
+            <v-btn small color="secondary" outlined to="/user/orders" :disabled="userOrders.length < 1">Перейти к заказам</v-btn>
           </template>
         </Box>
       </v-col>
@@ -92,7 +81,6 @@
     <v-dialog scrollable persistent max-width="600" attach :value="!!showDetails">
       <OrderItems v-bind="showDetails" @close="showDetails = null"/>
     </v-dialog>
-  </v-sheet>
   </BaseTemplate>
 </template>
 
@@ -118,9 +106,9 @@ export default {
     showDetails: null,
     tab: null,
     orderHeaders: [
-      { text: 'Статус', value: 'status', align: 'start', width: '220px' },
-      { text: 'Добавлен', value: 'created' },
-      { text: 'Товары', value: 'items' },
+      { value: 'status', align: 'start', width: '180px' },
+      { value: 'created' },
+      { value: 'items' },
     ],
     cartHeaders: [
       {

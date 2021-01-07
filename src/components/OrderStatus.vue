@@ -2,14 +2,15 @@
   <v-alert
     :color="theStatus.color"
     dense
-    max-width="150"
+    :max-width="small ? 105 : 150"
     outlined
-    min-width="150"
-    class="pa-0 mt-1 mb-1"
+    :min-width="small ? 105 : 150"
+    :class="{ 'pa-0 mt-1 mb-1': true, small }"
   >
     <v-icon
       v-if="theStatus.icon"
       :color="theStatus.color"
+      :size="small ? 16 : 16"
       class="my-0 ml-2 mr-1"
     >{{ theStatus.icon }}</v-icon>
     {{ theStatus.title }}
@@ -19,7 +20,7 @@
 <script>
 export default {
   name: 'OrderStatus',
-  props: ['status'],
+  props: ['status', 'small'],
   computed: {
     theStatus() {
       return this.status_titles.find(s => s.number === this.status);
@@ -38,3 +39,8 @@ export default {
   })
 }
 </script>
+<style scoped>
+.small {
+  font-size: 12px;
+}
+</style>

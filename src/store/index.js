@@ -228,6 +228,9 @@ export default new Vuex.Store({
     PUT_USER_ORDERS(state, orders) {
       state.userOrders = orders;
     },
+    PUSH_USER_ORDERS(state, orders) {
+      orders.forEach(order => state.userOrders.push(order));
+    },
     PUT_SELLER_ORDERS(state, orders) {
       state.sellerOrders = orders;
     },

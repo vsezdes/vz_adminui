@@ -1,8 +1,5 @@
 <template>
-  <BaseTemplate>
-  <v-sheet max-width="1400">
-    <div class="text-h2 my-3">Мои заказы</div>
-    <v-divider class="mb-10"/>
+  <BaseTemplate title="Мои заказы">
     <v-tabs
       v-model="tab"
       background-color="gray accent-1"
@@ -49,7 +46,6 @@
     <v-dialog scrollable persistent max-width="600" attach :value="!!showDetails">
       <OrderItems v-bind="showDetails" @close="showDetails = null"/>
     </v-dialog>
-  </v-sheet>
   </BaseTemplate>
 </template>
 

@@ -122,9 +122,9 @@ const routes = [
     }
   },
   {
-    path: '/seller/my_items',
+    path: '/seller/items',
     name: 'MyItems',
-    component: () => import(/* webpackChunkName: "my_items" */ '../views/MyItems.vue'),
+    component: () => import(/* webpackChunkName: "selleritems" */ '../views/MyItems.vue'),
     meta: {
       protected: true,
     }

@@ -94,12 +94,16 @@
 
     <v-main>
       <v-container fluid>
-        <slot />
+        <v-sheet max-width="1400">
+          <div v-if="title" class="pagetitle text-h2" v-text="title" />
+          <v-divider v-if="title" class="mb-10"/>
+          <slot />
+        </v-sheet>
       </v-container>
     </v-main>
     <v-footer>
       <small class="text-right flex">
-        &copy; 2020
+        &copy; 2021
       </small>
     </v-footer>
   </v-app>
@@ -117,6 +121,9 @@ export default {
     UserBar,
   },
   props: {
+    title: {
+      type: String,
+    },
     loading: {
       type: Boolean,
       default: false,
@@ -155,7 +162,7 @@ export default {
           return [
             { heading: 'Товары и заказы' },
             { icon: 'mdi-cash-register', text: 'Дашборда поставщика', href:'/seller' },
-            { icon: 'mdi-cash-register', text: 'Управление товарами', href:'/seller/my_items' },
+            { icon: 'mdi-cash-register', text: 'Управление товарами', href:'/seller/items' },
             { icon: 'mdi-cash-register', text: 'Управление заказами', href:'/seller/orders' },
             { heading: 'Отчеты' },
             { icon: 'mdi-cash-register', text: 'Просмотр отчетов', href:'/seller/reports' },
@@ -163,10 +170,14 @@ export default {
         case 'USER':
           return [
             {heading: 'Меню'},
-            {icon: 'mdi-home', text: 'Главная', href: "/" },
-            {heading: 'Мой ЛК'},
-            {icon: 'mdi-cash-register', text: 'Мой кабинет', href: '/user'},
+            {icon: 'mdi-shopping', text: 'Магазин', href: "/" },
+            {icon: 'mdi-briefcase-account', text: 'Мой кабинет', href: '/user'},
             {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/user/orders'},
+          ];
+        case 'ADMIN':
+          return [
+            {heading: 'Меню'},
+            {icon: 'mdi-shopping', text: 'Магазин', href: "/" },
             {heading: 'ЛК Продавца'},
             {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/seller/orders'},
             {heading: 'Товары'},
@@ -184,6 +195,9 @@ export default {
 </script>
 
 <style scoped>
+.pagetitle.text-h2 {
+  font-size: 36px !important;
+}
 .v-navigation-drawer--mini-variant .mini-btn {
   display: none;
 }

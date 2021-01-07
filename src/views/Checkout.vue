@@ -16,6 +16,7 @@
           </v-col>
           <v-col class="shrink">
             <v-btn to="/">Купить еще</v-btn>
+            <v-btn outlined to="/user/orders">К заказам</v-btn>
           </v-col>
         </v-row>
       </v-alert>
@@ -219,6 +220,7 @@ export default {
       }).then(({ data: { setOrder }}) => {
         this.loading = false;
         this.orderSuccess = setOrder;
+        this.$store.commit('PUSH_USER_ORDERS', setOrder);
         this.emptyCart();
       }).catch(error => {
         this.loading = false;

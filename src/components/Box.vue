@@ -1,21 +1,17 @@
 <template>
  <v-card
-    class="mx-auto"
+    class="box mx-auto"
     outlined
   >
-    <v-list-item three-line>
-      <v-list-item-content>
-        <div class="overline" v-if="smallTitle">
-          {{ title }}
-        </div>
-        <v-list-item-title v-else class="headline mb-1">
-          {{ title }}
-        </v-list-item-title>
-        <v-divider class="mb-3" />
-        <slot />
-      </v-list-item-content>
-    </v-list-item>
-    <v-card-actions>
+    <div :class="{ headline: true, 'small': !bigTitle }">
+      {{ title }}
+    </div>
+    <v-divider class="mb-3" />
+    <div class="content">
+      <slot />
+    </div>
+    <v-divider  />
+    <v-card-actions >
       <slot name="buttons" />
     </v-card-actions>
   </v-card>
@@ -29,10 +25,32 @@ export default {
       type: String,
       default: 'Default header'
     },
-    smallTitle: {
+    bigTitle: {
       type: Boolean,
       default: false,
     }
   }
 }
 </script>
+
+<style lang="scss">
+.box {
+  .headline {
+    background: #f5f5f5;
+    padding: 5px 15px !important;
+    font-weight: bold;
+    &.small {
+      font-size: 14px !important;
+      line-height: 18px;
+      text-transform: uppercase;
+    }
+  }
+  .content {
+    min-height: 180px;
+    padding: 3px 15px;
+  }
+  .v-card__actions {
+    background: #FDFDFD;
+  }
+}
+</style>
