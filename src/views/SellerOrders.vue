@@ -1,9 +1,12 @@
 <template>
-  <BaseTemplate>
-  <v-sheet max-width="1400">
-    <v-btn x-large right absolute icon @click="refresh" :loading="loading"><v-icon>mdi-refresh</v-icon></v-btn>
-    <div class="text-h2 my-3">Мои заказы</div>
-    <v-divider class="mb-10"/>
+  <BaseTemplate title="Мои заказы">
+    <v-btn
+      large right absolute top icon
+      @click="refresh" :loading="loading"
+      outlined
+    >
+      <v-icon>mdi-refresh</v-icon>
+    </v-btn>
     <v-tabs
       v-model="tab"
       background-color="gray accent-1"
@@ -50,7 +53,6 @@
     <v-dialog scrollable persistent max-width="600" attach :value="!!showDetails">
       <OrderDetails :order="selectedOrder" @close="showDetails = null"/>
     </v-dialog>
-  </v-sheet>
   </BaseTemplate>
 </template>
 

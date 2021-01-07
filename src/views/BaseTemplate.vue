@@ -154,18 +154,21 @@ export default {
         case 'DEFAULT':
         default:
           return [
-            { heading: 'Авторизация' },
-            { icon: 'mdi-login-variant', text: 'Войти', href:'/login' },
-            { icon: 'mdi-account-plus', text: 'Зарегистрироваться', href:'/register' },
+            { heading: 'Меню' },
+            { icon: 'mdi-shopping', text: 'Магазин', href: "/" },
+            { icon: 'mdi-login-variant', text: 'Вход', href:'/login' },
+            { icon: 'mdi-account-plus', text: 'Регистрация', href:'/register' },
           ];
         case 'SELLER':
           return [
+            {heading: 'Меню'},
+            {icon: 'mdi-shopping', text: 'Магазин', href: "/" },
             { heading: 'Товары и заказы' },
-            { icon: 'mdi-cash-register', text: 'Дашборда поставщика', href:'/seller' },
-            { icon: 'mdi-cash-register', text: 'Управление товарами', href:'/seller/items' },
+            { icon: 'mdi-briefcase-account', text: 'Дашборда поставщика', href:'/seller' },
+            { icon: 'mdi-basket', text: 'Управление товарами', href:'/seller/items' },
             { icon: 'mdi-cash-register', text: 'Управление заказами', href:'/seller/orders' },
             { heading: 'Отчеты' },
-            { icon: 'mdi-cash-register', text: 'Просмотр отчетов', href:'/seller/reports' },
+            { icon: 'mdi-file-chart', text: 'Просмотр отчетов', href:'/seller/reports' },
           ];
         case 'USER':
           return [

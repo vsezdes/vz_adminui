@@ -1,21 +1,12 @@
 <template>
-  <BaseTemplate>
-    <div class="text-h2 mt-2 mb-3">Мои товары</div>
-    <v-divider class="mb-5"/>
-
+  <BaseTemplate title="Мои товары">
     <v-btn
-      dark
-      fixed
-      top
-      right
-      fab
-      class="mt-16"
-      color="primary"
-      @click="showForm = !showForm"
+      large right absolute top icon
+      @click="showForm = !showForm" :loading="loading"
+      color="primary" outlined
     >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
-    <!-- fixed viewMode buttons -->
 
     <v-sheet>
       <v-row justify="space-between">

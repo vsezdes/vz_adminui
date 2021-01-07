@@ -122,6 +122,14 @@ const routes = [
     }
   },
   {
+    path: '/seller',
+    name: 'SellerDashboard',
+    component: () => import(/* webpackChunkName: "sellerdashboard" */ '../views/SellerDashboard.vue'),
+    meta: {
+      protected: true,
+    }
+  },
+  {
     path: '/seller/items',
     name: 'MyItems',
     component: () => import(/* webpackChunkName: "selleritems" */ '../views/MyItems.vue'),
