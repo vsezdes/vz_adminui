@@ -47,43 +47,7 @@
       </template>
     </v-data-table>
     <v-dialog scrollable persistent max-width="600" attach :value="!!showDetails">
-      <v-card>
-        <v-card-title>Подробности заказа №{{ showDetails && showDetails.id }}</v-card-title>
-        <v-divider></v-divider>
-        <v-card-text style="height: 300px;">
-          <v-data-iterator
-            v-if="showDetails"
-            :items="showDetails.items"
-            :disable-pagination="true"
-            item-key="id"
-            hide-default-footer
-          >
-            <template v-slot:item="{ item }">
-              <v-card class="pa-0 mt-1" outlined elevation="1">
-                <v-card-title>{{ item.title }}</v-card-title>
-                <v-card-subtitle>{{ getQuantity(item.id) }} штук по {{ item.price }} на сумму {{ getQuantity(item.id)*item.price }}</v-card-subtitle>
-              </v-card>
-            </template>
-          </v-data-iterator>
-
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-alert border="left" type="info" outlined dense class="ml-4 mt-4">
-            Сумма заказа: <strong>{{ showDetails && showDetails.total }}</strong>
-          </v-alert>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="green darken-1"
-            class="mr-4"
-            outlined
-            text
-            @click="showDetails = null"
-          >
-            Ok
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+      <OrderItems v-bind="showDetails" @close="showDetails = null"/>
     </v-dialog>
   </v-sheet>
   </BaseTemplate>
@@ -93,6 +57,7 @@
 import { mapActions, mapState } from 'vuex';
 import BaseTemplate from './BaseTemplate';
 import OrderStatus from '@/components/OrderStatus';
+import OrderItems from '@/components/OrderItems';
 import {DateFormat} from '@/mixins/DateFormat'
 
 export default {
@@ -101,6 +66,7 @@ export default {
   components: {
     BaseTemplate,
     OrderStatus,
+    OrderItems,
   },
   data: () => ({
     loading: false,

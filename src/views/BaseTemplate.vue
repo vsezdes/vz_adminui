@@ -76,6 +76,7 @@
             v-else
             :key="i"
             link
+            exact
             :to="item.href"
           >
             <v-list-item-action>
@@ -164,6 +165,7 @@ export default {
             {heading: 'Меню'},
             {icon: 'mdi-home', text: 'Главная', href: "/" },
             {heading: 'Мой ЛК'},
+            {icon: 'mdi-cash-register', text: 'Мой кабинет', href: '/user'},
             {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/user/orders'},
             {heading: 'ЛК Продавца'},
             {icon: 'mdi-cash-register', text: 'Мои заказы', href: '/seller/orders'},
