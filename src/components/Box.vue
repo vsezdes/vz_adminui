@@ -51,6 +51,7 @@ export default {
   }
   .v-card__actions {
     background: #FDFDFD;
+    min-height: 45px;
   }
 }
 </style>

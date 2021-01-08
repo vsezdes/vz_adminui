@@ -51,6 +51,27 @@
           </template>
         </Box>
       </v-col>
+      <v-col>
+        <Box title="Продажи за 24 часа">
+          <v-sheet
+            class="v-sheet mx-0"
+            color="grey lighten-4"
+            outlined
+            min-height="160"
+          >
+            <v-sparkline
+              :labels="labels"
+              :value="value"
+              color="blue lighten-1"
+              line-width="2"
+              padding="16"
+              :show-labels="true"
+              smooth
+              height="160"
+            ></v-sparkline>
+          </v-sheet>
+        </Box>
+      </v-col>
     </v-row>
     <v-dialog scrollable persistent max-width="600" attach :value="!!showDetails">
       <OrderItems v-bind="showDetails" @close="showDetails = null"/>
@@ -94,6 +115,26 @@ export default {
       },
       { text: 'Цена', value: 'price' },
       { text: 'Кол-во', value: 'quantity', width: '75px', align: 'center' },
+    ],
+    labels: [
+      '0',
+      '3',
+      '6',
+      '9',
+      '12',
+      '15',
+      '18',
+      '21',
+    ],
+    value: [
+      200,
+      675,
+      410,
+      390,
+      310,
+      460,
+      250,
+      240,
     ],
   }),
   mounted() {
